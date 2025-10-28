@@ -25,7 +25,7 @@ export default function ChoicesDialog({
   return (
     <Dialog open={state.isOpen} onClose={() => state.close()} className="">
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
-      <div className="fixed inset-0 flex h-screen w-screen items-center justify-center">
+      <div className="fixed inset-0 flex h-dvh w-dvw items-center justify-center">
         <DialogPanel className="bg-base-100 card card-border m-4 max-w-lg min-w-xs">
           <div className="card-body">
             <DialogTitle className="card-title">{title}</DialogTitle>

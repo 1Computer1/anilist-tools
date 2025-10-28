@@ -50,7 +50,7 @@ function Root() {
 
   return (
     <div
-      className="bg-base-100 flex h-screen w-screen flex-col items-center justify-center lg:flex-row"
+      className="bg-base-100 flex h-dvh w-dvw flex-col items-center justify-center lg:flex-row"
       data-theme={isDarkMode ? "dracula" : "fantasy"}
     >
       {lg ? (
