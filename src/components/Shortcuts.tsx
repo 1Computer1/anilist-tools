@@ -24,7 +24,7 @@ export function Shortcuts({
                   {x1.split("|").map((x2, i2) => (
                     <Fragment key={i2}>
                       {i2 > 0 && "\u2009"}
-                      <kbd className="kbd text-xs xl:text-sm">
+                      <kbd className="kbd text-xs lg:text-sm">
                         {x2.trim().replaceAll(/\\(.)/g, "$1")}
                       </kbd>
                     </Fragment>

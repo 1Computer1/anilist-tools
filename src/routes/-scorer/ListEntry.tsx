@@ -29,9 +29,9 @@ export function ListEntry({
   return (
     <div
       className={clsx(
-        "bg-base-300 min-h-12 w-full rounded-lg shadow xl:min-h-16",
+        "bg-base-300 min-h-12 w-full rounded-lg p-1 shadow lg:min-h-16",
         "grid grid-cols-[3rem_4rem_1rem_1fr] grid-rows-1 gap-2 [grid-template-areas:'img_score_oldscore_text']",
-        "xl:grid-cols-[4rem_5rem_2rem_1fr] xl:grid-rows-1 xl:gap-2 xl:[grid-template-areas:'img_score_oldscore_text']",
+        "lg:grid-cols-[4rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
@@ -102,7 +102,7 @@ export function ListEntry({
     >
       <div className="flex h-full flex-row items-center justify-center self-center [grid-area:img]">
         <div className="relative h-0 w-0">
-          <div className="scroll-helper absolute top-1/2 -mt-16 h-32 xl:-mt-48 xl:h-96"></div>
+          <div className="scroll-helper absolute top-1/2 -mt-16 h-32 lg:-mt-48 lg:h-96"></div>
         </div>
         <a
           href={entry.media.siteUrl}
@@ -111,7 +111,7 @@ export function ListEntry({
           tabIndex={-1}
         >
           <div
-            className="h-full w-12 rounded-lg bg-cover bg-center bg-no-repeat xl:h-16 xl:w-16"
+            className="h-12 w-12 rounded-lg bg-cover bg-center bg-no-repeat lg:h-16 lg:w-16"
             style={{
               backgroundImage: `url(${entry.media.coverImage.medium})`,
             }}
@@ -120,7 +120,7 @@ export function ListEntry({
       </div>
       <Input
         type="number"
-        className="input input-primary m-0 w-12 [appearance:textfield] place-self-center text-center [grid-area:score] xl:w-16 xl:text-lg"
+        className="input input-primary m-0 w-12 [appearance:textfield] place-self-center text-center [grid-area:score] lg:w-16 lg:text-lg"
         value={draft.get(entry.id)?.score ?? entry.score}
         min={0}
         max={100}
@@ -154,7 +154,7 @@ export function ListEntry({
             <>
               <div
                 className={clsx(
-                  "flex flex-col items-center justify-center text-xs xl:text-sm",
+                  "flex flex-col items-center justify-center text-xs lg:text-sm",
                   d === 0
                     ? "text-neutral"
                     : newScore === 0
@@ -166,13 +166,13 @@ export function ListEntry({
               >
                 {d == 0 ? (
                   <>
-                    <div className="scale-75 xl:scale-100">
+                    <div className="scale-75 lg:scale-100">
                       <PiEqualsBold />
                     </div>
                   </>
                 ) : newScore === 0 ? (
                   <>
-                    <div className="scale-75 xl:scale-100">
+                    <div className="scale-75 lg:scale-100">
                       <PiEraserFill />
                     </div>
                     <div>{entry.score}</div>
@@ -180,7 +180,7 @@ export function ListEntry({
                 ) : (
                   <>
                     <div>{d > 0 ? entry.score : newScore}</div>
-                    <div className="scale-75 xl:scale-100">
+                    <div className="scale-75 lg:scale-100">
                       {d >= 20 ? (
                         <PiArrowFatLinesDownFill />
                       ) : d > 0 ? (
@@ -199,7 +199,7 @@ export function ListEntry({
           );
         })()}
       </div>
-      <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text] xl:h-16">
+      <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text] lg:h-16">
         <p className="wrap-anywhere">{entry.media.title.userPreferred}</p>
       </div>
     </div>

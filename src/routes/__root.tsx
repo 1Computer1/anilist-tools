@@ -38,7 +38,7 @@ function Root() {
     queryClient.removeQueries();
   };
 
-  const xl = useMediaQuery("(width >= 80rem)");
+  const lg = useMediaQuery("(width >= 64rem)");
 
   const menuItems: (
     | ((Outer?: React.ElementType) => React.JSX.Element)
@@ -73,8 +73,8 @@ function Root() {
   ];
 
   return (
-    <div className="bg-base-100 flex h-screen w-screen flex-col items-center justify-center xl:flex-row">
-      {xl ? (
+    <div className="bg-base-100 flex h-screen w-screen flex-col items-center justify-center lg:flex-row">
+      {lg ? (
         <nav className="bg-base-200 flex h-full max-w-36 min-w-36 flex-col items-center justify-between pb-4 shadow">
           <ul className="menu flex-1 px-2">
             {menuItems.map((x) =>

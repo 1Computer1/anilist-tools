@@ -125,7 +125,7 @@ function Scorer() {
   }, [list.data?.size]);
 
   return (
-    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 xl:px-16">
+    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 lg:px-16">
       <ChoicesDialog
         state={confirmSaveDialog}
         title="Update Scores"
@@ -198,10 +198,10 @@ function Scorer() {
           ]}
         />
       </InfoDialog>
-      <h1 className="inline-flex flex-row items-center justify-center text-xl whitespace-pre xl:text-4xl">
+      <h1 className="inline-flex flex-row items-center justify-center text-xl whitespace-pre lg:text-4xl">
         Scorer{" "}
         <Button
-          className="btn btn-ghost btn-square btn-sm -mt-4 -ml-1 hidden size-6 text-base xl:inline-flex"
+          className="btn btn-ghost btn-square btn-sm -mt-4 -ml-1 hidden size-6 text-base lg:inline-flex"
           onClick={() => shortcutsDialog.open()}
         >
           <PiQuestionFill />
