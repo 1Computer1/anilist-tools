@@ -121,8 +121,11 @@ function Scorer() {
 
   const listEntryRefs = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
-    listEntryRefs.current = Array.from({ length: list.data?.size ?? 0 });
-  }, [list.data?.size]);
+    listEntryRefs.current = listEntryRefs.current.slice(
+      0,
+      list.data?.size ?? 0,
+    );
+  }, [list.data]);
 
   return (
     <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 lg:px-16">
