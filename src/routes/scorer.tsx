@@ -212,7 +212,7 @@ function Scorer() {
       </h1>
       <div className="flex flex-row items-center justify-center gap-2">
         <Select
-          className="select select-neutral pr-8"
+          className="select select-neutral text-base-content pr-8"
           disabled={viewer.data == null}
           defaultValue={"ANIME"}
           onChange={(e) => {

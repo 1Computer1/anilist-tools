@@ -8,10 +8,23 @@ import {
   PopoverBackdrop,
   PopoverButton,
   PopoverPanel,
+  Select,
 } from "@headlessui/react";
 import { getViewer } from "../api/queries/viewer";
-import { useMediaQuery } from "usehooks-ts";
-import { PiGithubLogo, PiListBold } from "react-icons/pi";
+import {
+  useDarkMode,
+  useMediaQuery,
+  useTernaryDarkMode,
+  type TernaryDarkMode,
+} from "usehooks-ts";
+import {
+  PiArrowFatRightFill,
+  PiArrowRightBold,
+  PiGithubLogo,
+  PiListBold,
+  PiMoonFill,
+  PiSunFill,
+} from "react-icons/pi";
 import { useQueryClient } from "@tanstack/react-query";
 
 const ANILIST_OAUTH_URL = `https://anilist.co/api/v2/oauth/authorize?client_id=${import.meta.env.VITE_ANILIST_APPID}&response_type=token`;
@@ -40,8 +53,11 @@ function Root() {
 
   const lg = useMediaQuery("(width >= 64rem)");
 
+  const { isDarkMode, toggle } = useDarkMode();
+
   const menuItems: (
     | ((Outer?: React.ElementType) => React.JSX.Element)
+    | React.JSX.Element
     | { divider: true }
     | { fill: true }
   )[] = [
@@ -70,10 +86,21 @@ function Root() {
       </Outer>
     ),
     { divider: true },
+    <Button
+      className="btn btn-neutral btn-outline text-base-content btn-sm flex flex-row items-center justify-center"
+      onClick={() => toggle()}
+    >
+      {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+      <PiArrowRightBold />
+      {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+    </Button>,
   ];
 
   return (
-    <div className="bg-base-100 flex h-screen w-screen flex-col items-center justify-center lg:flex-row">
+    <div
+      className="bg-base-100 flex h-screen w-screen flex-col items-center justify-center lg:flex-row"
+      data-theme={isDarkMode ? "dracula" : "fantasy"}
+    >
       {lg ? (
         <nav className="bg-base-200 flex h-full max-w-36 min-w-36 flex-col items-center justify-between pb-4 shadow">
           <ul className="menu flex-1 px-2">
@@ -84,7 +111,7 @@ function Root() {
                 <li></li>
               ) : (
                 <li className="inline-flex flex-row items-center justify-center">
-                  {x()}
+                  {typeof x === "function" ? x() : x}
                 </li>
               ),
             )}
@@ -148,7 +175,7 @@ function Root() {
                     <li></li>
                   ) : (
                     <li className="inline-flex flex-row items-center justify-center">
-                      {x(CloseButton)}
+                      {typeof x === "function" ? x(CloseButton) : x}
                     </li>
                   ),
                 )}
