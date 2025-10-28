@@ -253,7 +253,7 @@ function Scorer() {
       </div>
       {!list.query.isFetching && list.data != null ? (
         <ol
-          className="bg-base-200 flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto rounded-lg p-4 shadow"
+          className="dark:bg-base-200 flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto rounded-lg p-4 dark:shadow"
           tabIndex={-1}
         >
           {[...list.data.values()].map((entry, i) => (
@@ -273,7 +273,7 @@ function Scorer() {
           ))}
         </ol>
       ) : (
-        <div className="bg-base-200 flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 rounded-lg p-4 shadow">
+        <div className="dark:bg-base-200 flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 rounded-lg p-4 dark:shadow">
           {fetchError != null ? (
             <ErrorAlert type="NETWORK">
               {fetchError.cause.status === 429 ? (

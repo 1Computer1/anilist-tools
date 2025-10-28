@@ -29,7 +29,7 @@ export function ListEntry({
   return (
     <div
       className={clsx(
-        "bg-base-300 min-h-12 w-full rounded-lg p-1 shadow lg:min-h-16",
+        "bg-base-100 dark:bg-base-300 min-h-12 w-full rounded-lg p-1 shadow-md lg:min-h-16 dark:shadow",
         "grid grid-cols-[3rem_4rem_1rem_1fr] grid-rows-1 gap-2 [grid-template-areas:'img_score_oldscore_text']",
         "lg:grid-cols-[4rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
         "focus:outline-primary focus:outline-2",

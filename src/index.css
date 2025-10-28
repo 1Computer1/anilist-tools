@@ -1,4 +1,41 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: emerald --default, dracula --prefersdark;
+  themes: fantasy --default, dracula --prefersdark;
+}
+
+@plugin "daisyui/theme" {
+  name: "fantasy";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-warning: oklch(67.71% 0.359 83.87);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(68.76% 0.271 22.18);
+  --color-error-content: oklch(0% 0 0);
+
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "dracula";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
 }
