@@ -8,17 +8,10 @@ import {
   PopoverBackdrop,
   PopoverButton,
   PopoverPanel,
-  Select,
 } from "@headlessui/react";
 import { getViewer } from "../api/queries/viewer";
+import { useDarkMode, useMediaQuery } from "usehooks-ts";
 import {
-  useDarkMode,
-  useMediaQuery,
-  useTernaryDarkMode,
-  type TernaryDarkMode,
-} from "usehooks-ts";
-import {
-  PiArrowFatRightFill,
   PiArrowRightBold,
   PiGithubLogo,
   PiListBold,
@@ -53,48 +46,7 @@ function Root() {
 
   const lg = useMediaQuery("(width >= 64rem)");
 
-  const { isDarkMode, toggle } = useDarkMode();
-
-  const menuItems: (
-    | ((Outer?: React.ElementType) => React.JSX.Element)
-    | React.JSX.Element
-    | { divider: true }
-    | { fill: true }
-  )[] = [
-    (Outer = Link) => (
-      <Outer as={Link} to="/" className="text-lg">
-        Home
-      </Outer>
-    ),
-    { divider: true },
-    (Outer = Link) => (
-      <Outer as={Link} to="/scorer">
-        Scorer
-      </Outer>
-    ),
-    { fill: true },
-    { divider: true },
-    (Outer = "a") => (
-      <Outer
-        as="a"
-        className="link link-hover link-primary"
-        href="https://github.com/1Computer1/anilist-tools"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <PiGithubLogo /> Source
-      </Outer>
-    ),
-    { divider: true },
-    <Button
-      className="btn btn-neutral btn-outline text-base-content btn-sm flex flex-row items-center justify-center"
-      onClick={() => toggle()}
-    >
-      {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-      <PiArrowRightBold />
-      {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-    </Button>,
-  ];
+  const { isDarkMode } = useDarkMode();
 
   return (
     <div
@@ -102,62 +54,21 @@ function Root() {
       data-theme={isDarkMode ? "dracula" : "fantasy"}
     >
       {lg ? (
-        <nav className="bg-base-200 flex h-full max-w-36 min-w-36 flex-col items-center justify-between pb-4 shadow">
-          <ul className="menu flex-1 px-2">
-            {menuItems.map((x) =>
-              "fill" in x ? (
-                <div className="grow"></div>
-              ) : "divider" in x ? (
-                <li></li>
-              ) : (
+        <nav className="bg-base-200 flex h-full max-w-40 min-w-40 flex-col items-center justify-between pb-4 shadow">
+          <ul className="menu w-full flex-1 px-4">
+            <MenuItems
+              login={login}
+              logout={logout}
+              Item={({ children }) => (
                 <li className="inline-flex flex-row items-center justify-center">
-                  {typeof x === "function" ? x() : x}
+                  {children}
                 </li>
-              ),
-            )}
+              )}
+              Divider={() => <li></li>}
+              Space={() => <div className="my-1 h-0 w-full"></div>}
+              Filler={() => <div className="grow"></div>}
+            />
           </ul>
-          <div className="flex flex-col items-center justify-center gap-2">
-            {viewer.data ? (
-              <>
-                <a
-                  href={viewer.data.siteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-xl btn-square btn-ghost"
-                >
-                  <img
-                    className="rounded-lg"
-                    src={viewer.data.avatar.medium}
-                    width={64}
-                    height={64}
-                  ></img>
-                </a>
-                <span className="inline-flex flex-row items-center justify-center whitespace-pre">
-                  <a
-                    className="link link-hover link-primary"
-                    href={viewer.data.siteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {viewer.data.name}
-                  </a>
-                </span>
-                <Button
-                  className="btn btn-sm btn-primary btn-outline"
-                  onClick={logout}
-                >
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <Button
-                className="btn btn-sm btn-primary btn-outline"
-                onClick={login}
-              >
-                Login with Anilist
-              </Button>
-            )}
-          </div>
         </nav>
       ) : (
         <nav className="bg-base-200 flex w-full flex-row items-center justify-between px-4 py-2 shadow">
@@ -166,54 +77,38 @@ function Root() {
               <PiListBold className="size-6" />
             </PopoverButton>
             <PopoverBackdrop className="fixed inset-0 z-10 bg-black/30 backdrop-blur-xs" />
-            <PopoverPanel className="bg-base-200 fixed top-0 left-0 z-20 flex h-dvh flex-col items-center justify-between pb-4">
-              <ul className="menu h-full">
-                {menuItems.map((x) =>
-                  "fill" in x ? (
-                    <div className="grow"></div>
-                  ) : "divider" in x ? (
-                    <li></li>
-                  ) : (
+            <PopoverPanel className="bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4">
+              <ul className="menu h-full w-full px-4">
+                <MenuItems
+                  login={login}
+                  logout={logout}
+                  Item={({ children }) => (
                     <li className="inline-flex flex-row items-center justify-center">
-                      {typeof x === "function" ? x(CloseButton) : x}
+                      {children}
                     </li>
-                  ),
-                )}
+                  )}
+                  CloseButton={CloseButton}
+                  Space={() => <div className="my-1 h-0 w-full"></div>}
+                  Divider={() => <li></li>}
+                  Filler={() => <div className="grow"></div>}
+                />
               </ul>
-              {viewer.data && (
-                <Button
-                  className="btn btn-sm btn-primary btn-outline"
-                  onClick={logout}
-                >
-                  Logout
-                </Button>
-              )}
             </PopoverPanel>
           </Popover>
           {viewer.data ? (
             <div className="flex flex-row items-center justify-center gap-2">
-              <span className="inline-flex flex-row items-center justify-center whitespace-pre">
-                <a
-                  className="link link-hover link-primary"
-                  href={viewer.data.siteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {viewer.data.name}
-                </a>
-              </span>
               <a
+                className="link link-hover link-primary"
                 href={viewer.data.siteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-square btn-ghost btn-sm"
               >
                 <img
                   className="rounded-lg"
                   src={viewer.data.avatar.medium}
                   width={32}
                   height={32}
-                ></img>
+                />
               </a>
             </div>
           ) : (
@@ -226,12 +121,129 @@ function Root() {
           )}
         </nav>
       )}
-      <div className="flex h-full grow flex-col items-center justify-start">
-        <div className="my-4 grow lg:w-[54rem] xl:w-[70rem] 2xl:w-[86rem]">
+      <div className="flex h-full w-full flex-col items-center justify-start">
+        <div className="my-4 w-full grow lg:w-[54rem] xl:w-[70rem] 2xl:w-[86rem]">
           <Outlet />
         </div>
       </div>
     </div>
+  );
+}
+
+function MenuItems({
+  Item,
+  CloseButton,
+  Divider,
+  Filler,
+  Space,
+  logout,
+  login,
+}: {
+  Item: React.ElementType;
+  CloseButton?: React.ElementType;
+  Divider: React.ElementType;
+  Filler: React.ElementType;
+  Space: React.ElementType;
+  logout: () => void;
+  login: () => void;
+}) {
+  const viewer = useAnilistQuery(["viewer"], getViewer, {
+    staleTime: Infinity,
+  });
+  const { isDarkMode, toggle } = useDarkMode();
+
+  const Link_ = CloseButton ?? Link;
+
+  return (
+    <>
+      <Item>
+        <Link_ as={Link} to="/" className="text-lg">
+          Home
+        </Link_>
+      </Item>
+      <Divider />
+      <Item>
+        <Link_ as={Link} to="/scorer">
+          Scorer
+        </Link_>
+      </Item>
+      <Filler />
+      <Item>
+        <a
+          className="link link-hover link-primary"
+          href="https://github.com/1Computer1/anilist-tools"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <PiGithubLogo /> Source
+        </a>
+      </Item>
+      {viewer.data ? (
+        <>
+          <Divider />
+          <Space />
+          <a
+            className="link link-hover link-primary self-center"
+            href={viewer.data.siteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              className="rounded-lg"
+              src={viewer.data.avatar.medium}
+              width={64}
+              height={64}
+            />
+          </a>
+          <Space />
+          <Item>
+            <a
+              className="link link-hover link-primary"
+              href={viewer.data.siteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {viewer.data.name}
+            </a>
+          </Item>
+          <Space />
+          <Button
+            className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
+            onClick={() => toggle()}
+          >
+            {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+            <PiArrowRightBold />
+            {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+          </Button>
+          <Space />
+          <Button
+            className="btn btn-sm btn-primary btn-outline"
+            onClick={logout}
+          >
+            Logout
+          </Button>
+        </>
+      ) : (
+        <>
+          <Space />
+          <Button
+            className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
+            onClick={() => toggle()}
+          >
+            {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+            <PiArrowRightBold />
+            {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+          </Button>
+          <Space />
+          <Button
+            className="btn btn-sm btn-primary btn-outline"
+            onClick={login}
+          >
+            Login with Anilist
+          </Button>
+        </>
+      )}
+    </>
   );
 }
 
