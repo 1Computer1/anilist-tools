@@ -46,7 +46,7 @@ function Root() {
 
   const lg = useMediaQuery("(width >= 64rem)");
 
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode, toggle: toggleDarkMode } = useDarkMode();
 
   return (
     <div
@@ -59,6 +59,8 @@ function Root() {
             <MenuItems
               login={login}
               logout={logout}
+              isDarkMode={isDarkMode}
+              toggleDarkMode={toggleDarkMode}
               Item={({ children }) => (
                 <li className="inline-flex flex-row items-center justify-center">
                   {children}
@@ -82,6 +84,8 @@ function Root() {
                 <MenuItems
                   login={login}
                   logout={logout}
+                  isDarkMode={isDarkMode}
+                  toggleDarkMode={toggleDarkMode}
                   Item={({ children }) => (
                     <li className="inline-flex flex-row items-center justify-center">
                       {children}
@@ -138,6 +142,8 @@ function MenuItems({
   Space,
   logout,
   login,
+  isDarkMode,
+  toggleDarkMode,
 }: {
   Item: React.ElementType;
   CloseButton?: React.ElementType;
@@ -146,11 +152,12 @@ function MenuItems({
   Space: React.ElementType;
   logout: () => void;
   login: () => void;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
 }) {
   const viewer = useAnilistQuery(["viewer"], getViewer, {
     staleTime: Infinity,
   });
-  const { isDarkMode, toggle } = useDarkMode();
 
   const Link_ = CloseButton ?? Link;
 
@@ -209,7 +216,7 @@ function MenuItems({
           <Space />
           <Button
             className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
-            onClick={() => toggle()}
+            onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
             <PiArrowRightBold />
@@ -228,7 +235,7 @@ function MenuItems({
           <Space />
           <Button
             className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
-            onClick={() => toggle()}
+            onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
             <PiArrowRightBold />
