@@ -30,7 +30,7 @@ export function ListEntry({
     <div
       className={clsx(
         "bg-base-100 dark:bg-base-300 min-h-12 w-full rounded-lg p-1 shadow-md lg:min-h-16 dark:shadow",
-        "grid grid-cols-[3rem_4rem_1rem_1fr] grid-rows-1 gap-2 [grid-template-areas:'img_score_oldscore_text']",
+        "grid grid-cols-[3rem_4rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
         "lg:grid-cols-[4rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
         "focus:outline-primary focus:outline-2",
       )}
@@ -120,7 +120,7 @@ export function ListEntry({
       </div>
       <Input
         type="number"
-        className="input input-primary m-0 w-12 [appearance:textfield] place-self-center text-center [grid-area:score] lg:w-16 lg:text-lg"
+        className="input input-primary m-0 w-14 [appearance:textfield] place-self-center text-center [grid-area:score] lg:w-16 lg:text-lg"
         value={draft.get(entry.id)?.score ?? entry.score}
         min={0}
         max={100}
@@ -142,7 +142,7 @@ export function ListEntry({
           dispatch({
             t: "updateScore",
             id: entry.id,
-            score: Math.max(0, Math.min(100, e.target.valueAsNumber || 0)),
+            score: Math.max(0, Math.min(100, e.target.valueAsNumber)),
           });
         }}
       />
@@ -161,10 +161,12 @@ export function ListEntry({
                       ? "text-warning"
                       : d > 0
                         ? "text-error"
-                        : "text-success",
+                        : d < 0
+                          ? "text-success"
+                          : "text-neutral",
                 )}
               >
-                {d == 0 ? (
+                {d == 0 || Number.isNaN(d) ? (
                   <>
                     <div className="scale-75 lg:scale-100">
                       <PiEqualsBold />

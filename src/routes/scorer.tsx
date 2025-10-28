@@ -92,7 +92,7 @@ function Scorer() {
       : (() => {
           try {
             return [...draft.entries()].filter(([k, v]) => {
-              if (v.score == null) {
+              if (v.score == null || Number.isNaN(v.score)) {
                 return false;
               }
               const before = list.data!.get(k);

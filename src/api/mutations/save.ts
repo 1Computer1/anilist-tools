@@ -33,7 +33,7 @@ function makeMutationQuery(draft: ListDraft): {
       mutations.push(mutArgs);
       mutArgs.push(`id: $entry${k}`);
 
-      if (v.score != null) {
+      if (v.score != null && !Number.isNaN(v.score)) {
         vars[`scoreRaw${k}`] = v.score;
         queryVars.push(`$scoreRaw${k}: Int`);
         mutArgs.push(`scoreRaw: $scoreRaw${k}`);
