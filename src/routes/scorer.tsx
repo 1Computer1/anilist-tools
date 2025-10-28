@@ -128,7 +128,7 @@ function Scorer() {
   }, [list.data]);
 
   return (
-    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 lg:px-16">
+    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-4 lg:px-8">
       <ChoicesDialog
         state={confirmSaveDialog}
         title="Update Scores"

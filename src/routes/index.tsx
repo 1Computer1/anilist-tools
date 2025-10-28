@@ -6,7 +6,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="mx-auto flex flex-col items-center justify-center gap-2 px-16 sm:w-[40rem] md:w-[48rem] lg:w-[64rem] xl:w-[80rem] 2xl:w-[96rem]">
+    <main className="flex flex-col items-center justify-center gap-2 px-16">
       <h1 className="inline-flex flex-row items-center justify-center text-4xl">
         Anilist Tools
       </h1>

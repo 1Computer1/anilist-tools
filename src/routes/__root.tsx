@@ -200,7 +200,7 @@ function Root() {
         </nav>
       )}
       <div className="flex h-full grow flex-col items-center justify-start">
-        <div className="container mx-auto my-4 grow">
+        <div className="my-4 grow lg:w-[54rem] xl:w-[70rem] 2xl:w-[86rem]">
           <Outlet />
         </div>
       </div>
