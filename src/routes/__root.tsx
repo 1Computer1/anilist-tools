@@ -50,7 +50,7 @@ function Root() {
 
   return (
     <div
-      className="bg-base-100 flex h-dvh w-dvw flex-col items-center justify-center lg:flex-row"
+      className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row"
       data-theme={isDarkMode ? "dracula" : "fantasy"}
     >
       {lg ? (
@@ -125,8 +125,8 @@ function Root() {
           )}
         </nav>
       )}
-      <div className="flex h-full w-full flex-col items-center justify-start">
-        <div className="my-4 w-full grow lg:w-[54rem] xl:w-[70rem] 2xl:w-[86rem]">
+      <div className="flex grow flex-col items-center justify-start">
+        <div className="my-4 h-full w-full">
           <Outlet />
         </div>
       </div>
