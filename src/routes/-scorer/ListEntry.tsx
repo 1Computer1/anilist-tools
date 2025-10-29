@@ -2,12 +2,12 @@ import { Input } from "@headlessui/react";
 import clsx from "clsx";
 import { type Dispatch, type Ref } from "react";
 import {
-  PiArrowFatLinesDownFill,
   PiArrowFatDownFill,
-  PiArrowFatLinesUpFill,
   PiArrowFatUpFill,
   PiEraserFill,
   PiEqualsBold,
+  PiCaretDoubleDownFill,
+  PiCaretDoubleUpFill,
 } from "react-icons/pi";
 import type { ListDraft } from "../../api/mutations/save";
 import type { Entry } from "../../api/queries/list";
@@ -184,11 +184,11 @@ export function ListEntry({
                     <div>{d > 0 ? entry.score : newScore}</div>
                     <div className="scale-75 lg:scale-100">
                       {d >= 20 ? (
-                        <PiArrowFatLinesDownFill />
+                        <PiCaretDoubleDownFill />
                       ) : d > 0 ? (
                         <PiArrowFatDownFill />
                       ) : d <= -20 ? (
-                        <PiArrowFatLinesUpFill />
+                        <PiCaretDoubleUpFill />
                       ) : (
                         <PiArrowFatUpFill />
                       )}
