@@ -191,7 +191,7 @@ function Scorer() {
             { keys: "←|-|_", desc: "-1 to score" },
             { divider: "Update" },
             { keys: "1...0", desc: "Set score to 10…100" },
-            { keys: "y...p", desc: "Set score to 20, 40, 60, 80, 100" },
+            { keys: "y...p", desc: "Set score to 10, 30, 50, 70, 90" },
             { keys: "j...l", desc: "Set score to 35, 60, 85" },
             { keys: ".", desc: "Clear score value" },
             { keys: "/", desc: "Revert score to original" },
