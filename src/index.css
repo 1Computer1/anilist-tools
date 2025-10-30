@@ -42,3 +42,17 @@
   --depth: 0;
   --noise: 0;
 }
+
+@utility flex-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@utility inline-flex-center {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}

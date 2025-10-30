@@ -24,6 +24,7 @@ import {
   PiSunFill,
 } from "react-icons/pi";
 import { useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
 
 const ANILIST_OAUTH_URL = `https://anilist.co/api/v2/oauth/authorize?client_id=${import.meta.env.VITE_ANILIST_APPID}&response_type=token`;
 
@@ -69,7 +70,7 @@ function Root() {
                 isDarkMode={isDarkMode}
                 toggleDarkMode={toggleDarkMode}
                 Item={({ children }) => (
-                  <li className="inline-flex flex-row items-center justify-center">
+                  <li className="has-data-[status=active]:bg-base-content/10 rounded-field inline-flex flex-row items-center justify-center">
                     {children}
                   </li>
                 )}
@@ -94,7 +95,7 @@ function Root() {
                     isDarkMode={isDarkMode}
                     toggleDarkMode={toggleDarkMode}
                     Item={({ children }) => (
-                      <li className="inline-flex flex-row items-center justify-center">
+                      <li className="has-data-[status=active]:bg-base-content/10 rounded-field inline-flex flex-row items-center justify-center">
                         {children}
                       </li>
                     )}
@@ -171,26 +172,33 @@ function MenuItems({
     ? ({ ...props }) => <CloseButton as={Link} {...props} />
     : Link;
 
+  const linkClassName = clsx(
+    "flex-center w-full data-[status=active]:hover:bg-transparent",
+  );
+
   return (
     <>
       <Item>
-        <Link_ to="/" className="text-lg">
+        <Link_ to="/" className={clsx(linkClassName, "text-lg")}>
           Home
         </Link_>
       </Item>
       <Divider />
       <Item>
-        <Link_ to="/scorer">Scorer</Link_>
+        <Link_ to="/scorer" className={linkClassName}>
+          Scorer
+        </Link_>
       </Item>
       <Filler />
       <Item>
         <a
-          className="link link-hover link-primary"
+          className="link link-hover link-primary inline-flex-center w-full"
           href="https://github.com/1Computer1/anilist-tools"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <PiGithubLogo /> Source
+          Source
+          <PiGithubLogo />
         </a>
       </Item>
       {viewer.data ? (
@@ -213,7 +221,7 @@ function MenuItems({
           <Space />
           <Item>
             <a
-              className="link link-hover link-primary"
+              className="link link-hover link-primary inline-flex-center w-full text-center wrap-anywhere"
               href={viewer.data.siteUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -223,7 +231,7 @@ function MenuItems({
           </Item>
           <Space />
           <Button
-            className="btn btn-outline btn-sm flex flex-row items-center justify-center"
+            className="btn btn-outline btn-sm flex w-full flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
@@ -232,7 +240,7 @@ function MenuItems({
           </Button>
           <Space />
           <Button
-            className="btn btn-sm btn-primary btn-outline"
+            className="btn btn-sm btn-primary btn-outline w-full"
             onClick={logout}
           >
             Logout
@@ -242,7 +250,7 @@ function MenuItems({
         <>
           <Space />
           <Button
-            className="btn btn-outline btn-sm flex flex-row items-center justify-center"
+            className="btn btn-outline btn-sm flex w-full flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
@@ -251,7 +259,7 @@ function MenuItems({
           </Button>
           <Space />
           <Button
-            className="btn btn-sm btn-primary btn-outline"
+            className="btn btn-sm btn-primary btn-outline w-full"
             onClick={login}
           >
             Login with Anilist
