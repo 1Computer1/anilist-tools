@@ -150,7 +150,7 @@ function Scorer() {
   const confirmRefreshDialog = useDialog();
   const shortcutsDialog = useDialog();
 
-  const listEntryRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const listEntryRefs = useRef<HTMLDivElement[]>([]);
   useEffect(() => {
     listEntryRefs.current = listEntryRefs.current.slice(
       0,
@@ -287,13 +287,13 @@ function Scorer() {
         <Transition show={md || isOpenSettings}>
           <div
             className={clsx(
-              "flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-[unset] md:grow-0",
+              "bg-base-200 rounded-box flex w-full flex-1 flex-col items-center justify-start dark:shadow",
+              "md:h-full md:w-auto md:flex-[unset] md:grow-0",
               "origin-top duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0 motion-reduce:transition-none md:transition-none",
             )}
           >
             <div
               className={clsx(
-                "bg-base-200 rounded-box dark:shadow",
                 "flex min-h-0 w-full grow basis-0 flex-col justify-start gap-2 overflow-y-auto p-4",
                 "md:h-full md:w-44 lg:w-48",
                 "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
@@ -307,13 +307,12 @@ function Scorer() {
             </div>
           </div>
         </Transition>
-        <div className="flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-auto md:grow">
+        <div className="bg-base-200 rounded-box flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-auto md:grow dark:shadow">
           {!list.query.isFetching &&
           list.data != null &&
           displayList != null ? (
             <ol
               className={clsx(
-                "bg-base-200 rounded-box dark:shadow",
                 "flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto p-4",
                 "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
@@ -322,6 +321,7 @@ function Scorer() {
                 <>
                   {dividerPositions.includes(i) && (
                     <ListDivider
+                      key={i}
                       text={nameOfStatus(settings.listType.value, entry.status)}
                     />
                   )}
