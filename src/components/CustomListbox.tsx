@@ -6,6 +6,8 @@ import {
   type ListboxButtonProps,
 } from "@headlessui/react";
 import clsx from "clsx";
+import { useRef } from "react";
+import { useResizeObserver } from "usehooks-ts";
 
 export type CustomListboxProps<TOpt extends string> = {
   modal?: boolean;
@@ -37,22 +39,26 @@ export function CustomListbox<TOpt extends string>({
   OptionContents = ({ value }) => value,
   ...props
 }: CustomListboxProps<TOpt> & Omit<ListboxButtonProps, Used>) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const { width } = useResizeObserver({ ref: ref as any, box: "border-box" });
+
   return (
     <Listbox
       multiple={multiple}
       value={value as any}
       onChange={onChange as any}
     >
-      <ListboxButton {...props}>
+      <ListboxButton ref={ref} {...props}>
         <div className="inline-flex w-full flex-row">
           <ButtonContents />
         </div>
       </ListboxButton>
       <ListboxOptions
         className={clsx(
-          "bg-base-100 rounded-field border-base-content/20 flex min-w-(--button-width) flex-col border p-2 shadow-sm",
+          "bg-base-100 rounded-field border-base-content/20 flex flex-col border p-2 shadow-sm",
           "focus:outline-none",
         )}
+        style={width ? { minWidth: width } : { display: "none" }}
         modal={modal}
         anchor="bottom"
       >
