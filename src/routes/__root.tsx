@@ -159,20 +159,20 @@ function MenuItems({
     staleTime: Infinity,
   });
 
-  const Link_ = CloseButton ?? Link;
+  const Link_ = CloseButton
+    ? ({ ...props }) => <CloseButton as={Link} {...props} />
+    : Link;
 
   return (
     <>
       <Item>
-        <Link_ as={Link} to="/" className="text-lg">
+        <Link_ to="/" className="text-lg">
           Home
         </Link_>
       </Item>
       <Divider />
       <Item>
-        <Link_ as={Link} to="/scorer">
-          Scorer
-        </Link_>
+        <Link_ to="/scorer">Scorer</Link_>
       </Item>
       <Filler />
       <Item>
