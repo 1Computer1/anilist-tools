@@ -78,7 +78,7 @@ export function ListEntry({
           if (!e.ctrlKey) {
             tab(1);
           }
-        } else if (e.key === "ArrowDown") {
+        } else if (e.key === "ArrowDown" || e.key === "Enter") {
           tab(1);
         } else if (e.key === "ArrowUp") {
           tab(-1);
