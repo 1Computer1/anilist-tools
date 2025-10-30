@@ -296,7 +296,7 @@ function Scorer() {
               className={clsx(
                 "flex min-h-0 w-full grow basis-0 flex-col justify-start gap-2 overflow-y-auto p-4",
                 "md:h-full md:w-44 lg:w-48",
-                "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
+                "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
             >
               <SettingsItems
@@ -314,7 +314,7 @@ function Scorer() {
             <ol
               className={clsx(
                 "flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto p-4",
-                "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
+                "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
             >
               {displayList.map((entry, i) => (

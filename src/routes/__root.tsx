@@ -120,7 +120,7 @@ function Root() {
             {viewer.data ? (
               <div className="flex flex-row items-center justify-center gap-2">
                 <a
-                  className="link link-hover link-primary"
+                  className="link link-hover link-primary btn btn-ghost btn-square h-8 w-8"
                   href={viewer.data.siteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -216,7 +216,7 @@ function MenuItems({
           <Divider />
           <Space />
           <a
-            className="link link-hover link-primary self-center"
+            className="link link-hover link-primary btn btn-ghost btn-square h-16 w-16 self-center"
             href={viewer.data.siteUrl}
             target="_blank"
             rel="noopener noreferrer"
