@@ -2,6 +2,8 @@
 
 @custom-variant dark (&:where([data-theme=dracula], [data-theme=dracula] *));
 
+@custom-variant light (&:where([data-theme=fantasy], [data-theme=fantasy] *));
+
 @plugin "daisyui" {
   themes: fantasy --default, dracula --prefersdark;
 }

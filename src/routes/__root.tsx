@@ -231,7 +231,7 @@ function MenuItems({
           </Item>
           <Space />
           <Button
-            className="btn btn-outline btn-sm flex w-full flex-row items-center justify-center"
+            className="btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
@@ -250,7 +250,7 @@ function MenuItems({
         <>
           <Space />
           <Button
-            className="btn btn-outline btn-sm flex w-full flex-row items-center justify-center"
+            className="btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
