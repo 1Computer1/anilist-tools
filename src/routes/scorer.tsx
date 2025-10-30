@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAnilistMutation, useAnilistQuery } from "../hooks/anilist";
-import { getList, type Entry } from "../api/queries/list";
+import { getList } from "../api/queries/list";
 import { useImmerReducer } from "use-immer";
 import { Button, Switch } from "@headlessui/react";
 import { saveMediaListEntries, type ListDraft } from "../api/mutations/save";
