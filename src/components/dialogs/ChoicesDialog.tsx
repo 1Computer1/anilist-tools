@@ -1,0 +1,39 @@
+import { Button, Description } from "@headlessui/react";
+import clsx from "clsx";
+import CustomDialog, { type CustomDialogProps } from "./CustomDialog";
+
+export type Severity = "NORMAL" | "BAD" | "GOOD";
+
+export default function ChoicesDialog({
+  choices,
+  children,
+  ...props
+}: {
+  choices: { text: string; severity: Severity; onClick: () => unknown }[];
+  children: React.ReactNode;
+} & Omit<CustomDialogProps, "children">) {
+  return (
+    <CustomDialog {...props}>
+      <Description className="text-wrap whitespace-pre-wrap">
+        {children}
+      </Description>
+      <div className="card-actions mt-4 flex w-full flex-row justify-end gap-2">
+        {choices.map(({ text, severity, onClick }) => (
+          <Button
+            className={clsx(
+              "btn btn-outline",
+              {
+                NORMAL: "btn-primary",
+                BAD: "btn-error",
+                GOOD: "btn-success",
+              }[severity],
+            )}
+            onClick={onClick}
+          >
+            {text}
+          </Button>
+        ))}
+      </div>
+    </CustomDialog>
+  );
+}

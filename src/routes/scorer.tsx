@@ -14,13 +14,13 @@ import {
   PiQuestionFill,
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
-import ChoicesDialog from "../components/ChoicesDialog";
+import ChoicesDialog from "../components/dialogs/ChoicesDialog";
 import { Shortcuts } from "../components/Shortcuts";
 import { ListDivider, ListEntry } from "./-scorer/ListEntry";
 import type { Context } from "../api/anilist";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { useEffect, useRef, useState } from "react";
-import InfoDialog from "../components/InfoDialog";
+import CustomDialog from "../components/dialogs/CustomDialog";
 import clsx from "clsx";
 import { useMediaQuery } from "usehooks-ts";
 import {
@@ -160,7 +160,7 @@ function Scorer() {
 
   const md = useMediaQuery("(width >= 48rem)");
 
-  const [isOpenSettings, setOpenSettings] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 lg:px-4">
@@ -215,7 +215,7 @@ function Scorer() {
         <br />
         Your unsaved changes will be lost.
       </ChoicesDialog>
-      <InfoDialog title="Keyboard Shortcuts" state={shortcutsDialog}>
+      <CustomDialog title="Keyboard Shortcuts" state={shortcutsDialog}>
         <Shortcuts
           shortcuts={[
             { divider: "Navigation" },
@@ -235,7 +235,7 @@ function Scorer() {
             { keys: "`|Esc|⌫", desc: "Revert score and go back" },
           ]}
         />
-      </InfoDialog>
+      </CustomDialog>
       <div className="flex w-full flex-row items-center justify-between">
         <div className="flex flex-row items-center justify-center gap-2">
           <Button
@@ -275,7 +275,7 @@ function Scorer() {
             <>
               <Switch
                 className="btn btn-square btn-ghost"
-                onClick={() => setOpenSettings(!isOpenSettings)}
+                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
               >
                 <PiDotsThreeOutlineFill className="size-6" />
               </Switch>
@@ -284,7 +284,7 @@ function Scorer() {
         </div>
       </div>
       <div className="flex w-full grow flex-col items-start justify-center gap-2 md:flex-row">
-        <Transition show={md || isOpenSettings}>
+        <Transition show={md || isSettingsOpen}>
           <div
             className={clsx(
               "bg-base-200 rounded-box flex w-full flex-1 flex-col items-center justify-start dark:shadow",

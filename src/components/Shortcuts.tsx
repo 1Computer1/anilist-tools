@@ -6,10 +6,13 @@ export function Shortcuts({
   shortcuts: ({ keys: string; desc: string } | { divider: string })[];
 }) {
   return (
-    <ul className="flex w-full flex-col flex-wrap items-start justify-center gap-x-8 gap-y-2">
-      {shortcuts.map((o) =>
+    <ul className="flex w-full flex-col items-start justify-center gap-x-8 gap-y-2">
+      {shortcuts.map((o, i) =>
         "divider" in o ? (
-          <li className="flex w-full flex-row items-center justify-between gap-2">
+          <li
+            key={i}
+            className="flex w-full flex-row items-center justify-between gap-2"
+          >
             {o.divider}
           </li>
         ) : (
@@ -17,7 +20,7 @@ export function Shortcuts({
             className="flex w-full flex-row items-center justify-between gap-2"
             key={o.keys}
           >
-            <span className="inline-flex max-w-1/2 flex-row flex-wrap items-center justify-start gap-y-1">
+            <span className="inline-flex max-w-1/2 flex-row items-center justify-start gap-y-1">
               {o.keys.split("...").map((x1, i1) => (
                 <Fragment key={i1}>
                   {i1 > 0 && "\u2009…\u2009"}
@@ -33,7 +36,7 @@ export function Shortcuts({
               ))}
             </span>
             <div className="border-neutral grow border-b border-dotted px-1"></div>
-            <span>{o.desc}</span>
+            <span className="text-nowrap">{o.desc}</span>
           </li>
         ),
       )}
