@@ -25,6 +25,7 @@ import {
 } from "react-icons/pi";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
+import { useEffect } from "react";
 
 const ANILIST_OAUTH_URL = `https://anilist.co/api/v2/oauth/authorize?client_id=${import.meta.env.VITE_ANILIST_APPID}&response_type=token`;
 
@@ -63,10 +64,7 @@ function Root() {
   return (
     <>
       <HeadContent />
-      <div
-        className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row"
-        data-theme={isDarkMode ? "dracula" : "fantasy"}
-      >
+      <div className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row">
         {lg ? (
           <nav className="bg-base-200 flex h-full max-w-40 min-w-40 flex-col items-center justify-between pb-4 shadow">
             <ul className="menu w-full flex-1 px-4">
@@ -93,7 +91,13 @@ function Root() {
                 <PiListBold className="size-6" />
               </PopoverButton>
               <PopoverBackdrop className="fixed inset-0 z-10 bg-black/30 backdrop-blur-xs" />
-              <PopoverPanel className="bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4">
+              <PopoverPanel
+                transition
+                className={clsx(
+                  "bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4",
+                  "origin-left transition duration-150 ease-out data-closed:-translate-x-90 data-closed:scale-x-90 data-closed:opacity-0",
+                )}
+              >
                 <ul className="menu h-full w-full px-4">
                   <MenuItems
                     login={login}

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAnilistMutation, useAnilistQuery } from "../hooks/anilist";
 import { getList } from "../api/queries/list";
 import { useImmerReducer } from "use-immer";
-import { Button, Switch } from "@headlessui/react";
+import { Button, Switch, Transition } from "@headlessui/react";
 import { saveMediaListEntries, type ListDraft } from "../api/mutations/save";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTokenUserId } from "../util/jwt";
@@ -284,8 +284,13 @@ function Scorer() {
         </div>
       </div>
       <div className="flex w-full grow flex-col items-start justify-center gap-2 md:flex-row">
-        {(md || isOpenSettings) && (
-          <div className="flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-[unset] md:grow-0">
+        <Transition show={md || isOpenSettings}>
+          <div
+            className={clsx(
+              "flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-[unset] md:grow-0",
+              "origin-top duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0 md:transition-none",
+            )}
+          >
             <div
               className={clsx(
                 "bg-base-200 rounded-box dark:shadow",
@@ -301,7 +306,7 @@ function Scorer() {
               />
             </div>
           </div>
-        )}
+        </Transition>
         <div className="flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-auto md:grow">
           {!list.query.isFetching &&
           list.data != null &&

@@ -54,8 +54,10 @@ export function CustomListbox<TOpt extends string>({
         </div>
       </ListboxButton>
       <ListboxOptions
+        transition
         className={clsx(
           "bg-base-100 rounded-field border-base-content/20 flex flex-col border p-2 shadow-sm",
+          "origin-top transition duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0",
           "focus:outline-none",
         )}
         style={width ? { minWidth: width } : { display: "none" }}

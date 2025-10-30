@@ -23,7 +23,12 @@ export default function ChoicesDialog({
   children: any;
 }) {
   return (
-    <Dialog open={state.isOpen} onClose={() => state.close()} className="">
+    <Dialog
+      open={state.isOpen}
+      onClose={() => state.close()}
+      transition
+      className="transition duration-150 ease-out data-closed:opacity-0"
+    >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
       <div className="fixed inset-0 flex h-dvh w-dvw items-center justify-center">
         <DialogPanel className="bg-base-100 card card-border m-4 max-w-lg min-w-xs">
