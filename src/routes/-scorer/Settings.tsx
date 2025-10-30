@@ -163,7 +163,7 @@ function SettingsItem({
   children: React.JSX.Element;
 }) {
   return (
-    <Field className="flex w-full flex-col gap-y-2">
+    <Field className="flex w-full flex-col gap-y-2 text-sm md:text-base">
       <Label>{label}</Label>
       {children}
     </Field>

@@ -210,7 +210,7 @@ export function ListEntry({
 
 export function ListDivider({ text }: { text: string }) {
   return (
-    <div className="divider my-2 w-full text-sm lg:my-4 lg:text-base">
+    <div className="divider my-1 w-full text-sm lg:my-2 lg:text-base">
       {text}
     </div>
   );
