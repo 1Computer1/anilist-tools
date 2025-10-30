@@ -108,7 +108,7 @@ function Root() {
                 rel="noopener noreferrer"
               >
                 <img
-                  className="rounded-lg"
+                  className="rounded-field"
                   src={viewer.data.avatar.medium}
                   width={32}
                   height={32}
@@ -126,7 +126,7 @@ function Root() {
         </nav>
       )}
       <div className="flex grow flex-col items-center justify-start">
-        <div className="my-4 h-full w-full">
+        <div className="my-2 h-full w-full lg:my-4">
           <Outlet />
         </div>
       </div>
@@ -196,7 +196,7 @@ function MenuItems({
             rel="noopener noreferrer"
           >
             <img
-              className="rounded-lg"
+              className="rounded-field"
               src={viewer.data.avatar.medium}
               width={64}
               height={64}
@@ -215,7 +215,7 @@ function MenuItems({
           </Item>
           <Space />
           <Button
-            className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
+            className="btn btn-outline btn-sm flex flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
@@ -234,7 +234,7 @@ function MenuItems({
         <>
           <Space />
           <Button
-            className="btn btn-neutral btn-outline btn-sm flex flex-row items-center justify-center"
+            className="btn btn-outline btn-sm flex flex-row items-center justify-center"
             onClick={() => toggleDarkMode()}
           >
             {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}

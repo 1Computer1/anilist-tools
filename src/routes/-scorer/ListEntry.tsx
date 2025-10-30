@@ -29,9 +29,9 @@ export function ListEntry({
   return (
     <div
       className={clsx(
-        "bg-base-100 dark:bg-base-300 min-h-12 w-full rounded-lg p-1 shadow-md lg:min-h-16 dark:shadow",
-        "grid grid-cols-[3rem_4rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
-        "lg:grid-cols-[4rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
+        "bg-base-100 rounded-field min-h-10 w-full p-1 shadow-md lg:min-h-12 dark:shadow",
+        "grid grid-cols-[2.5rem_4rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
+        "lg:grid-cols-[3rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
@@ -111,7 +111,7 @@ export function ListEntry({
           tabIndex={-1}
         >
           <div
-            className="h-12 w-12 rounded-lg bg-cover bg-center bg-no-repeat lg:h-16 lg:w-16"
+            className="rounded-field h-10 w-10 bg-cover bg-center bg-no-repeat lg:h-12 lg:w-12"
             style={{
               backgroundImage: `url(${entry.media.coverImage.medium})`,
             }}
@@ -201,9 +201,17 @@ export function ListEntry({
           );
         })()}
       </div>
-      <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text] lg:h-16">
+      <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text]">
         <p className="wrap-anywhere">{entry.media.title.userPreferred}</p>
       </div>
+    </div>
+  );
+}
+
+export function ListDivider({ text }: { text: string }) {
+  return (
+    <div className="divider my-2 w-full text-sm lg:my-4 lg:text-base">
+      {text}
     </div>
   );
 }

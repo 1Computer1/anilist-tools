@@ -1,30 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAnilistMutation, useAnilistQuery } from "../hooks/anilist";
-import { getList, type MediaType } from "../api/queries/list";
-import { useImmer, useImmerReducer } from "use-immer";
-import { Button, Select } from "@headlessui/react";
+import { getList, type Entry } from "../api/queries/list";
+import { useImmerReducer } from "use-immer";
+import { Button, Switch } from "@headlessui/react";
 import { saveMediaListEntries, type ListDraft } from "../api/mutations/save";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTokenUserId } from "../util/jwt";
 import { getViewer } from "../api/queries/viewer";
 import {
   PiArrowClockwiseFill,
+  PiDotsThreeOutlineFill,
   PiFloppyDiskFill,
   PiQuestionFill,
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
 import ChoicesDialog from "../components/ChoicesDialog";
 import { Shortcuts } from "../components/Shortcuts";
-import { ListEntry } from "./-scorer/ListEntry";
+import { ListDivider, ListEntry } from "./-scorer/ListEntry";
 import type { Context } from "../api/anilist";
 import { ErrorAlert } from "../components/ErrorAlert";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import InfoDialog from "../components/InfoDialog";
+import clsx from "clsx";
+import { useMediaQuery } from "usehooks-ts";
+import {
+  nameOfStatus,
+  prepareListForDisplay,
+  SettingsItems,
+  useSettings,
+} from "./-scorer/Settings";
 
 export type ListDraftAction =
   | { t: "updateScore"; id: number; score: number }
-  | { t: "reset" }
-  | { t: "clean" };
+  | { t: "reset" };
 
 export type UserListOptions = Pick<
   typeof getList extends (ctx: Context, options: infer O) => any ? O : never,
@@ -42,11 +50,20 @@ function Scorer() {
     staleTime: Infinity,
   });
 
-  const [listOptions, updateListOptions] = useImmer<UserListOptions>({
-    type: "ANIME",
-    statusIn: ["COMPLETED"],
+  const settings = useSettings();
+
+  const listOptions: UserListOptions = {
+    type: settings.listType.value,
+    statusIn: [
+      "CURRENT",
+      "PLANNING",
+      "COMPLETED",
+      "DROPPED",
+      "PAUSED",
+      "REPEATING",
+    ],
     sort: ["SCORE_DESC"],
-  });
+  };
 
   const list = useAnilistQuery(
     ["list", listOptions],
@@ -66,6 +83,10 @@ function Scorer() {
   );
 
   const fetchError = viewer.query.error ?? list.query.error;
+
+  const [displayList, dividerPositions] = list.data
+    ? prepareListForDisplay(list.data, settings)
+    : [null, null];
 
   const [draft, dispatch] = useImmerReducer<ListDraft, ListDraftAction>(
     (draft, action) => {
@@ -123,12 +144,16 @@ function Scorer() {
   useEffect(() => {
     listEntryRefs.current = listEntryRefs.current.slice(
       0,
-      list.data?.size ?? 0,
+      displayList?.length ?? 0,
     );
-  }, [list.data]);
+  }, [displayList?.length]);
+
+  const md = useMediaQuery("(width >= 48rem)");
+
+  const [isOpenSettings, setOpenSettings] = useState(false);
 
   return (
-    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-4 lg:px-8">
+    <main className="flex h-full w-full flex-col items-center justify-start gap-2 px-2 lg:px-4">
       <ChoicesDialog
         state={confirmSaveDialog}
         title="Update Scores"
@@ -180,7 +205,7 @@ function Scorer() {
         <br />
         Your unsaved changes will be lost.
       </ChoicesDialog>
-      <InfoDialog title="Shortcuts" state={shortcutsDialog}>
+      <InfoDialog title="Keyboard Shortcuts" state={shortcutsDialog}>
         <Shortcuts
           shortcuts={[
             { divider: "Navigation" },
@@ -201,128 +226,161 @@ function Scorer() {
           ]}
         />
       </InfoDialog>
-      <h1 className="inline-flex flex-row items-center justify-center text-xl whitespace-pre lg:text-4xl">
-        Scorer{" "}
-        <Button
-          className="btn btn-ghost btn-square btn-sm -mt-4 -ml-1 hidden size-6 text-base lg:inline-flex"
-          onClick={() => shortcutsDialog.open()}
-        >
-          <PiQuestionFill />
-        </Button>
-      </h1>
-      <div className="flex flex-row items-center justify-center gap-2">
-        <Select
-          className="select select-neutral text-base-content pr-8"
-          disabled={viewer.data == null}
-          defaultValue={"ANIME"}
-          onChange={(e) => {
-            dispatch({ t: "reset" });
-            updateListOptions((x) => {
-              x.type = e.target.value as MediaType;
-            });
-          }}
-        >
-          <option value="ANIME">Anime</option>
-          <option value="MANGA">Manga</option>
-        </Select>
-        <Button
-          className="btn btn-outline btn-success"
-          disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
-          onClick={() => {
-            confirmSaveDialog.open();
-          }}
-        >
-          <PiFloppyDiskFill /> Save
-        </Button>
-        <Button
-          className="btn btn-outline btn-secondary"
-          disabled={list.query.isFetching || list.data == null}
-          onClick={async () => {
-            if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-              confirmRefreshDialog.open();
-            } else {
-              await queryClient.invalidateQueries({
-                queryKey: ["list", { type: listOptions.type }],
-              });
-              dispatch({ t: "reset" });
-            }
-          }}
-        >
-          <PiArrowClockwiseFill /> Refresh
-        </Button>
-      </div>
-      {!list.query.isFetching && list.data != null ? (
-        <ol
-          className="dark:bg-base-200 flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto rounded-lg p-4 dark:shadow"
-          tabIndex={-1}
-        >
-          {[...list.data.values()].map((entry, i) => (
-            <li key={entry.id} className="w-full">
-              <ListEntry
-                entry={entry}
-                draft={draft}
-                dispatch={dispatch}
-                ref={(el) => {
-                  listEntryRefs.current[i] = el!;
-                }}
-                tab={(d) => {
-                  listEntryRefs.current[i + d]?.focus({ preventScroll: true });
-                }}
-              />
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <div className="dark:bg-base-200 flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 rounded-lg p-4 dark:shadow">
-          {fetchError != null ? (
-            <ErrorAlert type="NETWORK">
-              {fetchError.cause.status === 429 ? (
-                <div>
-                  Too many requests were sent to Anilist in a short amount of
-                  time.
-                  <br />
-                  Please wait at least one minute, then refresh the page.
-                </div>
-              ) : fetchError.cause.status === 401 ||
-                fetchError.cause.status === 403 ? (
-                <div>
-                  Could not log in to your account.
-                  <br />
-                  Please revoke the Anilist Tools app from your account and try
-                  again.
-                </div>
-              ) : fetchError.cause.status >= 500 ? (
-                <div>
-                  Anilist is not working at the moment.
-                  <br />
-                  Please try again later.
-                </div>
-              ) : (
-                <div>
-                  An error occured fetching data from Anilist:
-                  <br />
-                  {fetchError.cause.text ??
-                    JSON.stringify(fetchError.cause.errors)}
-                </div>
-              )}
-            </ErrorAlert>
-          ) : viewer.data == null ? (
-            <ErrorAlert type="AUTH">
-              Please login with Anilist to use this tool.
-            </ErrorAlert>
-          ) : !list.query.isFetching &&
-            list.query.isSuccess &&
-            numUnsavedChanges == null ? (
-            <ErrorAlert type="APP">
-              Your saved changes appear to be out-of-sync with your list.
-              <br />
-              Please refresh the page.
-            </ErrorAlert>
-          ) : (
-            <span className="loading loading-bars loading-xl"></span>
+      <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex flex-row items-center justify-center gap-2">
+          <Button
+            className="btn btn-ghost btn-square"
+            onClick={() => shortcutsDialog.open()}
+          >
+            <PiQuestionFill className="size-6" />
+          </Button>
+        </div>
+        <div className="flex flex-row items-center justify-center gap-2">
+          <Button
+            className="btn btn-outline btn-secondary"
+            disabled={list.query.isFetching || list.data == null}
+            onClick={async () => {
+              if (numUnsavedChanges != null && numUnsavedChanges > 0) {
+                confirmRefreshDialog.open();
+              } else {
+                await queryClient.invalidateQueries({
+                  queryKey: ["list", { type: listOptions.type }],
+                });
+                dispatch({ t: "reset" });
+              }
+            }}
+          >
+            <PiArrowClockwiseFill /> Refresh
+          </Button>
+          <Button
+            className="btn btn-outline btn-success"
+            disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
+            onClick={() => {
+              confirmSaveDialog.open();
+            }}
+          >
+            <PiFloppyDiskFill /> Save
+          </Button>
+          {!md && (
+            <>
+              <Switch
+                className="btn btn-square btn-ghost"
+                onClick={() => setOpenSettings(!isOpenSettings)}
+              >
+                <PiDotsThreeOutlineFill className="size-6" />
+              </Switch>
+            </>
           )}
         </div>
-      )}
+      </div>
+      <div className="flex w-full grow flex-col items-start justify-center gap-2 md:flex-row">
+        {(md || isOpenSettings) && (
+          <div className="flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-[unset] md:grow-0">
+            <div
+              className={clsx(
+                "bg-base-200 rounded-box dark:shadow",
+                "flex min-h-0 w-full grow basis-0 flex-col justify-start gap-2 overflow-y-auto p-4",
+                "md:h-full md:w-44 lg:w-48",
+                "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
+              )}
+            >
+              <SettingsItems
+                viewer={viewer}
+                dispatch={dispatch}
+                settings={settings}
+              />
+            </div>
+          </div>
+        )}
+        <div className="flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-auto md:grow">
+          {!list.query.isFetching &&
+          list.data != null &&
+          displayList != null ? (
+            <ol
+              className={clsx(
+                "bg-base-200 rounded-box dark:shadow",
+                "flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto p-4",
+                "focus:outline-base-content focus:outline-2 focus:outline-offset-2",
+              )}
+            >
+              {displayList.map((entry, i) => (
+                <>
+                  {dividerPositions.includes(i) && (
+                    <ListDivider
+                      text={nameOfStatus(settings.listType.value, entry.status)}
+                    />
+                  )}
+                  <li key={entry.id} className="w-full">
+                    <ListEntry
+                      entry={entry}
+                      draft={draft}
+                      dispatch={dispatch}
+                      ref={(el) => {
+                        listEntryRefs.current[i] = el!;
+                      }}
+                      tab={(d) => {
+                        listEntryRefs.current[i + d]?.focus({
+                          preventScroll: true,
+                        });
+                      }}
+                    />
+                  </li>
+                </>
+              ))}
+            </ol>
+          ) : (
+            <div className="dark:bg-base-200 rounded-box flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 p-4 dark:shadow">
+              {fetchError != null ? (
+                <ErrorAlert type="NETWORK">
+                  {fetchError.cause.status === 429 ? (
+                    <div>
+                      Too many requests were sent to Anilist in a short amount
+                      of time.
+                      <br />
+                      Please wait at least one minute, then refresh the page.
+                    </div>
+                  ) : fetchError.cause.status === 401 ||
+                    fetchError.cause.status === 403 ? (
+                    <div>
+                      Could not log in to your account.
+                      <br />
+                      Please revoke the Anilist Tools app from your account and
+                      try again.
+                    </div>
+                  ) : fetchError.cause.status >= 500 ? (
+                    <div>
+                      Anilist is not working at the moment.
+                      <br />
+                      Please try again later.
+                    </div>
+                  ) : (
+                    <div>
+                      An error occured fetching data from Anilist:
+                      <br />
+                      {fetchError.cause.text ??
+                        JSON.stringify(fetchError.cause.errors)}
+                    </div>
+                  )}
+                </ErrorAlert>
+              ) : viewer.data == null ? (
+                <ErrorAlert type="AUTH">
+                  Please login with Anilist to use this tool.
+                </ErrorAlert>
+              ) : !list.query.isFetching &&
+                list.query.isSuccess &&
+                numUnsavedChanges == null ? (
+                <ErrorAlert type="APP">
+                  Your saved changes appear to be out-of-sync with your list.
+                  <br />
+                  Please refresh the page.
+                </ErrorAlert>
+              ) : (
+                <span className="loading loading-bars loading-xl"></span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </main>
   );
 }
