@@ -24,7 +24,7 @@ export default function InfoDialog({
       open={state.isOpen}
       onClose={() => state.close()}
       transition
-      className="transition duration-150 ease-out data-closed:opacity-0"
+      className="transition duration-150 ease-out data-closed:opacity-0 motion-reduce:transition-none"
     >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
       <div className="fixed inset-0 flex h-dvh w-dvw items-center justify-center">

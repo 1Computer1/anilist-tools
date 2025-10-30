@@ -288,7 +288,7 @@ function Scorer() {
           <div
             className={clsx(
               "flex w-full flex-1 flex-col items-center justify-start md:h-full md:w-auto md:flex-[unset] md:grow-0",
-              "origin-top duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0 md:transition-none",
+              "origin-top duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0 motion-reduce:transition-none md:transition-none",
             )}
           >
             <div

@@ -95,7 +95,7 @@ function Root() {
                 transition
                 className={clsx(
                   "bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4",
-                  "origin-left transition duration-150 ease-out data-closed:-translate-x-90 data-closed:scale-x-90 data-closed:opacity-0",
+                  "origin-left transition duration-150 ease-out data-closed:-translate-x-90 data-closed:scale-x-90 data-closed:opacity-0 motion-reduce:transition-none",
                 )}
               >
                 <ul className="menu h-full w-full px-4">
