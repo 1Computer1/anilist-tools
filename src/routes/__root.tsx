@@ -53,6 +53,12 @@ function Root() {
   const lg = useMediaQuery("(width >= 64rem)");
 
   const { isDarkMode, toggle: toggleDarkMode } = useDarkMode();
+  useEffect(() => {
+    document.body.setAttribute(
+      "data-theme",
+      isDarkMode ? "dracula" : "fantasy",
+    );
+  }, [isDarkMode]);
 
   return (
     <>
