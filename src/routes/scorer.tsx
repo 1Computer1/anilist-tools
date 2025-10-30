@@ -30,6 +30,20 @@ import {
   useSettings,
 } from "./-scorer/Settings";
 
+export const Route = createFileRoute("/scorer")({
+  component: Scorer,
+  head: () => ({
+    meta: [
+      { title: "Anilist Tools - Scorer" },
+      {
+        name: "description",
+        content:
+          "Enhance your Anilist experience with various tools!\nQuickly apply new scores to your entire list.",
+      },
+    ],
+  }),
+});
+
 export type ListDraftAction =
   | { t: "updateScore"; id: number; score: number }
   | { t: "reset" };
@@ -38,10 +52,6 @@ export type UserListOptions = Pick<
   typeof getList extends (ctx: Context, options: infer O) => any ? O : never,
   "type" | "statusIn" | "sort"
 >;
-
-export const Route = createFileRoute("/scorer")({
-  component: Scorer,
-});
 
 function Scorer() {
   const queryClient = useQueryClient();

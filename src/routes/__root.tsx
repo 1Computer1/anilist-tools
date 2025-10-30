@@ -1,4 +1,9 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  HeadContent,
+  Link,
+  Outlet,
+} from "@tanstack/react-router";
 import useAccessToken from "../hooks/useAccessToken";
 import { useAnilistQuery } from "../hooks/anilist";
 import {
@@ -49,88 +54,91 @@ function Root() {
   const { isDarkMode, toggle: toggleDarkMode } = useDarkMode();
 
   return (
-    <div
-      className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row"
-      data-theme={isDarkMode ? "dracula" : "fantasy"}
-    >
-      {lg ? (
-        <nav className="bg-base-200 flex h-full max-w-40 min-w-40 flex-col items-center justify-between pb-4 shadow">
-          <ul className="menu w-full flex-1 px-4">
-            <MenuItems
-              login={login}
-              logout={logout}
-              isDarkMode={isDarkMode}
-              toggleDarkMode={toggleDarkMode}
-              Item={({ children }) => (
-                <li className="inline-flex flex-row items-center justify-center">
-                  {children}
-                </li>
-              )}
-              Divider={() => <li></li>}
-              Space={() => <div className="my-1 h-0 w-full"></div>}
-              Filler={() => <div className="grow"></div>}
-            />
-          </ul>
-        </nav>
-      ) : (
-        <nav className="bg-base-200 flex w-full flex-row items-center justify-between px-4 py-2 shadow">
-          <Popover className="relative">
-            <PopoverButton className="btn btn-sm btn-ghost btn-square">
-              <PiListBold className="size-6" />
-            </PopoverButton>
-            <PopoverBackdrop className="fixed inset-0 z-10 bg-black/30 backdrop-blur-xs" />
-            <PopoverPanel className="bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4">
-              <ul className="menu h-full w-full px-4">
-                <MenuItems
-                  login={login}
-                  logout={logout}
-                  isDarkMode={isDarkMode}
-                  toggleDarkMode={toggleDarkMode}
-                  Item={({ children }) => (
-                    <li className="inline-flex flex-row items-center justify-center">
-                      {children}
-                    </li>
-                  )}
-                  CloseButton={CloseButton}
-                  Space={() => <div className="my-1 h-0 w-full"></div>}
-                  Divider={() => <li></li>}
-                  Filler={() => <div className="grow"></div>}
-                />
-              </ul>
-            </PopoverPanel>
-          </Popover>
-          {viewer.data ? (
-            <div className="flex flex-row items-center justify-center gap-2">
-              <a
-                className="link link-hover link-primary"
-                href={viewer.data.siteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+    <>
+      <HeadContent />
+      <div
+        className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row"
+        data-theme={isDarkMode ? "dracula" : "fantasy"}
+      >
+        {lg ? (
+          <nav className="bg-base-200 flex h-full max-w-40 min-w-40 flex-col items-center justify-between pb-4 shadow">
+            <ul className="menu w-full flex-1 px-4">
+              <MenuItems
+                login={login}
+                logout={logout}
+                isDarkMode={isDarkMode}
+                toggleDarkMode={toggleDarkMode}
+                Item={({ children }) => (
+                  <li className="inline-flex flex-row items-center justify-center">
+                    {children}
+                  </li>
+                )}
+                Divider={() => <li></li>}
+                Space={() => <div className="my-1 h-0 w-full"></div>}
+                Filler={() => <div className="grow"></div>}
+              />
+            </ul>
+          </nav>
+        ) : (
+          <nav className="bg-base-200 flex w-full flex-row items-center justify-between px-4 py-2 shadow">
+            <Popover className="relative">
+              <PopoverButton className="btn btn-sm btn-ghost btn-square">
+                <PiListBold className="size-6" />
+              </PopoverButton>
+              <PopoverBackdrop className="fixed inset-0 z-10 bg-black/30 backdrop-blur-xs" />
+              <PopoverPanel className="bg-base-200 fixed top-0 left-0 z-20 flex h-dvh max-w-40 min-w-40 flex-col items-center justify-between pb-4">
+                <ul className="menu h-full w-full px-4">
+                  <MenuItems
+                    login={login}
+                    logout={logout}
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={toggleDarkMode}
+                    Item={({ children }) => (
+                      <li className="inline-flex flex-row items-center justify-center">
+                        {children}
+                      </li>
+                    )}
+                    CloseButton={CloseButton}
+                    Space={() => <div className="my-1 h-0 w-full"></div>}
+                    Divider={() => <li></li>}
+                    Filler={() => <div className="grow"></div>}
+                  />
+                </ul>
+              </PopoverPanel>
+            </Popover>
+            {viewer.data ? (
+              <div className="flex flex-row items-center justify-center gap-2">
+                <a
+                  className="link link-hover link-primary"
+                  href={viewer.data.siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    className="rounded-field"
+                    src={viewer.data.avatar.medium}
+                    width={32}
+                    height={32}
+                  />
+                </a>
+              </div>
+            ) : (
+              <Button
+                className="btn btn-sm btn-primary btn-outline"
+                onClick={login}
               >
-                <img
-                  className="rounded-field"
-                  src={viewer.data.avatar.medium}
-                  width={32}
-                  height={32}
-                />
-              </a>
-            </div>
-          ) : (
-            <Button
-              className="btn btn-sm btn-primary btn-outline"
-              onClick={login}
-            >
-              Login with Anilist
-            </Button>
-          )}
-        </nav>
-      )}
-      <div className="flex grow flex-col items-center justify-start">
-        <div className="my-2 h-full w-full lg:my-4">
-          <Outlet />
+                Login with Anilist
+              </Button>
+            )}
+          </nav>
+        )}
+        <div className="flex grow flex-col items-center justify-start">
+          <div className="my-2 h-full w-full lg:my-4">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

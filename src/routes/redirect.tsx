@@ -4,6 +4,15 @@ import { useLocalStorage } from "usehooks-ts";
 
 export const Route = createFileRoute("/redirect")({
   component: Redirect,
+  head: () => ({
+    meta: [
+      { title: "Anilist Tools" },
+      {
+        name: "description",
+        content: "Enhance your Anilist experience with various tools!",
+      },
+    ],
+  }),
 });
 
 function Redirect() {

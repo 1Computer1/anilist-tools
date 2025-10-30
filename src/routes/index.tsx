@@ -2,6 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  head: () => ({
+    meta: [
+      { title: "Anilist Tools" },
+      {
+        name: "description",
+        content: "Enhance your Anilist experience with various tools!",
+      },
+    ],
+  }),
 });
 
 function Index() {
