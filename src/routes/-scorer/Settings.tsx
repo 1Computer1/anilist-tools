@@ -93,6 +93,7 @@ export function SettingsItems({
       <SettingsItem label="Status">
         <CustomListbox<MediaListStatus>
           className="select w-full"
+          disabled={viewer.data == null}
           multiple
           value={settings.allowedStatuses.value}
           options={MEDIA_LIST_STATUSES}
@@ -131,6 +132,7 @@ export function SettingsItems({
       <SettingsItem label="Sort By">
         <CustomListbox
           className="select w-full"
+          disabled={viewer.data == null}
           value={settings.sortBy.value}
           options={Object.keys(comparators) as SortBy[]}
           onChange={(v) => settings.sortBy.set(v)}
@@ -141,6 +143,7 @@ export function SettingsItems({
       <SettingsItem label="Sort Direction">
         <CustomListbox
           className="select w-full"
+          disabled={viewer.data == null}
           value={settings.sortDir.value}
           options={["asc", "desc"]}
           onChange={(v) => settings.sortDir.set(v)}
