@@ -487,43 +487,28 @@ function OldScore({
             </div>
           </CustomTooltip>
         ) : newScoreDisplay == prevScoreDisplay ? (
-          <CustomTooltip
-            severity="NORMAL"
-            content={
-              <div className="flex-center w-[20ch] gap-y-2 text-center text-pretty">
-                <p>
-                  This entry's original score, {prevScore}, is not supported by
-                  this score format and will be saved as {newPerceived}.
-                </p>
-              </div>
-            }
-          >
+          <CustomTooltip severity="NORMAL" content={newScore}>
+            <PiApproximateEqualsBold />
+          </CustomTooltip>
+        ) : (
+          <CustomTooltip severity="NORMAL" content={newScore}>
             <div className="flex w-full flex-col items-center justify-center">
               <div>
-                <PiApproximateEqualsBold />
+                {dPerceived >= threshold ? (
+                  <PiCaretDoubleDownFill />
+                ) : dPerceived >= 0 ? (
+                  <PiArrowFatDownFill />
+                ) : dPerceived <= -threshold ? (
+                  <PiCaretDoubleUpFill />
+                ) : (
+                  <PiArrowFatUpFill />
+                )}
               </div>
               <div className="flex w-full flex-row items-center justify-center">
                 {icon}
               </div>
             </div>
           </CustomTooltip>
-        ) : (
-          <div className="flex w-full flex-col items-center justify-center">
-            <div>
-              {dPerceived >= threshold ? (
-                <PiCaretDoubleDownFill />
-              ) : dPerceived >= 0 ? (
-                <PiArrowFatDownFill />
-              ) : dPerceived <= -threshold ? (
-                <PiCaretDoubleUpFill />
-              ) : (
-                <PiArrowFatUpFill />
-              )}
-            </div>
-            <div className="flex w-full flex-row items-center justify-center">
-              {icon}
-            </div>
-          </div>
         )}
       </div>
     </>
