@@ -193,7 +193,7 @@ export function ListDivider({ text }: { text: string }) {
   );
 }
 
-type ScoreSystemType = "int" | "decimal" | "stars" | "smiley";
+export type ScoreSystemType = "int" | "decimal" | "stars" | "smiley";
 
 type ScoreProps<T extends ScoreSystemType = ScoreSystemType> = {
   dispatch: Dispatch<ListDraftAction>;
@@ -202,7 +202,7 @@ type ScoreProps<T extends ScoreSystemType = ScoreSystemType> = {
   system: ScoreSystem<T>;
 };
 
-type ScoreSystem<T extends ScoreSystemType = ScoreSystemType> = {
+export type ScoreSystem<T extends ScoreSystemType = ScoreSystemType> = {
   fromRaw: (vRaw: number) => string;
   toRaw: (vDisplay: string) => number;
   step: (vDisplay: string, dir: -1 | 1) => string;
@@ -212,7 +212,7 @@ type ScoreSystem<T extends ScoreSystemType = ScoreSystemType> = {
 const POINT_5_VALUES = [10, 30, 50, 70, 90];
 const POINT_3_VALUES = [35, 60, 85];
 
-const SCORE_SYSTEMS = {
+export const SCORE_SYSTEMS = {
   POINT_100: {
     fromRaw: (x) => x.toString(),
     toRaw: (x) => Number(x),

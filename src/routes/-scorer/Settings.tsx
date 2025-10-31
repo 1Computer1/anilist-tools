@@ -136,20 +136,8 @@ export function SettingsItems({
             if (settings.scoreFormat.value === v) {
               return;
             }
-            const change = async () => {
-              settings.scoreFormat.set(v);
-              dispatch({ t: "reset" });
-            };
-            if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-              confirmDialog.openWith({
-                title: "Change List",
-                action: "Confirm",
-                message: "Are you sure you want to change the score format?",
-                onConfirm: change,
-              });
-            } else {
-              change();
-            }
+            settings.scoreFormat.set(v);
+            dispatch({ t: "updateScoreDisplays" });
           }}
           options={SCORE_FORMATS}
           ButtonContents={() => nameOfScoreFormat(settings.scoreFormat.value)}

@@ -16,7 +16,7 @@ import {
 import { useDialog } from "../hooks/useDialog";
 import ChoicesDialog from "../components/dialogs/ChoicesDialog";
 import { Shortcuts } from "../components/Shortcuts";
-import { ListDivider, ListEntry } from "./-scorer/ListEntry";
+import { ListDivider, ListEntry, SCORE_SYSTEMS } from "./-scorer/ListEntry";
 import type { Context } from "../api/anilist";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { useEffect, useRef, useState } from "react";
@@ -46,6 +46,7 @@ export const Route = createFileRoute("/scorer")({
 
 export type ListDraftAction =
   | { t: "updateScore"; id: number; score?: number; scoreDisplay?: string }
+  | { t: "updateScoreDisplays" }
   | { t: "reset" };
 
 export type UserListOptions = Pick<
@@ -120,6 +121,17 @@ function Scorer() {
           }
           draft.get(action.id)!.score = action.score;
           draft.get(action.id)!.scoreDisplay = action.scoreDisplay;
+          break;
+        }
+        case "updateScoreDisplays": {
+          for (const [_, v] of draft) {
+            if (v.score != null) {
+              const scoreDisplay = SCORE_SYSTEMS[
+                settings.scoreFormat.value
+              ].fromRaw(v.score);
+              v.scoreDisplay = scoreDisplay;
+            }
+          }
           break;
         }
         case "reset": {
