@@ -345,6 +345,7 @@ function ScoreIconsInput({
       <RadioGroup
         className="flex flex-row items-center justify-center"
         value={newScoreDisplay}
+        tabIndex={-1}
         onChange={(value) => {
           const x = Math.max(0, Math.min(100, toRaw(value)));
           dispatch({
