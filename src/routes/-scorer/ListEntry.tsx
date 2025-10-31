@@ -470,7 +470,6 @@ function OldScore({
           <PiEqualsBold />
         ) : newScore === 0 ? (
           <CustomTooltip
-            severity="NORMAL"
             content={
               <div className="flex-center w-[20ch] gap-y-2 text-center text-pretty">
                 <p>This entry's score will be cleared.</p>
@@ -487,11 +486,11 @@ function OldScore({
             </div>
           </CustomTooltip>
         ) : newScoreDisplay == prevScoreDisplay ? (
-          <CustomTooltip severity="NORMAL" content={newScore}>
+          <CustomTooltip content={newScore}>
             <PiApproximateEqualsBold />
           </CustomTooltip>
         ) : (
-          <CustomTooltip severity="NORMAL" content={newScore}>
+          <CustomTooltip content={newScore}>
             <div className="flex w-full flex-col items-center justify-center">
               <div>
                 {dPerceived >= threshold ? (

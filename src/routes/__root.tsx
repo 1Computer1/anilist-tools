@@ -138,7 +138,7 @@ function Root() {
                 className="btn btn-sm btn-primary btn-outline"
                 onClick={login}
               >
-                Login with Anilist
+                Login with AniList
               </Button>
             )}
           </nav>
@@ -272,7 +272,7 @@ function MenuItems({
             className="btn btn-sm btn-primary btn-outline w-full"
             onClick={login}
           >
-            Login with Anilist
+            Login with AniList
           </Button>
         </>
       )}

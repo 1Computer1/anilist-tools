@@ -1,15 +1,11 @@
 import clsx from "clsx";
 import Tooltip, { type TooltipProps } from "headless-tooltip";
 
-export type Severity = "NORMAL" | "BAD" | "GOOD";
-
 export default function CustomTooltip({
-  severity,
   content,
   children,
   ...props
 }: {
-  severity: Severity;
   content: React.ReactNode;
   children?: React.ReactNode;
   props?: TooltipProps;

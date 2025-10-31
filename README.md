@@ -1,3 +1,3 @@
-# Anilist Tools
+# AniList Tools
 
-Site for various Anilist tools.
+Site for various AniList tools.

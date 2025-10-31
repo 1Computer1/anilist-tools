@@ -34,11 +34,11 @@ export const Route = createFileRoute("/scorer")({
   component: Scorer,
   head: () => ({
     meta: [
-      { title: "Anilist Tools - Scorer" },
+      { title: "AniList Tools - Scorer" },
       {
         name: "description",
         content:
-          "Enhance your Anilist experience with various tools!\nQuickly apply new scores to your entire list.",
+          "Enhance your AniList experience with various tools!\nQuickly apply new scores to your entire list.",
       },
     ],
   }),
@@ -422,7 +422,7 @@ function Scorer() {
                 <ErrorAlert type="NETWORK">
                   {fetchError.cause.status === 429 ? (
                     <div>
-                      Too many requests were sent to Anilist in a short amount
+                      Too many requests were sent to AniList in a short amount
                       of time.
                       <br />
                       Please wait at least one minute, then refresh the page.
@@ -432,18 +432,18 @@ function Scorer() {
                     <div>
                       Could not log in to your account.
                       <br />
-                      Please revoke the Anilist Tools app from your account and
+                      Please revoke the AniList Tools app from your account and
                       try again.
                     </div>
                   ) : fetchError.cause.status >= 500 ? (
                     <div>
-                      Anilist is not working at the moment.
+                      AniList is not working at the moment.
                       <br />
                       Please try again later.
                     </div>
                   ) : (
                     <div>
-                      An error occured fetching data from Anilist:
+                      An error occured fetching data from AniList:
                       <br />
                       {fetchError.cause.text ??
                         JSON.stringify(fetchError.cause.errors)}
@@ -452,7 +452,7 @@ function Scorer() {
                 </ErrorAlert>
               ) : viewer.data == null ? (
                 <ErrorAlert type="AUTH">
-                  Please login with Anilist to use this tool.
+                  Please login with AniList to use this tool.
                 </ErrorAlert>
               ) : !list.query.isFetching &&
                 list.query.isSuccess &&

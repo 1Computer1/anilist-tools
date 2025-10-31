@@ -42,7 +42,7 @@ export async function postQuery<T>(
   } catch {}
   if (!res.ok) {
     if (json && json.errors) {
-      throw new Error("Anilist API returned error.", {
+      throw new Error("AniList API returned error.", {
         cause: { status: res.status, errors: json.errors },
       });
     }
