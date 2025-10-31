@@ -23,8 +23,8 @@ import CustomTooltip from "../../components/CustomTooltip";
 
 const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_100: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
-  POINT_10: [10, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  POINT_10_DECIMAL: [10, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  POINT_10: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+  POINT_10_DECIMAL: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
   POINT_5: [0, 10, 30, 50, 70, 90],
   POINT_3: [0, 35, 60, 85],
 };
@@ -90,12 +90,12 @@ export function ListEntry({
         const values = NUMBER_SHORTCUTS[settings.scoreFormat.value];
         const n = parseInt(e.key, 10);
         if (values[n]) {
-          update(() => values[n]!.toString());
+          update(() => system.fromRaw(values[n]!));
           if (!e.ctrlKey) {
             tab(1);
           }
         } else if (e.key === ".") {
-          update(() => "0");
+          update(() => system.fromRaw(0));
           if (!e.ctrlKey) {
             tab(1);
           }
