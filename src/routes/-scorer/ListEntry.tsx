@@ -11,6 +11,8 @@ import {
   PiApproximateEqualsBold,
   PiStarFill,
   PiSmileyBold,
+  PiSmileySadBold,
+  PiSmileyMehBold,
 } from "react-icons/pi";
 import type { ListDraft } from "../../api/mutations/save";
 import type { Entry } from "../../api/queries/list";
@@ -55,8 +57,8 @@ export function ListEntry({
             )
           : system.type === "stars"
             ? clsx(
-                "grid grid-cols-[2.75rem_8rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
-                "lg:grid-cols-[3.5rem_8rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
+                "grid grid-cols-[2.75rem_6.5rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
+                "lg:grid-cols-[3.5rem_8.5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
               )
             : clsx(
                 "grid grid-cols-[2.75rem_5rem_0.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
@@ -370,7 +372,7 @@ function ScoreIconsInput({
                   setHoveredAt(null);
                 }}
                 className={clsx(
-                  "btn-xs btn btn-ghost btn-square peer hover:border-transparent hover:bg-transparent",
+                  "btn btn-ghost size-fit p-0 hover:border-transparent hover:bg-transparent",
                   hoveredAt == null
                     ? newScore >= n
                       ? "text-yellow-600"
@@ -380,16 +382,29 @@ function ScoreIconsInput({
                       : "text-neutral",
                 )}
               >
-                <PiStarFill className="size-6" />
+                <PiStarFill className="size-4.5 lg:size-6" />
               </Radio>
             ))
           : POINT_3_VALUES.map((n) => (
               <Radio
                 key={n}
                 value={n.toString()}
-                className="btn-xs btn btn-ghost btn-square data-checked:text-success text-neutral size-fit p-0"
+                className={clsx(
+                  "btn btn-ghost text-neutral size-fit p-0",
+                  n === 35
+                    ? "data-checked:text-error"
+                    : n === 60
+                      ? "data-checked:text-warning"
+                      : "data-checked:text-success",
+                )}
               >
-                <PiSmileyBold className="size-6" />
+                {n === 35 ? (
+                  <PiSmileySadBold className="size-6" />
+                ) : n === 60 ? (
+                  <PiSmileyMehBold className="size-6" />
+                ) : (
+                  <PiSmileyBold className="size-6" />
+                )}
               </Radio>
             ))}
       </RadioGroup>
