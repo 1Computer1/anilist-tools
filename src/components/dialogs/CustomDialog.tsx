@@ -11,8 +11,6 @@ import clsx from "clsx";
 import { useRef, useState, useEffect } from "react";
 import { useResizeObserver } from "usehooks-ts";
 
-export type Severity = "NORMAL" | "BAD" | "GOOD";
-
 export type CustomDialogProps = {
   state: DialogState<any>;
   title: string;

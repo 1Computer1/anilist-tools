@@ -17,6 +17,7 @@ import type { Entry } from "../../api/queries/list";
 import type { ListDraftAction } from "../scorer";
 import type { Settings } from "./Settings";
 import type { ScoreFormat } from "../../api/queries/viewer";
+import CustomTooltip from "../../components/CustomTooltip";
 
 const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_100: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
@@ -49,16 +50,16 @@ export function ListEntry({
         "bg-base-100 rounded-field min-h-11 w-full p-1 shadow-md lg:min-h-14 dark:shadow",
         system.type === "int" || system.type === "decimal"
           ? clsx(
-              "grid grid-cols-[2.5rem_4rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
+              "grid grid-cols-[2.75rem_4rem_1.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
               "lg:grid-cols-[3.5rem_5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
             )
           : system.type === "stars"
             ? clsx(
-                "grid grid-cols-[2.5rem_8rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
+                "grid grid-cols-[2.75rem_8rem_1.25rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
                 "lg:grid-cols-[3.5rem_8rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
               )
             : clsx(
-                "grid grid-cols-[2.5rem_5rem_0.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
+                "grid grid-cols-[2.75rem_5rem_0.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
                 "lg:grid-cols-[3.5rem_5rem_1rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
               ),
         "focus:outline-primary focus:outline-2",
@@ -453,23 +454,44 @@ function OldScore({
         {d == 0 || Number.isNaN(d) ? (
           <PiEqualsBold />
         ) : newScore === 0 ? (
-          <div className="flex w-full flex-col items-center justify-center">
-            <div>
-              <PiEraserFill />
+          <CustomTooltip
+            severity="NORMAL"
+            content={
+              <div className="flex-center w-[20ch] gap-y-2 text-center text-pretty">
+                <p>This entry's score will be cleared.</p>
+              </div>
+            }
+          >
+            <div className="flex w-full flex-col items-center justify-center">
+              <div>
+                <PiEraserFill />
+              </div>
+              <div className="flex w-full flex-row items-center justify-center">
+                {icon}
+              </div>
             </div>
-            <div className="flex w-full flex-row items-center justify-center">
-              {icon}
-            </div>
-          </div>
+          </CustomTooltip>
         ) : newScoreDisplay == prevScoreDisplay ? (
-          <div className="flex w-full flex-col items-center justify-center">
-            <div>
-              <PiApproximateEqualsBold />
+          <CustomTooltip
+            severity="NORMAL"
+            content={
+              <div className="flex-center w-[20ch] gap-y-2 text-center text-pretty">
+                <p>
+                  This entry's original score, {prevScore}, is not supported by
+                  this score format and will be saved as {newPerceived}.
+                </p>
+              </div>
+            }
+          >
+            <div className="flex w-full flex-col items-center justify-center">
+              <div>
+                <PiApproximateEqualsBold />
+              </div>
+              <div className="flex w-full flex-row items-center justify-center">
+                {icon}
+              </div>
             </div>
-            <div className="flex w-full flex-row items-center justify-center">
-              {icon}
-            </div>
-          </div>
+          </CustomTooltip>
         ) : (
           <div className="flex w-full flex-col items-center justify-center">
             <div>
