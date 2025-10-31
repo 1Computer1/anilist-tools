@@ -60,11 +60,6 @@ function DialogBody({ children }: { children: React.ReactNode }) {
 
   const onResize = () => {
     if (ref.current) {
-      console.log(
-        "body height",
-        ref.current.scrollHeight,
-        ref.current.clientHeight,
-      );
       setNeedScroll(isOverflown(ref.current));
     }
   };
