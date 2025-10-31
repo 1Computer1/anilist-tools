@@ -3,16 +3,25 @@ import type { UseQueryResult } from "@tanstack/react-query";
 import clsx from "clsx";
 import { PiCheckFatFill } from "react-icons/pi";
 import type { AnilistError } from "../../api/anilist";
-import type {
-  Entry,
-  List,
-  MediaListStatus,
-  MediaType,
+import {
+  MEDIA_LIST_STATUSES,
+  MEDIA_TYPES,
+  type Entry,
+  type List,
+  type MediaListStatus,
+  type MediaType,
 } from "../../api/queries/list";
-import type { Viewer } from "../../api/queries/viewer";
+import {
+  SCORE_FORMATS,
+  TITLE_LANGUAGES,
+  type ScoreFormat,
+  type TitleLanguage,
+  type Viewer,
+} from "../../api/queries/viewer";
 import { CustomListbox } from "../../components/CustomListbox";
-import type { ListDraftAction } from "../scorer";
+import type { ConfirmDialogContext, ListDraftAction } from "../scorer";
 import { useState } from "react";
+import type { DialogState } from "../../hooks/useDialog";
 
 export type SortBy =
   | "score"
@@ -25,22 +34,29 @@ export type SortBy =
   | "averageScore"
   | "popularity";
 
+export const SORT_BYS: SortBy[] = [
+  "score",
+  "progress",
+  "lastUpdated",
+  "lastAdded",
+  "startDate",
+  "completedDate",
+  "releaseDate",
+  "averageScore",
+  "popularity",
+];
+
 export type SortDir = "asc" | "desc";
 
-export const MEDIA_LIST_STATUSES: MediaListStatus[] = [
-  "CURRENT",
-  "REPEATING",
-  "COMPLETED",
-  "PAUSED",
-  "DROPPED",
-  "PLANNING",
-];
+export const SORT_DIRS: SortDir[] = ["asc", "desc"];
 
 export type Settings = {
   listType: ReactState<MediaType>;
   sortBy: ReactState<SortBy>;
   sortDir: ReactState<SortDir>;
   allowedStatuses: ReactState<MediaListStatus[]>;
+  titleLanguage: ReactState<TitleLanguage>;
+  scoreFormat: ReactState<ScoreFormat>;
 };
 
 type ReactState<T> = {
@@ -50,11 +66,13 @@ type ReactState<T> = {
 
 export function useSettings(): Settings {
   return {
-    listType: useState_("ANIME"),
-    allowedStatuses: useState_(["COMPLETED"]),
-    sortBy: useState_("score"),
-    sortDir: useState_("desc"),
-  } as Settings;
+    listType: useState_<MediaType>("ANIME"),
+    allowedStatuses: useState_<MediaListStatus[]>(["COMPLETED"]),
+    sortBy: useState_<SortBy>("score"),
+    sortDir: useState_<SortDir>("desc"),
+    titleLanguage: useState_<TitleLanguage>("ENGLISH"),
+    scoreFormat: useState_<ScoreFormat>("POINT_100"),
+  };
 }
 
 function useState_<T>(intial: T): ReactState<T> {
@@ -66,6 +84,8 @@ export function SettingsItems({
   dispatch,
   settings,
   viewer,
+  numUnsavedChanges,
+  confirmDialog,
 }: {
   dispatch: React.Dispatch<ListDraftAction>;
   settings: Settings;
@@ -73,6 +93,8 @@ export function SettingsItems({
     data: Viewer | undefined;
     query: UseQueryResult<Viewer, AnilistError>;
   };
+  numUnsavedChanges: number | null;
+  confirmDialog: DialogState<ConfirmDialogContext>;
 }) {
   return (
     <>
@@ -82,12 +104,69 @@ export function SettingsItems({
           disabled={viewer.data == null}
           value={settings.listType.value}
           onChange={(v) => {
-            dispatch({ t: "reset" });
-            settings.listType.set(v);
+            if (settings.listType.value === v) {
+              return;
+            }
+            const change = async () => {
+              settings.listType.set(v);
+              dispatch({ t: "reset" });
+            };
+            if (numUnsavedChanges != null && numUnsavedChanges > 0) {
+              confirmDialog.openWith({
+                title: "Change List",
+                action: "Confirm",
+                message: "Are you sure you want to change your list?",
+                onConfirm: change,
+              });
+            } else {
+              change();
+            }
           }}
-          options={["ANIME", "MANGA"]}
+          options={MEDIA_TYPES}
           ButtonContents={() => nameOfListType(settings.listType.value)}
           OptionContents={({ value }) => nameOfListType(value)}
+        />
+      </SettingsItem>
+      <SettingsItem label="Score Format">
+        <CustomListbox
+          className="select w-full"
+          disabled={viewer.data == null}
+          value={settings.scoreFormat.value}
+          onChange={(v) => {
+            if (settings.scoreFormat.value === v) {
+              return;
+            }
+            const change = async () => {
+              settings.scoreFormat.set(v);
+              dispatch({ t: "reset" });
+            };
+            if (numUnsavedChanges != null && numUnsavedChanges > 0) {
+              confirmDialog.openWith({
+                title: "Change List",
+                action: "Confirm",
+                message: "Are you sure you want to change the score format?",
+                onConfirm: change,
+              });
+            } else {
+              change();
+            }
+          }}
+          options={SCORE_FORMATS}
+          ButtonContents={() => nameOfScoreFormat(settings.scoreFormat.value)}
+          OptionContents={({ value }) => nameOfScoreFormat(value)}
+        />
+      </SettingsItem>
+      <SettingsItem label="Title Language">
+        <CustomListbox
+          className="select w-full"
+          disabled={viewer.data == null}
+          value={settings.titleLanguage.value}
+          onChange={(v) => settings.titleLanguage.set(v)}
+          options={TITLE_LANGUAGES}
+          ButtonContents={() =>
+            nameOfTitleLanguage(settings.titleLanguage.value)
+          }
+          OptionContents={({ value }) => nameOfTitleLanguage(value)}
         />
       </SettingsItem>
       <SettingsItem label="Status">
@@ -134,7 +213,7 @@ export function SettingsItems({
           className="select w-full"
           disabled={viewer.data == null}
           value={settings.sortBy.value}
-          options={Object.keys(comparators) as SortBy[]}
+          options={SORT_BYS}
           onChange={(v) => settings.sortBy.set(v)}
           ButtonContents={() => nameOfSortBy(settings.sortBy.value)}
           OptionContents={({ value }) => nameOfSortBy(value)}
@@ -145,7 +224,7 @@ export function SettingsItems({
           className="select w-full"
           disabled={viewer.data == null}
           value={settings.sortDir.value}
-          options={["asc", "desc"]}
+          options={SORT_DIRS}
           onChange={(v) => settings.sortDir.set(v)}
           ButtonContents={() => nameOfSortDir(settings.sortDir.value)}
           OptionContents={({ value }) => nameOfSortDir(value)}
@@ -172,6 +251,24 @@ function SettingsItem({
 
 export function nameOfListType(s: MediaType) {
   return { ANIME: "Anime", MANGA: "Manga" }[s];
+}
+
+export function nameOfScoreFormat(s: ScoreFormat) {
+  return {
+    POINT_100: "100 Point",
+    POINT_10_DECIMAL: "10 Point Decimal",
+    POINT_10: "10 Point",
+    POINT_5: "5 Star",
+    POINT_3: "3 Point Smiley",
+  }[s];
+}
+
+export function nameOfTitleLanguage(s: TitleLanguage) {
+  return {
+    ENGLISH: "English",
+    NATIVE: "Native",
+    ROMAJI: "Romaji",
+  }[s];
 }
 
 export function nameOfSortBy(s: SortBy) {

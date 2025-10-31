@@ -45,13 +45,20 @@ export const Route = createFileRoute("/scorer")({
 });
 
 export type ListDraftAction =
-  | { t: "updateScore"; id: number; score: number }
+  | { t: "updateScore"; id: number; score?: number; scoreDisplay?: string }
   | { t: "reset" };
 
 export type UserListOptions = Pick<
   typeof getList extends (ctx: Context, options: infer O) => any ? O : never,
   "type" | "statusIn" | "sort"
 >;
+
+export type ConfirmDialogContext = {
+  title: string;
+  action: string;
+  message: string;
+  onConfirm: () => void;
+};
 
 function Scorer() {
   const queryClient = useQueryClient();
@@ -61,6 +68,12 @@ function Scorer() {
   });
 
   const settings = useSettings();
+  useEffect(() => {
+    if (viewer.data) {
+      settings.scoreFormat.set(viewer.data.mediaListOptions.scoreFormat);
+      settings.titleLanguage.set(viewer.data.options.titleLanguage);
+    }
+  }, [viewer.data]);
 
   const listOptions: UserListOptions = {
     type: settings.listType.value,
@@ -106,6 +119,7 @@ function Scorer() {
             draft.set(action.id, {});
           }
           draft.get(action.id)!.score = action.score;
+          draft.get(action.id)!.scoreDisplay = action.scoreDisplay;
           break;
         }
         case "reset": {
@@ -147,8 +161,46 @@ function Scorer() {
   });
 
   const confirmSaveDialog = useDialog();
-  const confirmRefreshDialog = useDialog();
+  const confirmDialog = useDialog<ConfirmDialogContext>({
+    title: "",
+    action: "",
+    message: "",
+    onConfirm: () => {},
+  });
+
   const shortcutsDialog = useDialog();
+  const shorcutsForScore = {
+    POINT_100: {
+      incDesc: "+1 to score",
+      decDesc: "-1 to score",
+      numKeyMax: 0,
+      numKeyDesc: "Set score to 10, 20, …, 100",
+    },
+    POINT_10_DECIMAL: {
+      incDesc: "+0.1 to score",
+      decDesc: "-0.1 to score",
+      numKeyMax: 0,
+      numKeyDesc: "Set score to 10, 20, …, 100",
+    },
+    POINT_10: {
+      incDesc: "+1 to score",
+      decDesc: "-1 to score",
+      numKeyMax: 0,
+      numKeyDesc: "Set score to 1 to 10",
+    },
+    POINT_5: {
+      incDesc: "Add ★ to score",
+      decDesc: "Remove ★ from score",
+      numKeyMax: 5,
+      numKeyDesc: "Set stars from 1★ to 5★",
+    },
+    POINT_3: {
+      incDesc: "Be more happy :)",
+      decDesc: "Be less happy :(",
+      numKeyMax: 3,
+      numKeyDesc: "Set your happiness",
+    },
+  }[settings.scoreFormat.value];
 
   const listEntryRefs = useRef<HTMLDivElement[]>([]);
   useEffect(() => {
@@ -188,30 +240,27 @@ function Scorer() {
         Are you sure you want to update {numUnsavedChanges} of your ratings?
       </ChoicesDialog>
       <ChoicesDialog
-        state={confirmRefreshDialog}
-        title="Refresh List"
+        state={confirmDialog}
+        title={confirmDialog.context.title}
         choices={[
           {
-            text: "Refresh",
+            text: confirmDialog.context.action,
             severity: "BAD",
-            onClick: async () => {
-              confirmRefreshDialog.close();
-              await queryClient.invalidateQueries({
-                queryKey: ["list", { type: listOptions.type }],
-              });
-              dispatch({ t: "reset" });
+            onClick: () => {
+              confirmDialog.context.onConfirm();
+              confirmDialog.close();
             },
           },
           {
             text: "Cancel",
             severity: "NORMAL",
             onClick: () => {
-              confirmRefreshDialog.close();
+              confirmDialog.close();
             },
           },
         ]}
       >
-        Are you sure you want to refresh?
+        {confirmDialog.context.message}
         <br />
         Your unsaved changes will be lost.
       </ChoicesDialog>
@@ -222,12 +271,13 @@ function Scorer() {
             { keys: "Tab|↓|↩", desc: "Go next" },
             { keys: "Shift+Tab|↑", desc: "Go back" },
             { divider: "Adjustments" },
-            { keys: "→|=|+", desc: "+1 to score" },
-            { keys: "←|-|_", desc: "-1 to score" },
+            { keys: "→|=|+", desc: shorcutsForScore.incDesc },
+            { keys: "←|-|_", desc: shorcutsForScore.decDesc },
             { divider: "Update" },
-            { keys: "1...0", desc: "Set score to 10…100" },
-            { keys: "y...p", desc: "Set score to 10, 30, 50, 70, 90" },
-            { keys: "j...l", desc: "Set score to 35, 60, 85" },
+            {
+              keys: `1...${shorcutsForScore.numKeyMax}`,
+              desc: shorcutsForScore.numKeyDesc,
+            },
             { keys: ".", desc: "Clear score value" },
             { keys: "/", desc: "Revert score to original" },
             { divider: "Other" },
@@ -250,13 +300,21 @@ function Scorer() {
             className="btn btn-outline btn-secondary"
             disabled={list.query.isFetching || list.data == null}
             onClick={async () => {
-              if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-                confirmRefreshDialog.open();
-              } else {
+              const refresh = async () => {
                 await queryClient.invalidateQueries({
                   queryKey: ["list", { type: listOptions.type }],
                 });
                 dispatch({ t: "reset" });
+              };
+              if (numUnsavedChanges != null && numUnsavedChanges > 0) {
+                confirmDialog.openWith({
+                  title: "Refresh List",
+                  action: "Refresh",
+                  message: "Are you sure you want to refresh?",
+                  onConfirm: refresh,
+                });
+              } else {
+                refresh();
               }
             }}
           >
@@ -303,6 +361,8 @@ function Scorer() {
                 viewer={viewer}
                 dispatch={dispatch}
                 settings={settings}
+                numUnsavedChanges={numUnsavedChanges}
+                confirmDialog={confirmDialog}
               />
             </div>
           </div>
@@ -327,6 +387,7 @@ function Scorer() {
                   )}
                   <li key={entry.id} className="w-full">
                     <ListEntry
+                      settings={settings}
                       entry={entry}
                       draft={draft}
                       dispatch={dispatch}

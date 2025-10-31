@@ -1,6 +1,6 @@
 import { postQuery, type Context } from "../anilist";
 
-export type EntryDraft = Partial<{ score: number }>;
+export type EntryDraft = Partial<{ score: number; scoreDisplay: string }>;
 export type ListDraft = Map<number, EntryDraft>;
 
 const makeMutation = (i: number, mutArgs: string[]) => `
@@ -26,17 +26,19 @@ function makeMutationQuery(draft: ListDraft): {
   for (const [k, v] of draft) {
     const empty = Object.keys(v).length == 0;
     if (!empty) {
-      queryVars.push(`$entry${k}: Int`);
-      vars[`entry${k}`] = k;
-
       const mutArgs: string[] = [];
-      mutations.push(mutArgs);
-      mutArgs.push(`id: $entry${k}`);
 
       if (v.score != null && !Number.isNaN(v.score)) {
         vars[`scoreRaw${k}`] = v.score;
         queryVars.push(`$scoreRaw${k}: Int`);
         mutArgs.push(`scoreRaw: $scoreRaw${k}`);
+      }
+
+      if (mutArgs.length) {
+        vars[`entry${k}`] = k;
+        queryVars.push(`$entry${k}: Int`);
+        mutArgs.push(`id: $entry${k}`);
+        mutations.push(mutArgs);
       }
     }
   }

@@ -1,4 +1,5 @@
 import { query } from "../anilist";
+import type { ScoreFormat } from "./viewer";
 
 export type MediaListStatus =
   | "CURRENT"
@@ -7,6 +8,15 @@ export type MediaListStatus =
   | "DROPPED"
   | "PAUSED"
   | "REPEATING";
+
+export const MEDIA_LIST_STATUSES: MediaListStatus[] = [
+  "CURRENT",
+  "REPEATING",
+  "COMPLETED",
+  "PAUSED",
+  "DROPPED",
+  "PLANNING",
+];
 
 export type MediaFormat =
   | "TV"
@@ -42,7 +52,7 @@ export type Entry = {
   notes: string | null;
   repeat: number;
   media: {
-    title: { userPreferred: string };
+    title: { english?: string; native: string; romaji?: string };
     coverImage: { medium: string };
     description: string;
     siteUrl: string;
@@ -71,7 +81,9 @@ const QUERY = `query ($id: Int, $type: MediaType, $forceSingleCompletedList: Boo
       entries {
         media {
           title {
-            userPreferred
+            english(stylised: false)
+            native(stylised: false)
+            romaji(stylised: false)
           }
           coverImage {
             medium
@@ -122,6 +134,8 @@ const QUERY = `query ($id: Int, $type: MediaType, $forceSingleCompletedList: Boo
 
 export type MediaType = "ANIME" | "MANGA";
 
+export const MEDIA_TYPES: MediaType[] = ["ANIME", "MANGA"];
+
 export type MediaListSort =
   | "MEDIA_ID"
   | "MEDIA_ID_DESC"
@@ -161,7 +175,7 @@ export const getList = query<
     type: MediaType;
     forceSingleCompletedList: true;
     statusIn: MediaListStatus[];
-    format: "POINT_100";
+    format: ScoreFormat;
     sort: [MediaListSort];
   }
 >(QUERY, (x) => {
