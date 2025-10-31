@@ -192,13 +192,13 @@ function Scorer() {
       incDesc: "+0.1 to score",
       decDesc: "-0.1 to score",
       numKeyMax: 0,
-      numKeyDesc: "Set score to 10, 20, …, 100",
+      numKeyDesc: "Set score to 1, 2, …, 10",
     },
     POINT_10: {
       incDesc: "+1 to score",
       decDesc: "-1 to score",
       numKeyMax: 0,
-      numKeyDesc: "Set score to 1 to 10",
+      numKeyDesc: "Set score to 1, 2, …, 10",
     },
     POINT_5: {
       incDesc: "Add ★ to score",
