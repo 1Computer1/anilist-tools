@@ -91,6 +91,8 @@ export function ListEntry({
           });
         };
 
+        const hasChange = draft.get(entry.id) != null;
+
         const values = NUMBER_SHORTCUTS[settings.scoreFormat.value];
         const n = parseInt(e.key, 10);
         if (values[n]) {
@@ -116,9 +118,13 @@ export function ListEntry({
         } else if (e.key === "ArrowUp") {
           tab(-1);
         } else if (e.key === "ArrowLeft" || e.key === "-" || e.key === "_") {
-          update((s) => system.step(s, -1));
+          if (hasChange) {
+            update((s) => system.step(s, -1));
+          }
         } else if (e.key === "ArrowRight" || e.key === "=" || e.key === "+") {
-          update((s) => system.step(s, 1));
+          if (hasChange) {
+            update((s) => system.step(s, 1));
+          }
         } else if (
           e.key === "`" ||
           e.key === "Escape" ||
