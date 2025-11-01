@@ -8,8 +8,9 @@ import {
   type UseQueryResult,
 } from "@tanstack/react-query";
 import { isTokenExpired } from "../util/jwt";
+import type { getList } from "../api/queries/list";
 
-type QueryOptions<
+export type QueryOptions<
   TQueryFnData,
   TError,
   TData,
@@ -18,6 +19,11 @@ type QueryOptions<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   "queryKey" | "queryFn"
 >;
+
+export type UseAnilistQueryResult<TData, TError = AnilistError> = {
+  data: TData | undefined;
+  query: UseQueryResult<TData, TError>;
+};
 
 export function useAnilistQuery<
   TQueryKey extends [string, Record<string, unknown>?],
@@ -28,7 +34,7 @@ export function useAnilistQuery<
   queryKey: TQueryKey,
   fetcher: (ctx: Context, signal: AbortSignal) => Promise<TQueryFnData>,
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): { data: TData | undefined; query: UseQueryResult<TData, TError> } {
+): UseAnilistQueryResult<TData, TError> {
   const { token } = useAccessToken();
   const enabled = token !== "" && !isTokenExpired(token);
   const query = useQuery({
@@ -51,3 +57,8 @@ export function useAnilistMutation<TData, TVars, TError = AnilistError>(
     ...options,
   });
 }
+
+export type UserListOptions = Pick<
+  typeof getList extends (ctx: Context, options: infer O) => any ? O : never,
+  "type" | "statusIn" | "sort"
+>;

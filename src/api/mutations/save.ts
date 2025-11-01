@@ -1,7 +1,16 @@
 import { postQuery, type Context } from "../anilist";
+import type { MediaListStatus } from "../queries/list";
 
-export type EntryDraft = Partial<{ score: number; scoreDisplay: string }>;
-export type ListDraft = Map<number, EntryDraft>;
+export type EntryDraft = Partial<{
+  score: number;
+  scoreDisplay: string;
+  status: MediaListStatus;
+}>;
+
+export type ListDraft<S extends keyof EntryDraft> = Map<
+  number,
+  Pick<EntryDraft, S>
+>;
 
 const makeMutation = (i: number, mutArgs: string[]) => `
   update${i}: SaveMediaListEntry(${mutArgs.join(", ")}) {
@@ -16,22 +25,37 @@ const makeQuery = (
   ${mutations.map((mutArgs, i) => makeMutation(i, mutArgs)).join("\n")}
 }`;
 
-function makeMutationQuery(draft: ListDraft): {
+function makeMutationQuery(draft: ListDraft<keyof EntryDraft>): {
   query: string;
   vars: Record<string, any>;
 } {
   const queryVars: string[] = [];
   const mutations: string[][] = [];
   const vars: Record<string, any> = {};
+
+  function add<T>(
+    k: number,
+    v: NonNullable<T>,
+    name: string,
+    type: string,
+    mutArgs: string[],
+  ) {
+    vars[`${name}${k}`] = v;
+    queryVars.push(`$${name}${k}: ${type}`);
+    mutArgs.push(`${name}: $${name}${k}`);
+  }
+
   for (const [k, v] of draft) {
     const empty = Object.keys(v).length == 0;
     if (!empty) {
       const mutArgs: string[] = [];
 
       if (v.score != null && !Number.isNaN(v.score)) {
-        vars[`scoreRaw${k}`] = v.score;
-        queryVars.push(`$scoreRaw${k}: Int`);
-        mutArgs.push(`scoreRaw: $scoreRaw${k}`);
+        add(k, v.score, "scoreRaw", "Int", mutArgs);
+      }
+
+      if (v.status != null) {
+        add(k, v.status, "status", "MediaListStatus", mutArgs);
       }
 
       if (mutArgs.length) {
@@ -45,7 +69,10 @@ function makeMutationQuery(draft: ListDraft): {
   return { query: makeQuery(queryVars, mutations), vars };
 }
 
-export const saveMediaListEntries = async (ctx: Context, draft: ListDraft) => {
+export const saveMediaListEntries = async (
+  ctx: Context,
+  draft: ListDraft<keyof EntryDraft>,
+) => {
   const { query, vars } = makeMutationQuery(draft);
   await postQuery(ctx, query, vars);
 };

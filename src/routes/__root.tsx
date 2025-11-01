@@ -67,7 +67,7 @@ function Root() {
       <div className="bg-base-100 flex h-dvh w-dvw flex-col items-stretch justify-center lg:flex-row">
         {lg ? (
           <nav className="bg-base-200 flex h-full max-w-40 min-w-40 flex-col items-center justify-between pb-4 shadow">
-            <ul className="menu w-full flex-1 px-4">
+            <ul className="menu w-full flex-1 gap-y-1 px-4">
               <MenuItems
                 login={login}
                 logout={logout}
@@ -79,7 +79,7 @@ function Root() {
                   </li>
                 )}
                 Divider={() => <li></li>}
-                Space={() => <div className="my-1 h-0 w-full"></div>}
+                Space={() => <div className="h-0 w-full"></div>}
                 Filler={() => <div className="grow"></div>}
               />
             </ul>
@@ -98,7 +98,7 @@ function Root() {
                   "origin-left transition duration-150 ease-out data-closed:-translate-x-90 data-closed:scale-x-90 data-closed:opacity-0 motion-reduce:transition-none",
                 )}
               >
-                <ul className="menu h-full w-full px-4">
+                <ul className="menu h-full w-full gap-y-1 px-4">
                   <MenuItems
                     login={login}
                     logout={logout}
@@ -110,7 +110,7 @@ function Root() {
                       </li>
                     )}
                     CloseButton={CloseButton}
-                    Space={() => <div className="my-1 h-0 w-full"></div>}
+                    Space={() => <div className="h-0 w-full"></div>}
                     Divider={() => <li></li>}
                     Filler={() => <div className="grow"></div>}
                   />

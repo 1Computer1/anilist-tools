@@ -6,9 +6,6 @@ import type { AnilistError } from "../../api/anilist";
 import {
   MEDIA_LIST_STATUSES,
   MEDIA_TYPES,
-  type Entry,
-  type FuzzyDate,
-  type List,
   type MediaListStatus,
   type MediaType,
 } from "../../api/queries/list";
@@ -20,42 +17,25 @@ import {
   type Viewer,
 } from "../../api/queries/viewer";
 import { CustomListbox } from "../../components/CustomListbox";
-import type { ConfirmResetDialogContext, ListDraftAction } from "../scorer";
-import { useState } from "react";
+import type { ScorerListDraftAction } from "../scorer";
 import type { DialogState } from "../../hooks/useDialog";
+import type { ConfirmDialogContext } from "../../components/list/LeftRightListInterface";
+import {
+  nameOfListType,
+  nameOfScoreFormat,
+  nameOfSortBy,
+  nameOfSortDir,
+  nameOfStatus,
+  nameOfTitleLanguage,
+  SORT_BYS,
+  SORT_DIRS,
+  type SortBy,
+  type SortDir,
+} from "../../util/settings";
+import { useStateW, type ReactState } from "../../hooks/useStateW";
+import SettingsItem from "../../components/list/SettingsItem";
 
-export type SortBy =
-  | "title"
-  | "score"
-  | "progress"
-  | "lastUpdated"
-  | "lastAdded"
-  | "startDate"
-  | "completedDate"
-  | "releaseDate"
-  | "averageScore"
-  | "popularity"
-  | "random";
-
-export const SORT_BYS: SortBy[] = [
-  "title",
-  "score",
-  "progress",
-  "lastUpdated",
-  "lastAdded",
-  "startDate",
-  "completedDate",
-  "releaseDate",
-  "averageScore",
-  "popularity",
-  "random",
-];
-
-export type SortDir = "asc" | "desc";
-
-export const SORT_DIRS: SortDir[] = ["asc", "desc"];
-
-export type Settings = {
+export type ScorerSettings = {
   listType: ReactState<MediaType>;
   sortBy: ReactState<SortBy>;
   // For forcing a settings reupdate when pressing shuffle
@@ -67,44 +47,34 @@ export type Settings = {
   hideScore: ReactState<boolean>;
 };
 
-export type ReactState<T> = {
-  value: T;
-  set: React.Dispatch<React.SetStateAction<T>>;
-};
-
-export function useSettings(): Settings {
+export function useScorerSettings(): ScorerSettings {
   return {
-    listType: useState_<MediaType>("ANIME"),
-    allowedStatuses: useState_<MediaListStatus[]>(["COMPLETED"]),
-    sortBy: useState_<SortBy>("score"),
-    random: useState_<boolean>(false),
-    sortDir: useState_<SortDir>("desc"),
-    titleLanguage: useState_<TitleLanguage>("ENGLISH"),
-    scoreFormat: useState_<ScoreFormat>("POINT_100"),
-    hideScore: useState_<boolean>(false),
+    listType: useStateW<MediaType>("ANIME"),
+    allowedStatuses: useStateW<MediaListStatus[]>(["COMPLETED"]),
+    sortBy: useStateW<SortBy>("score"),
+    random: useStateW<boolean>(false),
+    sortDir: useStateW<SortDir>("desc"),
+    titleLanguage: useStateW<TitleLanguage>("ENGLISH"),
+    scoreFormat: useStateW<ScoreFormat>("POINT_100"),
+    hideScore: useStateW<boolean>(false),
   };
 }
 
-function useState_<T>(intial: T): ReactState<T> {
-  const [value, set] = useState(intial);
-  return { value, set };
-}
-
-export function SettingsItems({
+export function ScorerSettingsItems({
   dispatch,
   settings,
   viewer,
   numUnsavedChanges,
-  confirmResetDialog,
+  confirmDialog,
 }: {
-  dispatch: React.Dispatch<ListDraftAction>;
-  settings: Settings;
+  dispatch: React.Dispatch<ScorerListDraftAction>;
+  settings: ScorerSettings;
   viewer: {
     data: Viewer | undefined;
     query: UseQueryResult<Viewer, AnilistError>;
   };
   numUnsavedChanges: number | null;
-  confirmResetDialog: DialogState<ConfirmResetDialogContext>;
+  confirmDialog: DialogState<ConfirmDialogContext>;
 }) {
   return (
     <>
@@ -122,9 +92,10 @@ export function SettingsItems({
               dispatch({ t: "reset" });
             };
             if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-              confirmResetDialog.openWith({
+              confirmDialog.openWith({
                 title: "Change List",
                 action: "Confirm",
+                severity: "BAD",
                 message: "Are you sure you want to change your list?",
                 onConfirm: change,
               });
@@ -133,8 +104,8 @@ export function SettingsItems({
             }
           }}
           options={MEDIA_TYPES}
-          ButtonContents={() => nameOfListType(settings.listType.value)}
-          OptionContents={({ value }) => nameOfListType(value)}
+          buttonContents={nameOfListType(settings.listType.value)}
+          optionContents={(value) => nameOfListType(value)}
         />
       </SettingsItem>
       <SettingsItem label="Score Format">
@@ -150,8 +121,8 @@ export function SettingsItems({
             dispatch({ t: "updateScoreDisplays" });
           }}
           options={SCORE_FORMATS}
-          ButtonContents={() => nameOfScoreFormat(settings.scoreFormat.value)}
-          OptionContents={({ value }) => nameOfScoreFormat(value)}
+          buttonContents={nameOfScoreFormat(settings.scoreFormat.value)}
+          optionContents={(value) => nameOfScoreFormat(value)}
         />
       </SettingsItem>
       <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
@@ -169,10 +140,8 @@ export function SettingsItems({
           value={settings.titleLanguage.value}
           onChange={(v) => settings.titleLanguage.set(v)}
           options={TITLE_LANGUAGES}
-          ButtonContents={() =>
-            nameOfTitleLanguage(settings.titleLanguage.value)
-          }
-          OptionContents={({ value }) => nameOfTitleLanguage(value)}
+          buttonContents={nameOfTitleLanguage(settings.titleLanguage.value)}
+          optionContents={(value) => nameOfTitleLanguage(value)}
         />
       </SettingsItem>
       <SettingsItem label="Status">
@@ -187,7 +156,7 @@ export function SettingsItems({
               settings.allowedStatuses.set(v);
             }
           }}
-          ButtonContents={() => (
+          buttonContents={
             <span className="inline-block truncate">
               {[...settings.allowedStatuses.value]
                 .sort(
@@ -198,8 +167,8 @@ export function SettingsItems({
                 .map((x) => nameOfStatus(settings.listType.value, x))
                 .join(", ")}
             </span>
-          )}
-          OptionContents={({ value }) => (
+          }
+          optionContents={(value) => (
             <div className="inline-flex flex-row items-center gap-x-2">
               <div
                 className={clsx(
@@ -224,8 +193,8 @@ export function SettingsItems({
             settings.sortBy.set(v);
             settings.random.set(!settings.random.value);
           }}
-          ButtonContents={() => nameOfSortBy(settings.sortBy.value)}
-          OptionContents={({ value }) => nameOfSortBy(value)}
+          buttonContents={nameOfSortBy(settings.sortBy.value)}
+          optionContents={(value) => nameOfSortBy(value)}
         />
       </SettingsItem>
       {settings.sortBy.value.startsWith("random") ? (
@@ -245,166 +214,11 @@ export function SettingsItems({
             value={settings.sortDir.value}
             options={SORT_DIRS}
             onChange={(v) => settings.sortDir.set(v)}
-            ButtonContents={() => nameOfSortDir(settings.sortDir.value)}
-            OptionContents={({ value }) => nameOfSortDir(value)}
+            buttonContents={nameOfSortDir(settings.sortDir.value)}
+            optionContents={(value) => nameOfSortDir(value)}
           />
         </SettingsItem>
       )}
     </>
   );
-}
-
-function SettingsItem({
-  label,
-  children,
-}: {
-  label: React.JSX.Element | string;
-  children: React.JSX.Element;
-}) {
-  return (
-    <Field className="flex w-full flex-col gap-y-2 text-sm md:text-base">
-      <Label>{label}</Label>
-      {children}
-    </Field>
-  );
-}
-
-export function nameOfListType(s: MediaType) {
-  return { ANIME: "Anime", MANGA: "Manga" }[s];
-}
-
-export function nameOfScoreFormat(s: ScoreFormat) {
-  return {
-    POINT_100: "100 Point",
-    POINT_10_DECIMAL: "10 Point Decimal",
-    POINT_10: "10 Point",
-    POINT_5: "5 Star",
-    POINT_3: "3 Point Smiley",
-  }[s];
-}
-
-export function nameOfTitleLanguage(s: TitleLanguage) {
-  return {
-    ENGLISH: "English",
-    NATIVE: "Native",
-    ROMAJI: "Romaji",
-  }[s];
-}
-
-export function nameOfSortBy(s: SortBy) {
-  return {
-    title: "Title",
-    score: "Score",
-    progress: "Progress",
-    lastUpdated: "Last Updated",
-    lastAdded: "Last Added",
-    averageScore: "Average Score",
-    popularity: "Popularity",
-    releaseDate: "Release Date",
-    startDate: "Start Date",
-    completedDate: "Completed Date",
-    random: "Random",
-  }[s];
-}
-
-export function nameOfSortDir(s: SortDir) {
-  return {
-    asc: "Ascending",
-    desc: "Descending",
-  }[s];
-}
-
-export function nameOfStatus(m: MediaType, s: MediaListStatus) {
-  return {
-    COMPLETED: "Completed",
-    CURRENT: { ANIME: "Watching", MANGA: "Reading" }[m],
-    DROPPED: "Dropped",
-    PAUSED: "Paused",
-    PLANNING: "Planning",
-    REPEATING: { ANIME: "Rewatching", MANGA: "Rereading" }[m],
-  }[s];
-}
-
-export function prepareListForDisplay(
-  data: List,
-  settings: Settings,
-): [Entry[], number[]] {
-  const sortBy = settings.sortBy.value;
-  let sorted;
-  if (sortBy === "random") {
-    sorted = [...data.values()].filter((x) =>
-      settings.allowedStatuses.value.includes(x.status),
-    );
-    shuffle(sorted);
-    sorted.sort(
-      (a, b) =>
-        MEDIA_LIST_STATUSES.indexOf(a.status) -
-        MEDIA_LIST_STATUSES.indexOf(b.status),
-    );
-  } else {
-    const comparator =
-      settings.sortDir.value === "desc"
-        ? comparators[sortBy]
-        : (a: Entry, b: Entry, s: Settings) => comparators[sortBy](b, a, s);
-    sorted = [...data.values()]
-      .filter((x) => settings.allowedStatuses.value.includes(x.status))
-      .sort((a, b) => {
-        const x =
-          MEDIA_LIST_STATUSES.indexOf(a.status) -
-          MEDIA_LIST_STATUSES.indexOf(b.status);
-        return x || comparator(a, b, settings);
-      });
-  }
-  const is = [];
-  for (let i = 0; i < sorted.length; i++) {
-    if (sorted[i].status !== sorted[i - 1]?.status) {
-      is.push(i);
-    }
-  }
-  return [sorted, is];
-}
-
-const comparators: Record<
-  Exclude<SortBy, "random">,
-  (a: Entry, b: Entry, settings: Settings) => number
-> = {
-  title: (a, b, settings) =>
-    getTitle(b, settings).localeCompare(getTitle(a, settings)),
-  score: (a, b) => b.score - a.score,
-  progress: (a, b) => (b.progress ?? 0) - (a.progress ?? 0),
-  lastUpdated: (a, b) => b.updatedAt - a.updatedAt,
-  lastAdded: (a, b) => b.createdAt - a.createdAt,
-  averageScore: (a, b) => b.media.averageScore - a.media.averageScore,
-  popularity: (a, b) => b.media.popularity - a.media.popularity,
-  releaseDate: (a, b) => compareDate(b.media.startDate, a.media.startDate),
-  startDate: (a, b) => compareDate(b.startedAt, a.startedAt),
-  completedDate: (a, b) => compareDate(b.completedAt, a.completedAt),
-};
-
-export function compareDate(a: FuzzyDate, b: FuzzyDate) {
-  return (
-    (a.year ?? 0) - (b.year ?? 0) ||
-    (a.month ?? 0) - (b.month ?? 0) ||
-    (a.day ?? 0) - (b.day ?? 0)
-  );
-}
-
-export function getTitle(entry: Entry, settings: Settings) {
-  return {
-    ENGLISH:
-      entry.media.title.english ??
-      entry.media.title.romaji ??
-      entry.media.title.native,
-    ROMAJI: entry.media.title.romaji ?? entry.media.title.native,
-    NATIVE: entry.media.title.native,
-  }[settings.titleLanguage.value];
-}
-
-function shuffle<T>(array: T[]) {
-  let i = array.length;
-  while (i != 0) {
-    let r = Math.floor(Math.random() * i);
-    i--;
-    [array[i], array[r]] = [array[r], array[i]];
-  }
 }

@@ -15,13 +15,13 @@ import {
   PiSmileyMehBold,
   PiAsteriskBold,
 } from "react-icons/pi";
-import type { ListDraft } from "../../api/mutations/save";
 import type { Entry } from "../../api/queries/list";
-import type { ListDraftAction } from "../scorer";
-import { getTitle, type Settings } from "./Settings";
+import type { ScorerListDraft, ScorerListDraftAction } from "../scorer";
 import type { ScoreFormat } from "../../api/queries/viewer";
 import CustomTooltip from "../../components/CustomTooltip";
 import { useMediaQuery } from "usehooks-ts";
+import type { ScorerSettings } from "./Settings";
+import { getTitle } from "../../util/settings";
 
 const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_100: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
@@ -31,7 +31,7 @@ const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_3: [0, 35, 60, 85],
 };
 
-export function ListEntry({
+export function ScorerListEntry({
   entry,
   draft,
   dispatch,
@@ -40,11 +40,11 @@ export function ListEntry({
   ref,
 }: {
   entry: Entry;
-  draft: ListDraft;
-  dispatch: Dispatch<ListDraftAction>;
+  draft: ScorerListDraft;
+  dispatch: Dispatch<ScorerListDraftAction>;
   tab: (d: 1 | -1) => void;
-  settings: Settings;
-  ref: Ref<HTMLDivElement>;
+  settings: ScorerSettings;
+  ref: Ref<HTMLElement>;
 }) {
   const system = SCORE_SYSTEMS[settings.scoreFormat.value];
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
@@ -71,7 +71,7 @@ export function ListEntry({
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
-      ref={ref}
+      ref={ref as any}
       onFocus={(e) => {
         e.target.querySelector(".scroll-helper")?.scrollIntoView({
           block: "nearest",
@@ -118,11 +118,11 @@ export function ListEntry({
         } else if (e.key === "ArrowUp") {
           tab(-1);
         } else if (e.key === "ArrowLeft" || e.key === "-" || e.key === "_") {
-          if (hasChange) {
+          if (!settings.hideScore.value || hasChange) {
             update((s) => system.step(s, -1));
           }
         } else if (e.key === "ArrowRight" || e.key === "=" || e.key === "+") {
-          if (hasChange) {
+          if (!settings.hideScore.value || hasChange) {
             update((s) => system.step(s, 1));
           }
         } else if (
@@ -180,16 +180,10 @@ export function ListEntry({
         />
       )}
       <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text]">
-        <p className="wrap-anywhere">{getTitle(entry, settings)}</p>
+        <p className="wrap-anywhere">
+          {getTitle(entry, settings.titleLanguage.value)}
+        </p>
       </div>
-    </div>
-  );
-}
-
-export function ListDivider({ text }: { text: string }) {
-  return (
-    <div className="divider my-1 w-full text-sm lg:my-2 lg:text-base">
-      {text}
     </div>
   );
 }
@@ -197,9 +191,9 @@ export function ListDivider({ text }: { text: string }) {
 export type ScoreSystemType = "int" | "decimal" | "stars" | "smiley";
 
 type ScoreProps<T extends ScoreSystemType = ScoreSystemType> = {
-  dispatch: Dispatch<ListDraftAction>;
-  draft: ListDraft;
-  settings: Settings;
+  dispatch: Dispatch<ScorerListDraftAction>;
+  draft: ScorerListDraft;
+  settings: ScorerSettings;
   entry: Entry;
   system: ScoreSystem<T>;
 };
@@ -481,7 +475,7 @@ function OldScore({
   newScoreDisplay: string;
   prevScore: number;
   prevScoreDisplay: string;
-  settings: Settings;
+  settings: ScorerSettings;
   system: ScoreSystem;
 }) {
   const d = prevScore - newScore;

@@ -13,7 +13,7 @@ import { useResizeObserver } from "usehooks-ts";
 
 export type CustomDialogProps = {
   state: DialogState<any>;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   closeButton?: boolean;
 };

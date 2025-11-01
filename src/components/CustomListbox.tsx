@@ -12,8 +12,8 @@ import { useResizeObserver } from "usehooks-ts";
 export type CustomListboxProps<TOpt extends string> = {
   modal?: boolean;
   options: TOpt[];
-  OptionContents?: React.ComponentType<{ value: TOpt }>;
-  ButtonContents?: React.ElementType;
+  optionContents?: (value: TOpt) => React.ReactNode;
+  buttonContents?: React.ReactNode;
 } & (
   | {
       value: TOpt;
@@ -35,8 +35,8 @@ export function CustomListbox<TOpt extends string>({
   multiple = false,
   modal = false,
   options,
-  ButtonContents = () => value,
-  OptionContents = ({ value }) => value,
+  buttonContents = value,
+  optionContents = (value) => value,
   ...props
 }: CustomListboxProps<TOpt> & Omit<ListboxButtonProps, Used>) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -49,9 +49,7 @@ export function CustomListbox<TOpt extends string>({
       onChange={onChange as any}
     >
       <ListboxButton ref={ref} {...props}>
-        <div className="inline-flex w-full flex-row">
-          <ButtonContents />
-        </div>
+        <div className="inline-flex w-full flex-row">{buttonContents}</div>
       </ListboxButton>
       <ListboxOptions
         transition
@@ -73,7 +71,7 @@ export function CustomListbox<TOpt extends string>({
               "hover:bg-base-content/10 data-focus:bg-base-content/10",
             )}
           >
-            <OptionContents value={o} />
+            {optionContents(o)}
           </ListboxOption>
         ))}
       </ListboxOptions>

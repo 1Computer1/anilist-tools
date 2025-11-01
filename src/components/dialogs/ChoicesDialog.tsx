@@ -9,7 +9,11 @@ export default function ChoicesDialog({
   children,
   ...props
 }: {
-  choices: { text: string; severity: Severity; onClick: () => unknown }[];
+  choices: {
+    text: React.ReactNode;
+    severity: Severity;
+    onClick: () => unknown;
+  }[];
   children: React.ReactNode;
 } & Omit<CustomDialogProps, "children">) {
   return (
