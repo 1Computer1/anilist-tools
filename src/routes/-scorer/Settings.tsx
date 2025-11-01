@@ -1,7 +1,7 @@
-import { Field, Label } from "@headlessui/react";
+import { Button, Field, Label } from "@headlessui/react";
 import type { UseQueryResult } from "@tanstack/react-query";
 import clsx from "clsx";
-import { PiCheckFatFill } from "react-icons/pi";
+import { PiCheckFatFill, PiShuffleFill } from "react-icons/pi";
 import type { AnilistError } from "../../api/anilist";
 import {
   MEDIA_LIST_STATUSES,
@@ -32,7 +32,8 @@ export type SortBy =
   | "completedDate"
   | "releaseDate"
   | "averageScore"
-  | "popularity";
+  | "popularity"
+  | "random";
 
 export const SORT_BYS: SortBy[] = [
   "score",
@@ -44,6 +45,7 @@ export const SORT_BYS: SortBy[] = [
   "releaseDate",
   "averageScore",
   "popularity",
+  "random",
 ];
 
 export type SortDir = "asc" | "desc";
@@ -53,13 +55,15 @@ export const SORT_DIRS: SortDir[] = ["asc", "desc"];
 export type Settings = {
   listType: ReactState<MediaType>;
   sortBy: ReactState<SortBy>;
+  // For forcing a settings reupdate when pressing shuffle
+  random: ReactState<boolean>;
   sortDir: ReactState<SortDir>;
   allowedStatuses: ReactState<MediaListStatus[]>;
   titleLanguage: ReactState<TitleLanguage>;
   scoreFormat: ReactState<ScoreFormat>;
 };
 
-type ReactState<T> = {
+export type ReactState<T> = {
   value: T;
   set: React.Dispatch<React.SetStateAction<T>>;
 };
@@ -69,6 +73,7 @@ export function useSettings(): Settings {
     listType: useState_<MediaType>("ANIME"),
     allowedStatuses: useState_<MediaListStatus[]>(["COMPLETED"]),
     sortBy: useState_<SortBy>("score"),
+    random: useState_<boolean>(false),
     sortDir: useState_<SortDir>("desc"),
     titleLanguage: useState_<TitleLanguage>("ENGLISH"),
     scoreFormat: useState_<ScoreFormat>("POINT_100"),
@@ -202,22 +207,36 @@ export function SettingsItems({
           disabled={viewer.data == null}
           value={settings.sortBy.value}
           options={SORT_BYS}
-          onChange={(v) => settings.sortBy.set(v)}
+          onChange={(v) => {
+            settings.sortBy.set(v);
+            settings.random.set(!settings.random.value);
+          }}
           ButtonContents={() => nameOfSortBy(settings.sortBy.value)}
           OptionContents={({ value }) => nameOfSortBy(value)}
         />
       </SettingsItem>
-      <SettingsItem label="Sort Direction">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.sortDir.value}
-          options={SORT_DIRS}
-          onChange={(v) => settings.sortDir.set(v)}
-          ButtonContents={() => nameOfSortDir(settings.sortDir.value)}
-          OptionContents={({ value }) => nameOfSortDir(value)}
-        />
-      </SettingsItem>
+      {settings.sortBy.value.startsWith("random") ? (
+        <Button
+          className="btn btn-outline btn-secondary"
+          onClick={() => {
+            settings.random.set(!settings.random.value);
+          }}
+        >
+          <PiShuffleFill /> Reshuffle
+        </Button>
+      ) : (
+        <SettingsItem label="Sort Direction">
+          <CustomListbox
+            className="select w-full"
+            disabled={viewer.data == null}
+            value={settings.sortDir.value}
+            options={SORT_DIRS}
+            onChange={(v) => settings.sortDir.set(v)}
+            ButtonContents={() => nameOfSortDir(settings.sortDir.value)}
+            OptionContents={({ value }) => nameOfSortDir(value)}
+          />
+        </SettingsItem>
+      )}
     </>
   );
 }
@@ -270,6 +289,7 @@ export function nameOfSortBy(s: SortBy) {
     releaseDate: "Release Date",
     startDate: "Start Date",
     completedDate: "Completed Date",
+    random: "Random",
   }[s];
 }
 
@@ -295,28 +315,45 @@ export function prepareListForDisplay(
   data: List,
   settings: Settings,
 ): [Entry[], number[]] {
-  const comparator =
-    settings.sortDir.value === "desc"
-      ? comparators[settings.sortBy.value]
-      : (a: Entry, b: Entry) => comparators[settings.sortBy.value](b, a);
-  const xs = [...data.values()]
-    .filter((x) => settings.allowedStatuses.value.includes(x.status))
-    .sort((a, b) => {
-      const x =
+  const sortBy = settings.sortBy.value;
+  let sorted;
+  if (sortBy === "random") {
+    sorted = [...data.values()].filter((x) =>
+      settings.allowedStatuses.value.includes(x.status),
+    );
+    shuffle(sorted);
+    sorted.sort(
+      (a, b) =>
         MEDIA_LIST_STATUSES.indexOf(a.status) -
-        MEDIA_LIST_STATUSES.indexOf(b.status);
-      return x || comparator(a, b);
-    });
+        MEDIA_LIST_STATUSES.indexOf(b.status),
+    );
+  } else {
+    const comparator =
+      settings.sortDir.value === "desc"
+        ? comparators[sortBy]
+        : (a: Entry, b: Entry) => comparators[sortBy](b, a);
+    sorted = [...data.values()]
+      .filter((x) => settings.allowedStatuses.value.includes(x.status))
+      .sort((a, b) => {
+        const x =
+          MEDIA_LIST_STATUSES.indexOf(a.status) -
+          MEDIA_LIST_STATUSES.indexOf(b.status);
+        return x || comparator(a, b);
+      });
+  }
   const is = [];
-  for (let i = 0; i < xs.length; i++) {
-    if (xs[i].status !== xs[i - 1]?.status) {
+  for (let i = 0; i < sorted.length; i++) {
+    if (sorted[i].status !== sorted[i - 1]?.status) {
       is.push(i);
     }
   }
-  return [xs, is];
+  return [sorted, is];
 }
 
-const comparators: Record<SortBy, (a: Entry, b: Entry) => number> = {
+const comparators: Record<
+  Exclude<SortBy, "random">,
+  (a: Entry, b: Entry) => number
+> = {
   score: (a, b) => b.score - a.score,
   progress: (a, b) => (b.progress ?? 0) - (a.progress ?? 0),
   lastUpdated: (a, b) => b.updatedAt - a.updatedAt,
@@ -336,3 +373,12 @@ const comparators: Record<SortBy, (a: Entry, b: Entry) => number> = {
     (b.completedAt.month ?? 0) - (a.completedAt.month ?? 0) ||
     (b.completedAt.day ?? 0) - (a.completedAt.day ?? 0),
 };
+
+function shuffle<T>(array: T[]) {
+  let i = array.length;
+  while (i != 0) {
+    let r = Math.floor(Math.random() * i);
+    i--;
+    [array[i], array[r]] = [array[r], array[i]];
+  }
+}
