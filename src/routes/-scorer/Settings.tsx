@@ -153,7 +153,7 @@ export function SettingsItems({
       </SettingsItem>
       <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
         <Switch
-          className="toggle toggle-primary duration-300"
+          className="toggle toggle-primary duration-300 motion-reduce:transition-none"
           checked={settings.hideScore.value}
           onChange={settings.hideScore.set}
         />

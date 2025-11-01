@@ -21,6 +21,7 @@ import type { ListDraftAction } from "../scorer";
 import type { Settings } from "./Settings";
 import type { ScoreFormat } from "../../api/queries/viewer";
 import CustomTooltip from "../../components/CustomTooltip";
+import { useMediaQuery } from "usehooks-ts";
 
 const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_100: [100, 10, 20, 30, 40, 50, 60, 70, 80, 90],
@@ -46,6 +47,7 @@ export function ListEntry({
   ref: Ref<HTMLDivElement>;
 }) {
   const system = SCORE_SYSTEMS[settings.scoreFormat.value];
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   return (
     <div
@@ -73,7 +75,7 @@ export function ListEntry({
       onFocus={(e) => {
         e.target.querySelector(".scroll-helper")?.scrollIntoView({
           block: "nearest",
-          behavior: "smooth",
+          behavior: reduceMotion ? "instant" : "smooth",
         });
       }}
       onKeyDown={(e) => {
