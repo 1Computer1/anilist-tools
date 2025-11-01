@@ -24,6 +24,7 @@ import { useState } from "react";
 import type { DialogState } from "../../hooks/useDialog";
 
 export type SortBy =
+  | "title"
   | "score"
   | "progress"
   | "lastUpdated"
@@ -36,6 +37,7 @@ export type SortBy =
   | "random";
 
 export const SORT_BYS: SortBy[] = [
+  "title",
   "score",
   "progress",
   "lastUpdated",
@@ -290,6 +292,7 @@ export function nameOfTitleLanguage(s: TitleLanguage) {
 
 export function nameOfSortBy(s: SortBy) {
   return {
+    title: "Title",
     score: "Score",
     progress: "Progress",
     lastUpdated: "Last Updated",
@@ -341,14 +344,14 @@ export function prepareListForDisplay(
     const comparator =
       settings.sortDir.value === "desc"
         ? comparators[sortBy]
-        : (a: Entry, b: Entry) => comparators[sortBy](b, a);
+        : (a: Entry, b: Entry, s: Settings) => comparators[sortBy](b, a, s);
     sorted = [...data.values()]
       .filter((x) => settings.allowedStatuses.value.includes(x.status))
       .sort((a, b) => {
         const x =
           MEDIA_LIST_STATUSES.indexOf(a.status) -
           MEDIA_LIST_STATUSES.indexOf(b.status);
-        return x || comparator(a, b);
+        return x || comparator(a, b, settings);
       });
   }
   const is = [];
@@ -362,8 +365,10 @@ export function prepareListForDisplay(
 
 const comparators: Record<
   Exclude<SortBy, "random">,
-  (a: Entry, b: Entry) => number
+  (a: Entry, b: Entry, settings: Settings) => number
 > = {
+  title: (a, b, settings) =>
+    getTitle(b, settings).localeCompare(getTitle(a, settings)),
   score: (a, b) => b.score - a.score,
   progress: (a, b) => (b.progress ?? 0) - (a.progress ?? 0),
   lastUpdated: (a, b) => b.updatedAt - a.updatedAt,
@@ -383,6 +388,17 @@ const comparators: Record<
     (b.completedAt.month ?? 0) - (a.completedAt.month ?? 0) ||
     (b.completedAt.day ?? 0) - (a.completedAt.day ?? 0),
 };
+
+function getTitle(entry: Entry, settings: Settings) {
+  return {
+    ENGLISH:
+      entry.media.title.english ??
+      entry.media.title.romaji ??
+      entry.media.title.native,
+    ROMAJI: entry.media.title.romaji ?? entry.media.title.native,
+    NATIVE: entry.media.title.native,
+  }[settings.titleLanguage.value];
+}
 
 function shuffle<T>(array: T[]) {
   let i = array.length;
