@@ -1,4 +1,3 @@
-import * as _ from "lodash-es";
 import {
   MEDIA_LIST_STATUSES,
   type Entry,
@@ -106,7 +105,7 @@ export function prepareListForDisplay(
   let sorted;
   if (sortBy === "random") {
     sorted = [...data.values()].filter(filter);
-    _.shuffle(sorted);
+    shuffle(sorted);
     sorted.sort(
       (a, b) =>
         MEDIA_LIST_STATUSES.indexOf(a.status) -
@@ -170,4 +169,13 @@ export function getTitle(entry: Entry, titleLanguage: TitleLanguage) {
     ROMAJI: entry.media.title.romaji ?? entry.media.title.native,
     NATIVE: entry.media.title.native,
   }[titleLanguage];
+}
+
+function shuffle<T>(array: T[]) {
+  let i = array.length;
+  while (i != 0) {
+    let r = Math.floor(Math.random() * i);
+    i--;
+    [array[i], array[r]] = [array[r], array[i]];
+  }
 }
