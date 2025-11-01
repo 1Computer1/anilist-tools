@@ -96,7 +96,14 @@ export function ScorerSettingsItems({
                 title: "Change List",
                 action: "Confirm",
                 severity: "BAD",
-                message: "Are you sure you want to change your list?",
+                message: (
+                  <>
+                    Are you sure you want to switch to your{" "}
+                    {nameOfListType(v).toLowerCase()} list?
+                    <br />
+                    You will lose all unsaved changes.
+                  </>
+                ),
                 onConfirm: change,
               });
             } else {

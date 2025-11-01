@@ -184,9 +184,9 @@ function Scorer() {
       error={
         numUnsavedChanges == null ? (
           <ErrorAlert type="APP">
-            Your saved changes appear to be out-of-sync with your list.
+            Your changes are out of sync with your list.
             <br />
-            Please refresh the page.
+            Please refresh to reset.
           </ErrorAlert>
         ) : null
       }
@@ -222,7 +222,13 @@ function Scorer() {
                   title: "Refresh List",
                   action: "Refresh",
                   severity: "BAD",
-                  message: "Are you sure you want to refresh?",
+                  message: (
+                    <>
+                      Are you sure you want to refresh?
+                      <br />
+                      You will lose all unsaved changes.
+                    </>
+                  ),
                   onConfirm: refresh,
                 });
               } else {
@@ -245,7 +251,15 @@ function Scorer() {
                 title: "Update Scores",
                 action: "Update",
                 severity: "GOOD",
-                message: "Are you sure you want to update?",
+                message: (
+                  <>
+                    Are you sure you want to update{" "}
+                    {settings.hideScore.value
+                      ? numPerceivedChanges
+                      : numUnsavedChanges}{" "}
+                    of your ratings?
+                  </>
+                ),
                 onConfirm: async () => {
                   if (numUnsavedChanges !== 0) {
                     mutSave.mutate(draft);
