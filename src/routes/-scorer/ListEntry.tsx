@@ -226,9 +226,17 @@ export const SCORE_SYSTEMS = {
   } as ScoreSystem<"int">,
 
   POINT_10_DECIMAL: {
-    fromRaw: (x) => (x / 10).toFixed(1),
+    fromRaw: (x) => {
+      const n = x / 10;
+      const s = n.toFixed(1);
+      return s.replace(/\.0/, "");
+    },
     toRaw: (x) => Math.round(Number(x) * 10),
-    step: (x, d) => clamp(Number(x) + d / 10, 0, 10).toFixed(1),
+    step: (x, d) => {
+      const n = clamp(Number(x) + d / 10, 0, 10);
+      const s = n.toFixed(1);
+      return s.replace(/\.0/, "");
+    },
     type: "decimal",
   } as ScoreSystem<"decimal">,
 
