@@ -54,7 +54,7 @@ export type UserListOptions = Pick<
   "type" | "statusIn" | "sort"
 >;
 
-export type ConfirmDialogContext = {
+export type ConfirmResetDialogContext = {
   title: string;
   action: string;
   message: string;
@@ -143,24 +143,26 @@ function Scorer() {
     new Map(),
   );
 
-  const numUnsavedChanges =
+  const [numUnsavedChanges, numPerceivedChanges] =
     list.data == null
-      ? null
+      ? [null, null]
       : (() => {
-          try {
-            return [...draft.entries()].filter(([k, v]) => {
-              if (v.score == null || Number.isNaN(v.score)) {
-                return false;
-              }
-              const before = list.data!.get(k);
-              if (!before) {
-                throw new Error("Could not find existing entry for draft");
-              }
-              return v.score !== before.score;
-            }).length;
-          } catch (err) {
-            return null;
+          let changes = 0;
+          let perceivedChanges = 0;
+          for (const [k, v] of draft) {
+            if (v.score == null || Number.isNaN(v.score)) {
+              continue;
+            }
+            const before = list.data!.get(k);
+            if (!before) {
+              return [null, null];
+            }
+            perceivedChanges += 1;
+            if (v.score !== before.score) {
+              changes += 1;
+            }
           }
+          return [changes, perceivedChanges];
         })();
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {
@@ -173,7 +175,7 @@ function Scorer() {
   });
 
   const confirmSaveDialog = useDialog();
-  const confirmDialog = useDialog<ConfirmDialogContext>({
+  const confirmResetDialog = useDialog<ConfirmResetDialogContext>({
     title: "",
     action: "",
     message: "",
@@ -235,9 +237,16 @@ function Scorer() {
           {
             text: "Update",
             severity: "GOOD",
-            onClick: () => {
+            onClick: async () => {
               confirmSaveDialog.close();
-              mutSave.mutate(draft);
+              if (numUnsavedChanges !== 0) {
+                mutSave.mutate(draft);
+              } else {
+                await queryClient.invalidateQueries({
+                  queryKey: ["list", { type: listOptions.type }],
+                });
+                dispatch({ t: "reset" });
+              }
             },
           },
           {
@@ -249,30 +258,32 @@ function Scorer() {
           },
         ]}
       >
-        Are you sure you want to update {numUnsavedChanges} of your ratings?
+        Are you sure you want to update{" "}
+        {settings.hideScore.value ? numPerceivedChanges : numUnsavedChanges} of
+        your ratings?
       </ChoicesDialog>
       <ChoicesDialog
-        state={confirmDialog}
-        title={confirmDialog.context.title}
+        state={confirmResetDialog}
+        title={confirmResetDialog.context.title}
         choices={[
           {
-            text: confirmDialog.context.action,
+            text: confirmResetDialog.context.action,
             severity: "BAD",
             onClick: () => {
-              confirmDialog.context.onConfirm();
-              confirmDialog.close();
+              confirmResetDialog.context.onConfirm();
+              confirmResetDialog.close();
             },
           },
           {
             text: "Cancel",
             severity: "NORMAL",
             onClick: () => {
-              confirmDialog.close();
+              confirmResetDialog.close();
             },
           },
         ]}
       >
-        {confirmDialog.context.message}
+        {confirmResetDialog.context.message}
         <br />
         Your unsaved changes will be lost.
       </ChoicesDialog>
@@ -318,8 +329,13 @@ function Scorer() {
                 });
                 dispatch({ t: "reset" });
               };
-              if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-                confirmDialog.openWith({
+              if (
+                numUnsavedChanges != null &&
+                (settings.hideScore.value
+                  ? numPerceivedChanges > 0
+                  : numUnsavedChanges > 0)
+              ) {
+                confirmResetDialog.openWith({
                   title: "Refresh List",
                   action: "Refresh",
                   message: "Are you sure you want to refresh?",
@@ -334,7 +350,12 @@ function Scorer() {
           </Button>
           <Button
             className="btn btn-outline btn-success"
-            disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
+            disabled={
+              numUnsavedChanges == null ||
+              (settings.hideScore.value
+                ? numPerceivedChanges == 0
+                : numUnsavedChanges == 0)
+            }
             onClick={() => {
               confirmSaveDialog.open();
             }}
@@ -374,7 +395,7 @@ function Scorer() {
                 dispatch={dispatch}
                 settings={settings}
                 numUnsavedChanges={numUnsavedChanges}
-                confirmDialog={confirmDialog}
+                confirmResetDialog={confirmResetDialog}
               />
             </div>
           </div>

@@ -19,7 +19,7 @@ import {
   type Viewer,
 } from "../../api/queries/viewer";
 import { CustomListbox } from "../../components/CustomListbox";
-import type { ConfirmDialogContext, ListDraftAction } from "../scorer";
+import type { ConfirmResetDialogContext, ListDraftAction } from "../scorer";
 import { useState } from "react";
 import type { DialogState } from "../../hooks/useDialog";
 
@@ -94,7 +94,7 @@ export function SettingsItems({
   settings,
   viewer,
   numUnsavedChanges,
-  confirmDialog,
+  confirmResetDialog,
 }: {
   dispatch: React.Dispatch<ListDraftAction>;
   settings: Settings;
@@ -103,7 +103,7 @@ export function SettingsItems({
     query: UseQueryResult<Viewer, AnilistError>;
   };
   numUnsavedChanges: number | null;
-  confirmDialog: DialogState<ConfirmDialogContext>;
+  confirmResetDialog: DialogState<ConfirmResetDialogContext>;
 }) {
   return (
     <>
@@ -121,7 +121,7 @@ export function SettingsItems({
               dispatch({ t: "reset" });
             };
             if (numUnsavedChanges != null && numUnsavedChanges > 0) {
-              confirmDialog.openWith({
+              confirmResetDialog.openWith({
                 title: "Change List",
                 action: "Confirm",
                 message: "Are you sure you want to change your list?",
