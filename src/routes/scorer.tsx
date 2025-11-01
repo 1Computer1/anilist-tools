@@ -385,7 +385,7 @@ function Scorer() {
           displayList != null ? (
             <ol
               className={clsx(
-                "flex min-h-0 w-full grow basis-0 flex-col gap-y-2 overflow-y-auto p-4",
+                "flex min-h-0 w-full grow basis-0 flex-col gap-y-1.5 overflow-y-auto p-4",
                 "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
             >
