@@ -27,6 +27,7 @@ import {
   nameOfSortDir,
   nameOfStatus,
   nameOfTitleLanguage,
+  seedgen,
   SORT_BYS,
   SORT_DIRS,
   type SortBy,
@@ -38,8 +39,7 @@ import SettingsItem from "../../components/list/SettingsItem";
 export type ScorerSettings = {
   listType: ReactState<MediaType>;
   sortBy: ReactState<SortBy>;
-  // For forcing a settings reupdate when pressing shuffle
-  random: ReactState<boolean>;
+  randomSeed: ReactState<number>;
   sortDir: ReactState<SortDir>;
   allowedStatuses: ReactState<MediaListStatus[]>;
   titleLanguage: ReactState<TitleLanguage>;
@@ -52,7 +52,7 @@ export function useScorerSettings(): ScorerSettings {
     listType: useStateW<MediaType>("ANIME"),
     allowedStatuses: useStateW<MediaListStatus[]>(["COMPLETED"]),
     sortBy: useStateW<SortBy>("score"),
-    random: useStateW<boolean>(false),
+    randomSeed: useStateW<number>(seedgen()),
     sortDir: useStateW<SortDir>("desc"),
     titleLanguage: useStateW<TitleLanguage>("ENGLISH"),
     scoreFormat: useStateW<ScoreFormat>("POINT_100"),
@@ -198,7 +198,6 @@ export function ScorerSettingsItems({
           options={SORT_BYS}
           onChange={(v) => {
             settings.sortBy.set(v);
-            settings.random.set(!settings.random.value);
           }}
           buttonContents={nameOfSortBy(settings.sortBy.value)}
           optionContents={(value) => nameOfSortBy(value)}
@@ -208,7 +207,7 @@ export function ScorerSettingsItems({
         <Button
           className="btn btn-outline btn-secondary"
           onClick={() => {
-            settings.random.set(!settings.random.value);
+            settings.randomSeed.set(seedgen());
           }}
         >
           <PiShuffleFill /> Reshuffle

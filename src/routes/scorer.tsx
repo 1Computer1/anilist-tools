@@ -179,6 +179,7 @@ function Scorer() {
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,
+          settings.randomSeed.value,
         )
       }
       error={

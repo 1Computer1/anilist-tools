@@ -101,11 +101,12 @@ export function prepareListForDisplay(
   sortBy: SortBy,
   sortDir: SortDir,
   titleLanguage: TitleLanguage,
+  seed: number,
 ): [Entry[], number[]] {
   let sorted;
   if (sortBy === "random") {
     sorted = [...data.values()].filter(filter);
-    shuffle(sorted);
+    shuffle(sorted, seed);
     sorted.sort(
       (a, b) =>
         MEDIA_LIST_STATUSES.indexOf(a.status) -
@@ -171,10 +172,24 @@ export function getTitle(entry: Entry, titleLanguage: TitleLanguage) {
   }[titleLanguage];
 }
 
-function shuffle<T>(array: T[]) {
+export function seedgen() {
+  return (Math.random() * 2 ** 32) >>> 0;
+}
+
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle<T>(array: T[], seed: number) {
+  const rand = mulberry32(seed);
   let i = array.length;
   while (i != 0) {
-    let r = Math.floor(Math.random() * i);
+    let r = Math.floor(rand() * i);
     i--;
     [array[i], array[r]] = [array[r], array[i]];
   }
