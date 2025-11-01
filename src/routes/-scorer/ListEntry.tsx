@@ -18,7 +18,7 @@ import {
 import type { ListDraft } from "../../api/mutations/save";
 import type { Entry } from "../../api/queries/list";
 import type { ListDraftAction } from "../scorer";
-import type { Settings } from "./Settings";
+import { getTitle, type Settings } from "./Settings";
 import type { ScoreFormat } from "../../api/queries/viewer";
 import CustomTooltip from "../../components/CustomTooltip";
 import { useMediaQuery } from "usehooks-ts";
@@ -180,18 +180,7 @@ export function ListEntry({
         />
       )}
       <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text]">
-        <p className="wrap-anywhere">
-          {
-            {
-              ENGLISH:
-                entry.media.title.english ??
-                entry.media.title.romaji ??
-                entry.media.title.native,
-              ROMAJI: entry.media.title.romaji ?? entry.media.title.native,
-              NATIVE: entry.media.title.native,
-            }[settings.titleLanguage.value]
-          }
-        </p>
+        <p className="wrap-anywhere">{getTitle(entry, settings)}</p>
       </div>
     </div>
   );

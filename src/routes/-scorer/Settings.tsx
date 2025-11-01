@@ -389,7 +389,7 @@ const comparators: Record<
     (b.completedAt.day ?? 0) - (a.completedAt.day ?? 0),
 };
 
-function getTitle(entry: Entry, settings: Settings) {
+export function getTitle(entry: Entry, settings: Settings) {
   return {
     ENGLISH:
       entry.media.title.english ??
