@@ -7,6 +7,7 @@ import {
   MEDIA_LIST_STATUSES,
   MEDIA_TYPES,
   type Entry,
+  type FuzzyDate,
   type List,
   type MediaListStatus,
   type MediaType,
@@ -375,19 +376,18 @@ const comparators: Record<
   lastAdded: (a, b) => b.createdAt - a.createdAt,
   averageScore: (a, b) => b.media.averageScore - a.media.averageScore,
   popularity: (a, b) => b.media.popularity - a.media.popularity,
-  releaseDate: (a, b) =>
-    (b.media.startDate.year ?? 0) - (a.media.startDate.year ?? 0) ||
-    (b.media.startDate.month ?? 0) - (a.media.startDate.month ?? 0) ||
-    (b.media.startDate.day ?? 0) - (a.media.startDate.day ?? 0),
-  startDate: (a, b) =>
-    (b.startedAt.year ?? 0) - (a.startedAt.year ?? 0) ||
-    (b.startedAt.month ?? 0) - (a.startedAt.month ?? 0) ||
-    (b.startedAt.day ?? 0) - (a.startedAt.day ?? 0),
-  completedDate: (a, b) =>
-    (b.completedAt.year ?? 0) - (a.completedAt.year ?? 0) ||
-    (b.completedAt.month ?? 0) - (a.completedAt.month ?? 0) ||
-    (b.completedAt.day ?? 0) - (a.completedAt.day ?? 0),
+  releaseDate: (a, b) => compareDate(b.media.startDate, a.media.startDate),
+  startDate: (a, b) => compareDate(b.startedAt, a.startedAt),
+  completedDate: (a, b) => compareDate(b.completedAt, a.completedAt),
 };
+
+export function compareDate(a: FuzzyDate, b: FuzzyDate) {
+  return (
+    (a.year ?? 0) - (b.year ?? 0) ||
+    (a.month ?? 0) - (b.month ?? 0) ||
+    (a.day ?? 0) - (b.day ?? 0)
+  );
+}
 
 export function getTitle(entry: Entry, settings: Settings) {
   return {
