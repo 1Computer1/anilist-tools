@@ -19,7 +19,7 @@ import { Shortcuts } from "../components/Shortcuts";
 import { ListDivider, ListEntry, SCORE_SYSTEMS } from "./-scorer/ListEntry";
 import type { Context } from "../api/anilist";
 import { ErrorAlert } from "../components/ErrorAlert";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
 import clsx from "clsx";
 import { useMediaQuery } from "usehooks-ts";
@@ -411,14 +411,13 @@ function Scorer() {
               )}
             >
               {displayList.map((entry, i) => (
-                <>
+                <Fragment key={entry.id}>
                   {dividerPositions.includes(i) && (
                     <ListDivider
-                      key={i}
                       text={nameOfStatus(settings.listType.value, entry.status)}
                     />
                   )}
-                  <li key={entry.id} className="w-full">
+                  <li className="w-full">
                     <ListEntry
                       settings={settings}
                       entry={entry}
@@ -434,7 +433,7 @@ function Scorer() {
                       }}
                     />
                   </li>
-                </>
+                </Fragment>
               ))}
             </ol>
           ) : (
