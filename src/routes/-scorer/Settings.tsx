@@ -1,4 +1,4 @@
-import { Button, Field, Label } from "@headlessui/react";
+import { Button, Field, Label, Switch } from "@headlessui/react";
 import type { UseQueryResult } from "@tanstack/react-query";
 import clsx from "clsx";
 import { PiCheckFatFill, PiShuffleFill } from "react-icons/pi";
@@ -61,6 +61,7 @@ export type Settings = {
   allowedStatuses: ReactState<MediaListStatus[]>;
   titleLanguage: ReactState<TitleLanguage>;
   scoreFormat: ReactState<ScoreFormat>;
+  hideScore: ReactState<boolean>;
 };
 
 export type ReactState<T> = {
@@ -77,6 +78,7 @@ export function useSettings(): Settings {
     sortDir: useState_<SortDir>("desc"),
     titleLanguage: useState_<TitleLanguage>("ENGLISH"),
     scoreFormat: useState_<ScoreFormat>("POINT_100"),
+    hideScore: useState_<boolean>(false),
   };
 }
 
@@ -149,6 +151,14 @@ export function SettingsItems({
           OptionContents={({ value }) => nameOfScoreFormat(value)}
         />
       </SettingsItem>
+      <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
+        <Switch
+          className="toggle toggle-primary duration-300"
+          checked={settings.hideScore.value}
+          onChange={settings.hideScore.set}
+        />
+        <Label>Hide Old Scores</Label>
+      </Field>
       <SettingsItem label="Title Language">
         <CustomListbox
           className="select w-full"

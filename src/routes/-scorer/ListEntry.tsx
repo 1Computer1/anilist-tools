@@ -13,6 +13,7 @@ import {
   PiSmileyBold,
   PiSmileySadBold,
   PiSmileyMehBold,
+  PiAsteriskBold,
 } from "react-icons/pi";
 import type { ListDraft } from "../../api/mutations/save";
 import type { Entry } from "../../api/queries/list";
@@ -52,18 +53,19 @@ export function ListEntry({
         "bg-base-100 rounded-field min-h-10 w-full p-1.25 shadow-md dark:shadow",
         system.type === "int" || system.type === "decimal"
           ? clsx(
-              "grid grid-cols-[2.5rem_4rem_1.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
-              "lg:grid-cols-[2.5rem_4.5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
+              "grid grid-cols-[2.5rem_4rem_1.5rem_1fr]",
+              "lg:grid-cols-[2.5rem_4.5rem_2rem_1fr]",
             )
           : system.type === "stars"
             ? clsx(
-                "grid grid-cols-[2.5rem_6.5rem_1.5rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
-                "lg:grid-cols-[2.5rem_8.5rem_2rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
+                "grid grid-cols-[2.5rem_6.5rem_1.5rem_1fr]",
+                "lg:grid-cols-[2.5rem_8.5rem_2rem_1fr]",
               )
             : clsx(
-                "grid grid-cols-[2.5rem_5rem_0.75rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text']",
-                "lg:grid-cols-[2.5rem_5rem_1rem_1fr] lg:grid-rows-1 lg:gap-2 lg:[grid-template-areas:'img_score_oldscore_text']",
+                "grid grid-cols-[2.5rem_5rem_0.75rem_1fr]",
+                "lg:grid-cols-[2.5rem_5rem_1rem_1fr]",
               ),
+        "grid-rows gap-1 [grid-template-areas:'img_score_oldscore_text'] lg:grid-rows-1 lg:gap-2",
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
@@ -156,6 +158,7 @@ export function ListEntry({
         <ScoreNumberInput
           draft={draft}
           dispatch={dispatch}
+          settings={settings}
           entry={entry}
           system={system as any}
         />
@@ -163,6 +166,7 @@ export function ListEntry({
         <ScoreIconsInput
           draft={draft}
           dispatch={dispatch}
+          settings={settings}
           entry={entry}
           system={system as any}
         />
@@ -198,6 +202,7 @@ export type ScoreSystemType = "int" | "decimal" | "stars" | "smiley";
 type ScoreProps<T extends ScoreSystemType = ScoreSystemType> = {
   dispatch: Dispatch<ListDraftAction>;
   draft: ListDraft;
+  settings: Settings;
   entry: Entry;
   system: ScoreSystem<T>;
 };
@@ -269,12 +274,15 @@ function nearest(x: number, ys: number[]) {
 function ScoreNumberInput({
   dispatch,
   draft,
+  settings,
   entry,
   system,
 }: ScoreProps<"int" | "decimal">) {
   const { fromRaw, toRaw, step, type } = system;
   const maxDisplay = fromRaw(100);
   const stepDisplay = step("0", 1);
+
+  const hasChange = draft.get(entry.id)?.score != null;
 
   const newScore = draft.get(entry.id)?.score ?? entry.score;
   const newScoreDisplay =
@@ -288,7 +296,14 @@ function ScoreNumberInput({
       <Input
         type="number"
         className="input input-primary m-0 w-14 [appearance:textfield] place-self-center text-center [grid-area:score] lg:w-16 lg:text-lg"
-        value={newScoreDisplay}
+        value={
+          settings.hideScore.value
+            ? hasChange
+              ? newScoreDisplay
+              : ""
+            : newScoreDisplay
+        }
+        placeholder={settings.hideScore.value && !hasChange ? "?" : undefined}
         min={0}
         max={maxDisplay}
         step={stepDisplay}
@@ -316,10 +331,12 @@ function ScoreNumberInput({
         }}
       />
       <OldScore
+        hasChange={hasChange}
         newScore={newScore}
         newScoreDisplay={newScoreDisplay}
         prevScore={prevScore}
         prevScoreDisplay={prevScoreDisplay}
+        settings={settings}
         system={system}
       />
     </>
@@ -329,10 +346,13 @@ function ScoreNumberInput({
 function ScoreIconsInput({
   dispatch,
   draft,
+  settings,
   entry,
   system,
 }: ScoreProps<"stars" | "smiley">) {
   const { fromRaw, toRaw, type } = system;
+
+  const hasChange = draft.get(entry.id)?.score != null;
 
   const newScore = draft.get(entry.id)?.score ?? entry.score;
   const newScoreDisplay =
@@ -376,13 +396,23 @@ function ScoreIconsInput({
                 }}
                 className={clsx(
                   "btn btn-ghost size-fit p-0 hover:border-transparent hover:bg-transparent",
-                  hoveredAt == null
-                    ? newScore >= n
-                      ? "text-yellow-600"
+                  settings.hideScore.value
+                    ? hasChange
+                      ? hoveredAt == null
+                        ? newScore >= n
+                          ? "text-yellow-600"
+                          : "text-neutral"
+                        : hoveredAt >= n
+                          ? "text-yellow-600"
+                          : "text-neutral"
                       : "text-neutral"
-                    : hoveredAt >= n
-                      ? "text-yellow-600"
-                      : "text-neutral",
+                    : hoveredAt == null
+                      ? newScore >= n
+                        ? "text-yellow-600"
+                        : "text-neutral"
+                      : hoveredAt >= n
+                        ? "text-yellow-600"
+                        : "text-neutral",
                 )}
               >
                 <PiStarFill className="size-4.5 lg:size-6" />
@@ -394,11 +424,19 @@ function ScoreIconsInput({
                 value={n.toString()}
                 className={clsx(
                   "btn btn-ghost text-neutral size-fit p-0",
-                  n === 35
-                    ? "data-checked:text-error"
-                    : n === 60
-                      ? "data-checked:text-warning"
-                      : "data-checked:text-success",
+                  settings.hideScore.value
+                    ? hasChange
+                      ? n === 35
+                        ? "data-checked:text-error"
+                        : n === 60
+                          ? "data-checked:text-warning"
+                          : "data-checked:text-success"
+                      : ""
+                    : n === 35
+                      ? "data-checked:text-error"
+                      : n === 60
+                        ? "data-checked:text-warning"
+                        : "data-checked:text-success",
                 )}
               >
                 {n === 35 ? (
@@ -412,10 +450,12 @@ function ScoreIconsInput({
             ))}
       </RadioGroup>
       <OldScore
+        hasChange={hasChange}
         newScore={newScore}
         newScoreDisplay={newScoreDisplay}
         prevScore={prevScore}
         prevScoreDisplay={prevScoreDisplay}
+        settings={settings}
         system={system}
       />
     </>
@@ -423,16 +463,20 @@ function ScoreIconsInput({
 }
 
 function OldScore({
+  hasChange,
   newScore,
   newScoreDisplay,
   prevScore,
   prevScoreDisplay,
+  settings,
   system: { type, toRaw },
 }: {
+  hasChange: boolean;
   newScore: number;
   newScoreDisplay: string;
   prevScore: number;
   prevScoreDisplay: string;
+  settings: Settings;
   system: ScoreSystem;
 }) {
   const d = prevScore - newScore;
@@ -458,18 +502,28 @@ function OldScore({
       <div
         className={clsx(
           "flex flex-col items-center justify-center text-xs lg:text-sm",
-          d === 0
-            ? "text-neutral"
-            : newScore === 0 || newScoreDisplay == prevScoreDisplay
+          settings.hideScore.value
+            ? hasChange
               ? "text-warning"
-              : d > 0
-                ? "text-error"
-                : d < 0
-                  ? "text-success"
-                  : "text-neutral",
+              : "text-neutral"
+            : d === 0
+              ? "text-neutral"
+              : newScore === 0 || newScoreDisplay == prevScoreDisplay
+                ? "text-warning"
+                : d > 0
+                  ? "text-error"
+                  : d < 0
+                    ? "text-success"
+                    : "text-neutral",
         )}
       >
-        {d == 0 || Number.isNaN(d) ? (
+        {settings.hideScore.value ? (
+          hasChange ? (
+            <PiAsteriskBold />
+          ) : (
+            <PiEqualsBold />
+          )
+        ) : d == 0 || Number.isNaN(d) ? (
           <PiEqualsBold />
         ) : newScore === 0 ? (
           <CustomTooltip
