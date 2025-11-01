@@ -121,7 +121,7 @@ export function prepareListForDisplay(
         MEDIA_LIST_STATUSES.indexOf(b.status);
       return (
         x ||
-        (sortDir === "asc"
+        (sortDir === "desc"
           ? comparator(a, b, titleLanguage)
           : comparator(b, a, titleLanguage))
       );
