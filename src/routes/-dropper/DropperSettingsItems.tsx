@@ -19,7 +19,7 @@ import {
   nameOfStatus,
   nameOfTitleLanguage,
 } from "../../util/settings";
-import { useStateW, type ReactState } from "../../hooks/useStateW";
+import useCell, { type Cell } from "../../hooks/useCell";
 import SettingsItem from "../../components/list/SettingsItem";
 import { DateTime } from "luxon";
 import clsx from "clsx";
@@ -28,8 +28,8 @@ import { PiCheckFatFill, PiTrashFill } from "react-icons/pi";
 import { useState } from "react";
 
 export type DropperSettings = {
-  listType: ReactState<MediaType>;
-  titleLanguage: ReactState<TitleLanguage>;
+  listType: Cell<MediaType>;
+  titleLanguage: Cell<TitleLanguage>;
 };
 
 type DroppableMediaListStatus = "CURRENT" | "PAUSED";
@@ -41,8 +41,8 @@ const DROPPABLE_MEDIA_LIST_STATUS: DroppableMediaListStatus[] = [
 
 export function useDropperSettings(): DropperSettings {
   return {
-    listType: useStateW<MediaType>("ANIME"),
-    titleLanguage: useStateW<TitleLanguage>("ENGLISH"),
+    listType: useCell<MediaType>("ANIME"),
+    titleLanguage: useCell<TitleLanguage>("ENGLISH"),
   };
 }
 

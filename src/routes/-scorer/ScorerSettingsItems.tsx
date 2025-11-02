@@ -33,30 +33,30 @@ import {
   type SortBy,
   type SortDir,
 } from "../../util/settings";
-import { useStateW, type ReactState } from "../../hooks/useStateW";
+import useCell, { type Cell } from "../../hooks/useCell";
 import SettingsItem from "../../components/list/SettingsItem";
 
 export type ScorerSettings = {
-  listType: ReactState<MediaType>;
-  sortBy: ReactState<SortBy>;
-  randomSeed: ReactState<number>;
-  sortDir: ReactState<SortDir>;
-  allowedStatuses: ReactState<MediaListStatus[]>;
-  titleLanguage: ReactState<TitleLanguage>;
-  scoreFormat: ReactState<ScoreFormat>;
-  hideScore: ReactState<boolean>;
+  listType: Cell<MediaType>;
+  sortBy: Cell<SortBy>;
+  randomSeed: Cell<number>;
+  sortDir: Cell<SortDir>;
+  allowedStatuses: Cell<MediaListStatus[]>;
+  titleLanguage: Cell<TitleLanguage>;
+  scoreFormat: Cell<ScoreFormat>;
+  hideScore: Cell<boolean>;
 };
 
 export function useScorerSettings(): ScorerSettings {
   return {
-    listType: useStateW<MediaType>("ANIME"),
-    allowedStatuses: useStateW<MediaListStatus[]>(["COMPLETED"]),
-    sortBy: useStateW<SortBy>("score"),
-    randomSeed: useStateW<number>(seedgen()),
-    sortDir: useStateW<SortDir>("desc"),
-    titleLanguage: useStateW<TitleLanguage>("ENGLISH"),
-    scoreFormat: useStateW<ScoreFormat>("POINT_100"),
-    hideScore: useStateW<boolean>(false),
+    listType: useCell<MediaType>("ANIME"),
+    allowedStatuses: useCell<MediaListStatus[]>(["COMPLETED"]),
+    sortBy: useCell<SortBy>("score"),
+    randomSeed: useCell<number>(seedgen()),
+    sortDir: useCell<SortDir>("desc"),
+    titleLanguage: useCell<TitleLanguage>("ENGLISH"),
+    scoreFormat: useCell<ScoreFormat>("POINT_100"),
+    hideScore: useCell<boolean>(false),
   };
 }
 
