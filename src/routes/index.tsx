@@ -96,8 +96,9 @@ function Card({
       <div className="card card-side lg:card-lg bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
         <figure className="h-45 w-25 lg:w-50">
           <img
-            className="mask-t-from-75% mask-r-from-0% mask-b-from-75% object-cover object-center blur-[1px]"
+            className="pointer-events-none mask-t-from-75% mask-r-from-0% mask-b-from-75% object-cover object-center blur-[1px]"
             src={img}
+            draggable={false}
           />
         </figure>
         <div className="card-body justify-between py-2 pr-4 pl-4">
