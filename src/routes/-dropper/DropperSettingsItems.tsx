@@ -32,6 +32,13 @@ export type DropperSettings = {
   titleLanguage: ReactState<TitleLanguage>;
 };
 
+type DroppableMediaListStatus = "CURRENT" | "PAUSED";
+
+const DROPPABLE_MEDIA_LIST_STATUS: DroppableMediaListStatus[] = [
+  "CURRENT",
+  "PAUSED",
+];
+
 export function useDropperSettings(): DropperSettings {
   return {
     listType: useStateW<MediaType>("ANIME"),
@@ -59,7 +66,7 @@ export default function DropperSettingsItems({
     DateTime.now().endOf("day"),
   );
 
-  const [dropStatuses, setDropStatuses] = useState<("CURRENT" | "PAUSED")[]>([
+  const [dropStatuses, setDropStatuses] = useState<DroppableMediaListStatus[]>([
     "CURRENT",
     "PAUSED",
   ]);
@@ -116,12 +123,12 @@ export default function DropperSettingsItems({
       </SettingsItem>
       <div className="divider mb-3"></div>
       <SettingsItem label="Drop Status Filter">
-        <CustomListbox<"CURRENT" | "PAUSED">
+        <CustomListbox<DroppableMediaListStatus>
           className="select w-full"
           disabled={viewer.data == null}
           multiple
           value={dropStatuses}
-          options={["CURRENT", "PAUSED"]}
+          options={DROPPABLE_MEDIA_LIST_STATUS}
           onChange={(v) => {
             if (v.length > 0) {
               setDropStatuses(v);

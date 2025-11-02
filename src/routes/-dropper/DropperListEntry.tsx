@@ -26,14 +26,15 @@ export default function DropperListEntry({
 }) {
   const oldStatus = entry.status;
   const newStatus = draft.get(entry.id)?.status ?? entry.status;
+
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   return (
     <div
       className={clsx(
         "bg-base-100 rounded-field min-h-10 w-full p-1.25 shadow-md dark:shadow",
-        "grid grid-cols-[2.5rem_4rem_3.75rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_date_status_text']",
-        "lg:grid-cols-[2.5rem_5rem_4.25rem_1fr] lg:gap-2",
+        "grid grid-cols-[2.5rem_4.25rem_1.75rem_1fr] grid-rows-1 gap-1 [grid-template-areas:'img_status_drop_text']",
+        "lg:grid-cols-[2.5rem_5rem_2rem_1fr] lg:gap-2",
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
@@ -99,14 +100,19 @@ export default function DropperListEntry({
           ></div>
         </a>
       </div>
-      <div className="flex-center text-xs [grid-area:date] lg:text-sm">
-        {DateTime.fromSeconds(entry.updatedAt).toLocaleString(
-          DateTime.DATE_SHORT,
-        )}
+      <div className="flex-center text-xs [grid-area:status] lg:text-sm">
+        <div className="opacity-50">
+          {nameOfStatus(settings.listType.value, oldStatus)}
+        </div>
+        <div>
+          {DateTime.fromSeconds(entry.updatedAt).toLocaleString(
+            DateTime.DATE_SHORT,
+          )}
+        </div>
       </div>
       <div
         className={clsx(
-          "flex-center [grid-area:status]",
+          "flex-center [grid-area:drop]",
           newStatus === "DROPPED" && "text-error",
         )}
       >
@@ -126,16 +132,8 @@ export default function DropperListEntry({
           }}
           className="btn btn-ghost text-neutral data-checked:text-error size-fit p-0"
         >
-          <PiTrashFill className="size-4.5 lg:size-6" />
+          <PiTrashFill className="size-6 lg:size-7" />
         </Switch>
-        <div
-          className={clsx(
-            "-mt-1.5 text-xs lg:text-sm",
-            newStatus !== "DROPPED" && "opacity-50",
-          )}
-        >
-          {nameOfStatus(settings.listType.value, oldStatus)}
-        </div>
       </div>
       <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text]">
         <p className="wrap-anywhere">
