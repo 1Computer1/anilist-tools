@@ -119,7 +119,7 @@ export default function DropperListEntry({
               status: newStatus === "DROPPED" ? undefined : "DROPPED",
             });
           }}
-          className="btn btn-ghost text-neutral data-checked:text-error size-fit p-0 hover:border-transparent hover:bg-transparent"
+          className="btn btn-ghost text-neutral data-checked:text-error size-fit p-0"
         >
           <PiTrashFill className="size-4.5 lg:size-6" />
         </Switch>
