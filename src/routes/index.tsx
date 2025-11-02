@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { PiNavigationArrowFill, PiStarFill, PiTrashFill } from "react-icons/pi";
-import scorerImg from "../images/scorer.avif";
-import dropperImg from "../images/dropper.avif";
+import scorerLightImg from "../images/scorer-light.avif";
+import scorerDarkImg from "../images/scorer-dark.avif";
+import dropperLightImg from "../images/dropper-light.avif";
+import dropperDarkImg from "../images/dropper-dark.avif";
+import useIsDarkMode from "../hooks/useIsDarkMode";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -19,6 +22,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const linkClassName = clsx("btn btn-primary btn-outline");
+  const isDarkMode = useIsDarkMode();
 
   return (
     <main className="flex h-full w-full flex-col items-center justify-start gap-6 overflow-y-auto px-16 lg:gap-8">
@@ -44,7 +48,7 @@ function Index() {
               </p>
             </>
           }
-          img={scorerImg}
+          img={isDarkMode ? scorerDarkImg : scorerLightImg}
           link={
             <Link to="/scorer" className={linkClassName}>
               <PiNavigationArrowFill /> Go
@@ -68,7 +72,7 @@ function Index() {
               </p>
             </>
           }
-          img={dropperImg}
+          img={isDarkMode ? dropperDarkImg : dropperLightImg}
           link={
             <Link to="/dropper" className={linkClassName}>
               <PiNavigationArrowFill /> Go
@@ -93,10 +97,10 @@ function Card({
 }) {
   return (
     <div className="flex flex-row flex-wrap items-center justify-start">
-      <div className="card card-side lg:card-lg bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
-        <figure className="h-45 w-25 lg:w-50">
+      <div className="card card-side lg:card-lg card-border dark:bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
+        <figure className="h-50 w-25 lg:w-50">
           <img
-            className="pointer-events-none mask-t-from-75% mask-r-from-0% mask-b-from-75% object-cover object-center blur-[1px]"
+            className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center]"
             src={img}
             draggable={false}
           />
