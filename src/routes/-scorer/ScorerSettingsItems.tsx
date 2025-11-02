@@ -142,6 +142,7 @@ export default function ScorerSettingsItems({
       <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
         <Switch
           className="toggle toggle-primary duration-300 motion-reduce:transition-none"
+          disabled={viewer.data == null}
           checked={settings.hideScore.value}
           onChange={settings.hideScore.set}
         />

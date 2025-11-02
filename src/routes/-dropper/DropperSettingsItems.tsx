@@ -161,6 +161,7 @@ export default function DropperSettingsItems({
       <SettingsItem label="Drop Older Than">
         <input
           type="date"
+          disabled={viewer.data == null}
           value={olderThan.toISODate()!}
           onChange={(e) => {
             const date = (
@@ -173,12 +174,13 @@ export default function DropperSettingsItems({
           className={clsx(
             "bg-base-100 rounded-field border-base-content/20 flex h-(--size) flex-col border p-2 text-sm shadow-sm",
             "origin-top transition duration-150 ease-out data-closed:scale-y-90 data-closed:opacity-0 motion-reduce:transition-none",
-            "focus:outline-none",
+            "disabled:bg-base-200 disabled:text-base-content/40 focus:outline-none disabled:cursor-not-allowed disabled:border-none disabled:shadow-none",
           )}
         />
       </SettingsItem>
       <Button
         className="btn btn-outline btn-secondary"
+        disabled={viewer.data == null}
         onClick={() => {
           dispatch({
             t: "updateOlderThan",
