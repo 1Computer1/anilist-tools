@@ -7,7 +7,7 @@ import { getList, type Entry, type List } from "../../api/queries/list";
 import { Switch, Transition } from "@headlessui/react";
 import { getTokenUserId } from "../../util/jwt";
 import { getViewer, type Viewer } from "../../api/queries/viewer";
-import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import { PiWrenchFill } from "react-icons/pi";
 import { useDialog, type DialogState } from "../../hooks/useDialog";
 import { ErrorAlert } from "../ErrorAlert";
 import React, { Fragment, useEffect, useRef, useState } from "react";
@@ -125,7 +125,7 @@ export default function LeftRightListInterface({
                 className="btn btn-square btn-ghost"
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
               >
-                <PiDotsThreeOutlineFill className="size-6" />
+                <PiWrenchFill className="size-6" />
               </Switch>
             </>
           )}
