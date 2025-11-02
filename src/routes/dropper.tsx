@@ -277,7 +277,7 @@ function Dropper() {
             { keys: "/", desc: "Revert status to original" },
             { divider: "Other" },
             { keys: "Ctrl", desc: "Hold to update but stay on entry" },
-            { keys: "`|Esc|⌫", desc: "Revert score and go back" },
+            { keys: "`|Esc|⌫", desc: "Revert status and go back" },
           ]}
         />
       </CustomDialog>
