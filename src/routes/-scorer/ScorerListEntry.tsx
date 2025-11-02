@@ -60,21 +60,21 @@ export default function ScorerListEntry({
     <div
       className={clsx(
         "bg-base-100 rounded-field min-h-10 w-full p-1.25 shadow-md dark:shadow",
+        "grid grid-rows-1 gap-1 [grid-template-areas:'img_score_oldscore_text'] lg:gap-2",
         system.type === "int" || system.type === "decimal"
           ? clsx(
-              "grid grid-cols-[2.5rem_4rem_1.5rem_1fr]",
+              "grid-cols-[2.5rem_4rem_1.5rem_1fr]",
               "lg:grid-cols-[2.5rem_4.5rem_2rem_1fr]",
             )
           : system.type === "stars"
             ? clsx(
-                "grid grid-cols-[2.5rem_6.5rem_1.5rem_1fr]",
+                "grid-cols-[2.5rem_6.5rem_1.5rem_1fr]",
                 "lg:grid-cols-[2.5rem_8.5rem_2rem_1fr]",
               )
             : clsx(
-                "grid grid-cols-[2.5rem_5rem_0.75rem_1fr]",
+                "grid-cols-[2.5rem_5rem_0.75rem_1fr]",
                 "lg:grid-cols-[2.5rem_5rem_1rem_1fr]",
               ),
-        "grid-rows gap-1 [grid-template-areas:'img_score_oldscore_text'] lg:grid-rows-1 lg:gap-2",
         "focus:outline-primary focus:outline-2",
       )}
       tabIndex={0}
