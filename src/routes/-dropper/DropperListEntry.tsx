@@ -130,7 +130,7 @@ export default function DropperListEntry({
         </Switch>
         <div
           className={clsx(
-            "text-xs lg:text-sm",
+            "-mt-1.5 text-xs lg:text-sm",
             newStatus !== "DROPPED" && "opacity-50",
           )}
         >
