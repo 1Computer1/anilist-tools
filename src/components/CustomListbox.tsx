@@ -29,7 +29,7 @@ export type CustomListboxProps<TOpt extends string> = {
 
 type Used = keyof CustomListboxProps<string>;
 
-export function CustomListbox<TOpt extends string>({
+export default function CustomListbox<TOpt extends string>({
   value,
   onChange,
   multiple = false,

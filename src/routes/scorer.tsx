@@ -11,11 +11,13 @@ import {
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
 import { Shortcuts } from "../components/Shortcuts";
-import { ScorerListEntry, SCORE_SYSTEMS } from "./-scorer/ListEntry";
+import ScorerListEntry, { SCORE_SYSTEMS } from "./-scorer/ScorerListEntry";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { useEffect } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
-import { ScorerSettingsItems, useScorerSettings } from "./-scorer/Settings";
+import ScorerSettingsItems, {
+  useScorerSettings,
+} from "./-scorer/ScorerSettingsItems";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";

@@ -9,22 +9,15 @@ import { getTokenUserId } from "../../util/jwt";
 import { getViewer, type Viewer } from "../../api/queries/viewer";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 import { useDialog, type DialogState } from "../../hooks/useDialog";
-import ChoicesDialog, { type Severity } from "../dialogs/ChoicesDialog";
 import { ErrorAlert } from "../ErrorAlert";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { useMediaQuery } from "usehooks-ts";
 import * as _ from "lodash-es";
 import { nameOfStatus } from "../../util/settings";
-import { ListDivider } from "./ListDivider";
-
-export type ConfirmDialogContext = {
-  title: React.ReactNode;
-  action: React.ReactNode;
-  severity: Severity;
-  message: React.ReactNode;
-  onConfirm: () => void;
-};
+import ListDivider from "./ListDivider";
+import type { ConfirmDialogContext } from "../dialogs/ConfirmDialog";
+import ConfirmDialog from "../dialogs/ConfirmDialog";
 
 export type LeftRightListInterfaceProps = {
   // Input props
@@ -138,29 +131,7 @@ export default function LeftRightListInterface({
           )}
         </div>
       </div>
-      <ChoicesDialog
-        state={confirmDialog}
-        title={confirmDialog.context.title}
-        choices={[
-          {
-            text: confirmDialog.context.action,
-            severity: confirmDialog.context.severity,
-            onClick: () => {
-              confirmDialog.context.onConfirm();
-              confirmDialog.close();
-            },
-          },
-          {
-            text: "Cancel",
-            severity: "NORMAL",
-            onClick: () => {
-              confirmDialog.close();
-            },
-          },
-        ]}
-      >
-        {confirmDialog.context.message}
-      </ChoicesDialog>
+      <ConfirmDialog state={confirmDialog}></ConfirmDialog>
       {children}
       <div className="flex w-full grow flex-col items-start justify-center gap-2 md:flex-row">
         <Transition show={md || isSettingsOpen}>

@@ -20,7 +20,7 @@ import type { ScorerListDraft, ScorerListDraftAction } from "../scorer";
 import type { ScoreFormat } from "../../api/queries/viewer";
 import CustomTooltip from "../../components/CustomTooltip";
 import { useMediaQuery } from "usehooks-ts";
-import type { ScorerSettings } from "./Settings";
+import type { ScorerSettings } from "./ScorerSettingsItems";
 import { getTitle } from "../../util/settings";
 
 const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
@@ -31,7 +31,7 @@ const NUMBER_SHORTCUTS: Record<ScoreFormat, number[]> = {
   POINT_3: [0, 35, 60, 85],
 };
 
-export function ScorerListEntry({
+export default function ScorerListEntry({
   entry,
   draft,
   dispatch,

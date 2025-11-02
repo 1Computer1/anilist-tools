@@ -16,10 +16,10 @@ import {
   type TitleLanguage,
   type Viewer,
 } from "../../api/queries/viewer";
-import { CustomListbox } from "../../components/CustomListbox";
+import CustomListbox from "../../components/CustomListbox";
 import type { ScorerListDraftAction } from "../scorer";
 import type { DialogState } from "../../hooks/useDialog";
-import type { ConfirmDialogContext } from "../../components/list/LeftRightListInterface";
+import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
 import {
   nameOfListType,
   nameOfScoreFormat,
@@ -60,7 +60,7 @@ export function useScorerSettings(): ScorerSettings {
   };
 }
 
-export function ScorerSettingsItems({
+export default function ScorerSettingsItems({
   dispatch,
   settings,
   viewer,
