@@ -248,14 +248,10 @@ function MenuItems({
             </a>
           </Item>
           <Space />
-          <Button
-            className="btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center"
-            onClick={() => toggleDarkMode()}
-          >
-            {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-            <PiArrowRightBold />
-            {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-          </Button>
+          <ToggleDarkModeButton
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
           <Space />
           <Button
             className="btn btn-sm btn-primary btn-outline w-full"
@@ -267,14 +263,10 @@ function MenuItems({
       ) : (
         <>
           <Space />
-          <Button
-            className="btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center"
-            onClick={() => toggleDarkMode()}
-          >
-            {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-            <PiArrowRightBold />
-            {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
-          </Button>
+          <ToggleDarkModeButton
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
           <Space />
           <Button
             className="btn btn-sm btn-primary btn-outline w-full"
@@ -285,6 +277,29 @@ function MenuItems({
         </>
       )}
     </>
+  );
+}
+
+function ToggleDarkModeButton({
+  isDarkMode,
+  toggleDarkMode,
+}: {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+}) {
+  return (
+    <Button
+      className={clsx(
+        "btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center",
+        "dark:hover:[--btn-bg:var(--color-base-content)] dark:hover:[--btn-fg:var(--color-base-200)]",
+        "dark:focus:[--btn-bg:var(--color-base-content)] dark:focus:[--btn-border:var(--color-base-content)] dark:focus:[--btn-fg:var(--color-base-200)]",
+      )}
+      onClick={() => toggleDarkMode()}
+    >
+      {!isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+      <PiArrowRightBold />
+      {isDarkMode ? <PiSunFill /> : <PiMoonFill />}
+    </Button>
   );
 }
 
