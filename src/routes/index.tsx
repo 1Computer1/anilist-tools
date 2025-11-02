@@ -92,19 +92,23 @@ function Card({
 }: {
   title: React.ReactNode;
   desc: React.ReactNode;
-  img: string;
+  img?: string;
   link: React.ReactNode;
 }) {
   return (
     <div className="flex flex-row flex-wrap items-center justify-start">
       <div className="card card-side lg:card-lg card-border dark:bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
-        <figure className="h-50 w-25 lg:w-50">
-          <img
-            className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center] blur-[0.5px]"
-            src={img}
-            draggable={false}
-          />
-        </figure>
+        {img ? (
+          <figure className="h-50 w-12 min-w-12 lg:w-25 lg:min-w-25">
+            <img
+              className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center] blur-[0.5px]"
+              src={img}
+              draggable={false}
+            />
+          </figure>
+        ) : (
+          <div className="to-base-100 dark:to-base-200 from-base-200 dark:from-base-300 rounded-l-box h-50 w-12 min-w-12 bg-linear-to-r lg:w-25 lg:min-w-25"></div>
+        )}
         <div className="card-body justify-between py-2 pr-4 pl-4">
           <div className="flex flex-col gap-y-1">
             <h2 className="card-title">{title}</h2>
