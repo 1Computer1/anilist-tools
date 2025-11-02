@@ -35,5 +35,6 @@ export default function useBlockerDialog({
         });
       });
     },
+    enableBeforeUnload: () => shouldBlock(),
   });
 }
