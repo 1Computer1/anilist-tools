@@ -292,7 +292,7 @@ function ToggleDarkModeButton({
       className={clsx(
         "btn btn-outline light:btn-neutral btn-sm flex w-full flex-row items-center justify-center",
         "dark:hover:[--btn-bg:var(--color-base-content)] dark:hover:[--btn-fg:var(--color-base-200)]",
-        "dark:focus:[--btn-bg:var(--color-base-content)] dark:focus:[--btn-border:var(--color-base-content)] dark:focus:[--btn-fg:var(--color-base-200)]",
+        "dark:focus-visible::[--btn-border:var(--color-base-content)] dark:focus-visible:[--btn-bg:var(--color-base-content)] dark:focus-visible:[--btn-fg:var(--color-base-200)]",
       )}
       onClick={() => toggleDarkMode()}
     >
