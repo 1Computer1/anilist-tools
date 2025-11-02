@@ -67,8 +67,8 @@ function Index() {
                 Drop shows and manga that you have not updated in a long time.
               </p>
               <p>
-                Filter by currently watching/reading and paused entries on your
-                list.
+                Filter by currently watching/reading and paused entries in your
+                lists.
               </p>
             </>
           }
