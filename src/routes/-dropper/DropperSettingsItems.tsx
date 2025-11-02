@@ -3,7 +3,6 @@ import type { AnilistError } from "../../api/anilist";
 import {
   MEDIA_LIST_STATUSES,
   MEDIA_TYPES,
-  type MediaListStatus,
   type MediaType,
 } from "../../api/queries/list";
 import {
