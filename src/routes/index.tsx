@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { PiNavigationArrowFill, PiStarFill, PiTrashFill } from "react-icons/pi";
-import scorerImg from "../images/scorer.png";
-import dropperImg from "../images/dropper.png";
+import scorerImg from "../images/scorer.avif";
+import dropperImg from "../images/dropper.avif";
 
 export const Route = createFileRoute("/")({
   component: Index,
