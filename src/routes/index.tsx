@@ -62,6 +62,10 @@ function Index() {
               <p>
                 Drop shows and manga that you have not updated in a long time.
               </p>
+              <p>
+                Filter by currently watching/reading and paused entries on your
+                list.
+              </p>
             </>
           }
           img={dropperImg}

@@ -1,6 +1,11 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import type { AnilistError } from "../../api/anilist";
-import { MEDIA_TYPES, type MediaType } from "../../api/queries/list";
+import {
+  MEDIA_LIST_STATUSES,
+  MEDIA_TYPES,
+  type MediaListStatus,
+  type MediaType,
+} from "../../api/queries/list";
 import {
   TITLE_LANGUAGES,
   type TitleLanguage,
@@ -10,13 +15,17 @@ import CustomListbox from "../../components/CustomListbox";
 import type { DropperListDraftAction } from "../dropper";
 import type { DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
-import { nameOfListType, nameOfTitleLanguage } from "../../util/settings";
+import {
+  nameOfListType,
+  nameOfStatus,
+  nameOfTitleLanguage,
+} from "../../util/settings";
 import { useStateW, type ReactState } from "../../hooks/useStateW";
 import SettingsItem from "../../components/list/SettingsItem";
 import { DateTime } from "luxon";
 import clsx from "clsx";
 import { Button } from "@headlessui/react";
-import { PiTrashFill } from "react-icons/pi";
+import { PiCheckFatFill, PiTrashFill } from "react-icons/pi";
 import { useState } from "react";
 
 export type DropperSettings = {
@@ -50,6 +59,11 @@ export default function DropperSettingsItems({
   const [olderThan, setOlderThan] = useState<DateTime>(
     DateTime.now().endOf("day"),
   );
+
+  const [dropStatuses, setDropStatuses] = useState<("CURRENT" | "PAUSED")[]>([
+    "CURRENT",
+    "PAUSED",
+  ]);
 
   return (
     <>
@@ -101,6 +115,43 @@ export default function DropperSettingsItems({
           optionContents={(value) => nameOfTitleLanguage(value)}
         />
       </SettingsItem>
+      <div className="divider mb-3"></div>
+      <SettingsItem label="Drop Status Filter">
+        <CustomListbox<"CURRENT" | "PAUSED">
+          className="select w-full"
+          disabled={viewer.data == null}
+          multiple
+          value={dropStatuses}
+          options={["CURRENT", "PAUSED"]}
+          onChange={(v) => {
+            if (v.length > 0) {
+              setDropStatuses(v);
+            }
+          }}
+          buttonContents={
+            <span className="inline-block truncate">
+              {[...dropStatuses]
+                .sort(
+                  (a, b) =>
+                    MEDIA_LIST_STATUSES.indexOf(a) -
+                    MEDIA_LIST_STATUSES.indexOf(b),
+                )
+                .map((x) => nameOfStatus(settings.listType.value, x))
+                .join(", ")}
+            </span>
+          }
+          optionContents={(value) => (
+            <div className="inline-flex flex-row items-center gap-x-2">
+              <div
+                className={clsx(!dropStatuses.includes(value) && "invisible")}
+              >
+                <PiCheckFatFill />
+              </div>
+              <span>{nameOfStatus(settings.listType.value, value)}</span>
+            </div>
+          )}
+        />
+      </SettingsItem>
       <SettingsItem label="Drop Older Than">
         <input
           type="date"
@@ -126,6 +177,7 @@ export default function DropperSettingsItems({
           dispatch({
             t: "updateOlderThan",
             date: olderThan,
+            dropStatuses,
             status: "DROPPED",
           });
         }}

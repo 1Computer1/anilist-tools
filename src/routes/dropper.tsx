@@ -43,7 +43,12 @@ export type DropperListDraft = ListDraft<"status">;
 
 export type DropperListDraftAction =
   | { t: "updateStatus"; id: number; status?: MediaListStatus }
-  | { t: "updateOlderThan"; date: DateTime; status: MediaListStatus }
+  | {
+      t: "updateOlderThan";
+      date: DateTime;
+      dropStatuses: MediaListStatus[];
+      status: MediaListStatus;
+    }
   | { t: "reset" };
 
 function Dropper() {
@@ -95,6 +100,7 @@ function Dropper() {
             draft.set(entry.id, {});
           }
           if (
+            action.dropStatuses.includes(entry.status) &&
             DateTime.fromSeconds(entry.updatedAt).endOf("day") <= action.date
           ) {
             draft.get(entry.id)!.status = "DROPPED";
