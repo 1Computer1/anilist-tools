@@ -32,7 +32,7 @@ export const Route = createFileRoute("/scorer")({
       {
         name: "description",
         content:
-          "Enhance your AniList experience with various tools!\nQuickly apply new scores to your entire list.",
+          "Enhance your AniList experience with various tools!\nQuickly apply new scores to your anime and manga list.",
       },
     ],
   }),

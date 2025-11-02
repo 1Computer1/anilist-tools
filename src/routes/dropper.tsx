@@ -33,7 +33,7 @@ export const Route = createFileRoute("/dropper")({
       {
         name: "description",
         content:
-          "Enhance your AniList experience with various tools!\nDrop shows you have not updated in a long time.",
+          "Enhance your AniList experience with various tools!\nDrop shows and manga that you have not updated in a long time.",
       },
     ],
   }),
