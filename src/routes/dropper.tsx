@@ -91,12 +91,12 @@ function Dropper() {
           break;
         }
         for (const [_, entry] of list.data) {
+          if (!draft.has(entry.id)) {
+            draft.set(entry.id, {});
+          }
           if (
             DateTime.fromSeconds(entry.updatedAt).endOf("day") <= action.date
           ) {
-            if (!draft.has(entry.id)) {
-              draft.set(entry.id, {});
-            }
             draft.get(entry.id)!.status = "DROPPED";
           } else {
             draft.get(entry.id)!.status = undefined;
