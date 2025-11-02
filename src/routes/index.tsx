@@ -100,7 +100,7 @@ function Card({
       <div className="card card-side lg:card-lg card-border dark:bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
         <figure className="h-50 w-25 lg:w-50">
           <img
-            className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center]"
+            className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center] blur-[0.5px]"
             src={img}
             draggable={false}
           />
