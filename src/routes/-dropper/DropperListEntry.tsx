@@ -7,7 +7,7 @@ import type { DropperSettings } from "./DropperSettingsItems";
 import { getTitle, nameOfStatus } from "../../util/settings";
 import { DateTime } from "luxon";
 import { PiTrashFill } from "react-icons/pi";
-import { Field, Label, Switch } from "@headlessui/react";
+import { Switch } from "@headlessui/react";
 
 export default function DropperListEntry({
   entry,
@@ -104,7 +104,7 @@ export default function DropperListEntry({
           DateTime.DATE_SHORT,
         )}
       </div>
-      <Field
+      <div
         className={clsx(
           "flex-center [grid-area:status]",
           newStatus === "DROPPED" && "text-error",
@@ -112,6 +112,11 @@ export default function DropperListEntry({
       >
         <Switch
           checked={newStatus === "DROPPED"}
+          ref={(e) => {
+            if (e) {
+              e.tabIndex = -1;
+            }
+          }}
           onChange={() => {
             dispatch({
               t: "updateStatus",
@@ -123,15 +128,15 @@ export default function DropperListEntry({
         >
           <PiTrashFill className="size-4.5 lg:size-6" />
         </Switch>
-        <Label
+        <div
           className={clsx(
             "text-xs lg:text-sm",
             newStatus !== "DROPPED" && "opacity-50",
           )}
         >
           {nameOfStatus(settings.listType.value, oldStatus)}
-        </Label>
-      </Field>
+        </div>
+      </div>
       <div className="flex min-w-0 flex-col justify-center self-center justify-self-start p-1 [grid-area:text]">
         <p className="wrap-anywhere">
           {getTitle(entry, settings.titleLanguage.value)}
