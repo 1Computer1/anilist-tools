@@ -23,6 +23,7 @@ import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
 import { prepareListForDisplay } from "../util/settings";
+import useBlockerDialog from "../hooks/useBlockerDialog";
 
 export const Route = createFileRoute("/scorer")({
   component: Scorer,
@@ -128,6 +129,15 @@ function Scorer() {
           }
           return [changes, perceivedChanges];
         })();
+
+  useBlockerDialog({
+    confirmDialog,
+    shouldBlock: () =>
+      numUnsavedChanges != null &&
+      (settings.hideScore.value
+        ? numPerceivedChanges > 0
+        : numUnsavedChanges > 0),
+  });
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {
     onSuccess: async () => {

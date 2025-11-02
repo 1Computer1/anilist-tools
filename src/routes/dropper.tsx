@@ -24,6 +24,7 @@ import DropperSettingsItems, {
 } from "./-dropper/DropperSettingsItems";
 import DropperListEntry from "./-dropper/DropperListEntry";
 import { DateTime } from "luxon";
+import useBlockerDialog from "../hooks/useBlockerDialog";
 
 export const Route = createFileRoute("/dropper")({
   component: Dropper,
@@ -136,6 +137,11 @@ function Dropper() {
           }
           return changes;
         })();
+
+  useBlockerDialog({
+    confirmDialog,
+    shouldBlock: () => numUnsavedChanges != null && numUnsavedChanges > 0,
+  });
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {
     onSuccess: async () => {

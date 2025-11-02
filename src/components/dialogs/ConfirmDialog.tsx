@@ -4,9 +4,11 @@ import ChoicesDialog, { type Severity } from "./ChoicesDialog";
 export type ConfirmDialogContext = {
   title: React.ReactNode;
   action: React.ReactNode;
+  cancel?: React.ReactNode;
   severity: Severity;
   message: React.ReactNode;
   onConfirm: () => void;
+  onCancel?: () => void;
 };
 
 export default function ConfirmDialog({
@@ -28,9 +30,10 @@ export default function ConfirmDialog({
           },
         },
         {
-          text: "Cancel",
+          text: state.context.cancel ?? "Cancel",
           severity: "NORMAL",
           onClick: () => {
+            state.context.onCancel?.();
             state.close();
           },
         },
