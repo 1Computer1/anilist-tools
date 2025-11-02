@@ -22,8 +22,9 @@ export default function ChoicesDialog({
         {children}
       </Description>
       <div className="card-actions mt-4 flex w-full flex-row justify-end gap-2">
-        {choices.map(({ text, severity, onClick }) => (
+        {choices.map(({ text, severity, onClick }, i) => (
           <Button
+            key={i}
             className={clsx(
               "btn btn-outline",
               {

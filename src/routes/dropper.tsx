@@ -11,56 +11,50 @@ import {
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
 import { Shortcuts } from "../components/Shortcuts";
-import ScorerListEntry from "./-scorer/ScorerListEntry";
-import { SCORE_SYSTEMS } from "./-scorer/scoreSystems";
 import { ErrorAlert } from "../components/ErrorAlert";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
-import ScorerSettingsItems, {
-  useScorerSettings,
-} from "./-scorer/ScorerSettingsItems";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
 import { prepareListForDisplay } from "../util/settings";
+import type { MediaListStatus } from "../api/queries/list";
+import DropperSettingsItems, {
+  useDropperSettings,
+} from "./-dropper/DropperSettingsItems";
+import DropperListEntry from "./-dropper/DropperListEntry";
+import { DateTime } from "luxon";
 
-export const Route = createFileRoute("/scorer")({
-  component: Scorer,
+export const Route = createFileRoute("/dropper")({
+  component: Dropper,
   head: () => ({
     meta: [
-      { title: "AniList Tools - Scorer" },
+      { title: "AniList Tools - Dropper" },
       {
         name: "description",
         content:
-          "Enhance your AniList experience with various tools!\nQuickly apply new scores to your entire list.",
+          "Enhance your AniList experience with various tools!\nDrop shows you have not updated in a long time.",
       },
     ],
   }),
 });
 
-export type ScorerListDraft = ListDraft<"score" | "scoreDisplay">;
+export type DropperListDraft = ListDraft<"status">;
 
-export type ScorerListDraftAction =
-  | { t: "updateScore"; id: number; score?: number; scoreDisplay?: string }
-  | { t: "updateScoreDisplays" }
+export type DropperListDraftAction =
+  | { t: "updateStatus"; id: number; status?: MediaListStatus }
+  | { t: "updateOlderThan"; date: DateTime; status: MediaListStatus }
   | { t: "reset" };
 
-function Scorer() {
+function Dropper() {
   const queryClient = useQueryClient();
 
-  const settings = useScorerSettings();
+  const settings = useDropperSettings();
 
   const listOptions: UserListOptions = {
     type: settings.listType.value,
-    statusIn: [
-      "CURRENT",
-      "PLANNING",
-      "COMPLETED",
-      "DROPPED",
-      "PAUSED",
-      "REPEATING",
-    ],
-    sort: ["SCORE_DESC"],
+    statusIn: ["CURRENT", "PAUSED"],
+    sort: ["UPDATED_TIME"],
   };
 
   const leftRightListInterfaceProps = useLeftRightListInterface({
@@ -71,31 +65,41 @@ function Scorer() {
 
   useEffect(() => {
     if (viewer.data) {
-      settings.scoreFormat.set(viewer.data.mediaListOptions.scoreFormat);
       settings.titleLanguage.set(viewer.data.options.titleLanguage);
     }
   }, [viewer.data]);
 
+  const [dispatchError, setDispatchError] = useState<React.ReactNode | null>(
+    null,
+  );
+
   const [draft, dispatch] = useImmerReducer<
-    ScorerListDraft,
-    ScorerListDraftAction
+    DropperListDraft,
+    DropperListDraftAction
   >((draft, action) => {
     switch (action.t) {
-      case "updateScore": {
+      case "updateStatus": {
         if (!draft.has(action.id)) {
           draft.set(action.id, {});
         }
-        draft.get(action.id)!.score = action.score;
-        draft.get(action.id)!.scoreDisplay = action.scoreDisplay;
+        draft.get(action.id)!.status = action.status;
         break;
       }
-      case "updateScoreDisplays": {
-        for (const [_, v] of draft) {
-          if (v.score != null) {
-            const scoreDisplay = SCORE_SYSTEMS[
-              settings.scoreFormat.value
-            ].fromRaw(v.score);
-            v.scoreDisplay = scoreDisplay;
+      case "updateOlderThan": {
+        if (!list.data) {
+          setDispatchError("Data somehow went missing, please refresh.");
+          break;
+        }
+        for (const [_, entry] of list.data) {
+          if (
+            DateTime.fromSeconds(entry.updatedAt).endOf("day") <= action.date
+          ) {
+            if (!draft.has(entry.id)) {
+              draft.set(entry.id, {});
+            }
+            draft.get(entry.id)!.status = "DROPPED";
+          } else {
+            draft.get(entry.id)!.status = undefined;
           }
         }
         break;
@@ -107,26 +111,24 @@ function Scorer() {
     }
   }, new Map());
 
-  const [numUnsavedChanges, numPerceivedChanges] =
+  const numUnsavedChanges =
     list.data == null
-      ? [null, null]
+      ? null
       : (() => {
           let changes = 0;
-          let perceivedChanges = 0;
           for (const [k, v] of draft) {
-            if (v.score == null || Number.isNaN(v.score)) {
+            if (v.status == null) {
               continue;
             }
             const before = list.data!.get(k);
             if (!before) {
-              return [null, null];
+              return null;
             }
-            perceivedChanges += 1;
-            if (v.score !== before.score) {
+            if (v.status !== before.status) {
               changes += 1;
             }
           }
-          return [changes, perceivedChanges];
+          return changes;
         })();
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {
@@ -139,51 +141,18 @@ function Scorer() {
   });
 
   const shortcutsDialog = useDialog();
-  const shorcutsForScore = {
-    POINT_100: {
-      incDesc: "+1 to score",
-      decDesc: "-1 to score",
-      numKeyMax: 0,
-      numKeyDesc: "Set score to 10, 20, …, 100",
-    },
-    POINT_10_DECIMAL: {
-      incDesc: "+0.1 to score",
-      decDesc: "-0.1 to score",
-      numKeyMax: 0,
-      numKeyDesc: "Set score to 1, 2, …, 10",
-    },
-    POINT_10: {
-      incDesc: "+1 to score",
-      decDesc: "-1 to score",
-      numKeyMax: 0,
-      numKeyDesc: "Set score to 1, 2, …, 10",
-    },
-    POINT_5: {
-      incDesc: "Add ★ to score",
-      decDesc: "Remove ★ from score",
-      numKeyMax: 5,
-      numKeyDesc: "Set stars from 1★ to 5★",
-    },
-    POINT_3: {
-      incDesc: "Be more happy :)",
-      decDesc: "Be less happy :(",
-      numKeyMax: 3,
-      numKeyDesc: "Set your happiness",
-    },
-  }[settings.scoreFormat.value];
-
   return (
     <LeftRightListInterface
       {...leftRightListInterfaceProps}
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (e) => settings.allowedStatuses.value.includes(e.status),
-          settings.sortBy.value,
-          settings.sortDir.value,
+          (_) => true,
+          "lastUpdated",
+          "asc",
           settings.titleLanguage.value,
-          settings.randomSeed.value,
-          true,
+          0,
+          false,
         )
       }
       error={
@@ -193,6 +162,8 @@ function Scorer() {
             <br />
             Please refresh to reset.
           </ErrorAlert>
+        ) : dispatchError ? (
+          <ErrorAlert type="APP">{dispatchError}</ErrorAlert>
         ) : null
       }
       leftMenu={
@@ -217,12 +188,7 @@ function Scorer() {
                 });
                 dispatch({ t: "reset" });
               };
-              if (
-                numUnsavedChanges != null &&
-                (settings.hideScore.value
-                  ? numPerceivedChanges > 0
-                  : numUnsavedChanges > 0)
-              ) {
+              if (numUnsavedChanges != null && numUnsavedChanges > 0) {
                 confirmDialog.openWith({
                   title: "Refresh List",
                   action: "Refresh",
@@ -245,12 +211,7 @@ function Scorer() {
           </Button>
           <Button
             className="btn btn-outline btn-success"
-            disabled={
-              numUnsavedChanges == null ||
-              (settings.hideScore.value
-                ? numPerceivedChanges == 0
-                : numUnsavedChanges == 0)
-            }
+            disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
             onClick={() => {
               confirmDialog.openWith({
                 title: "Update Scores",
@@ -258,11 +219,8 @@ function Scorer() {
                 severity: "GOOD",
                 message: (
                   <>
-                    Are you sure you want to update{" "}
-                    {settings.hideScore.value
-                      ? numPerceivedChanges
-                      : numUnsavedChanges}{" "}
-                    of your ratings?
+                    Are you sure you want to drop {numUnsavedChanges} of your
+                    entries?
                   </>
                 ),
                 onConfirm: async () => {
@@ -283,17 +241,16 @@ function Scorer() {
         </>
       }
       settingsItems={
-        <ScorerSettingsItems
+        <DropperSettingsItems
           viewer={viewer}
           dispatch={dispatch}
           settings={settings}
           numUnsavedChanges={numUnsavedChanges}
-          numPerceivedChanges={numPerceivedChanges}
           confirmDialog={confirmDialog}
         />
       }
       listEntry={({ entry, ref, tab }) => (
-        <ScorerListEntry
+        <DropperListEntry
           settings={settings}
           entry={entry}
           draft={draft}
@@ -309,16 +266,9 @@ function Scorer() {
             { divider: "Navigation" },
             { keys: "Tab|↓|↩", desc: "Go next" },
             { keys: "Shift+Tab|↑", desc: "Go back" },
-            { divider: "Adjustments" },
-            { keys: "→|=|+", desc: shorcutsForScore.incDesc },
-            { keys: "←|-|_", desc: shorcutsForScore.decDesc },
             { divider: "Update" },
-            {
-              keys: `1...${shorcutsForScore.numKeyMax}`,
-              desc: shorcutsForScore.numKeyDesc,
-            },
-            { keys: ".", desc: "Clear score value" },
-            { keys: "/", desc: "Revert score to original" },
+            { keys: ".", desc: "Drop entry" },
+            { keys: "/", desc: "Revert status to original" },
             { divider: "Other" },
             { keys: "Ctrl", desc: "Hold to update but stay on entry" },
             { keys: "`|Esc|⌫", desc: "Revert score and go back" },

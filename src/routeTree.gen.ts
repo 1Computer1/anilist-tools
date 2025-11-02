@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ScorerRouteImport } from './routes/scorer'
 import { Route as RedirectRouteImport } from './routes/redirect'
+import { Route as DropperRouteImport } from './routes/dropper'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ScorerRoute = ScorerRouteImport.update({
@@ -23,6 +24,11 @@ const RedirectRoute = RedirectRouteImport.update({
   path: '/redirect',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DropperRoute = DropperRouteImport.update({
+  id: '/dropper',
+  path: '/dropper',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dropper': typeof DropperRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dropper': typeof DropperRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dropper': typeof DropperRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/redirect' | '/scorer'
+  fullPaths: '/' | '/dropper' | '/redirect' | '/scorer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/redirect' | '/scorer'
-  id: '__root__' | '/' | '/redirect' | '/scorer'
+  to: '/' | '/dropper' | '/redirect' | '/scorer'
+  id: '__root__' | '/' | '/dropper' | '/redirect' | '/scorer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DropperRoute: typeof DropperRoute
   RedirectRoute: typeof RedirectRoute
   ScorerRoute: typeof ScorerRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedirectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dropper': {
+      id: '/dropper'
+      path: '/dropper'
+      fullPath: '/dropper'
+      preLoaderRoute: typeof DropperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DropperRoute: DropperRoute,
   RedirectRoute: RedirectRoute,
   ScorerRoute: ScorerRoute,
 }

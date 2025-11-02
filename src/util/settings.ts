@@ -102,25 +102,28 @@ export function prepareListForDisplay(
   sortDir: SortDir,
   titleLanguage: TitleLanguage,
   seed: number,
+  section: boolean,
 ): [Entry[], number[]] {
   let sorted;
   if (sortBy === "random") {
     sorted = [...data.values()].filter(filter);
     shuffle(sorted, seed);
-    sorted.sort(
-      (a, b) =>
-        MEDIA_LIST_STATUSES.indexOf(a.status) -
-        MEDIA_LIST_STATUSES.indexOf(b.status),
-    );
+    if (section) {
+      sorted.sort(
+        (a, b) =>
+          MEDIA_LIST_STATUSES.indexOf(a.status) -
+          MEDIA_LIST_STATUSES.indexOf(b.status),
+      );
+    }
   } else {
     const comparator = COMPARATORS[sortBy];
     sorted = [...data.values()].filter(filter);
     sorted.sort((a, b) => {
-      const x =
-        MEDIA_LIST_STATUSES.indexOf(a.status) -
-        MEDIA_LIST_STATUSES.indexOf(b.status);
       return (
-        x ||
+        (section
+          ? MEDIA_LIST_STATUSES.indexOf(a.status) -
+            MEDIA_LIST_STATUSES.indexOf(b.status)
+          : 0) ||
         (sortDir === "desc"
           ? comparator(a, b, titleLanguage)
           : comparator(b, a, titleLanguage))
@@ -128,9 +131,11 @@ export function prepareListForDisplay(
     });
   }
   const is = [];
-  for (let i = 0; i < sorted.length; i++) {
-    if (sorted[i].status !== sorted[i - 1]?.status) {
-      is.push(i);
+  if (section) {
+    for (let i = 0; i < sorted.length; i++) {
+      if (sorted[i].status !== sorted[i - 1]?.status) {
+        is.push(i);
+      }
     }
   }
   return [sorted, is];

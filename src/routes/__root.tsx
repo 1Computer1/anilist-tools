@@ -199,6 +199,11 @@ function MenuItems({
           Scorer
         </Link_>
       </Item>
+      <Item>
+        <Link_ to="/dropper" className={linkClassName}>
+          Dropper
+        </Link_>
+      </Item>
       <Filler />
       <Item>
         <a
