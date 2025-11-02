@@ -140,7 +140,8 @@ function Dropper() {
 
   useBlockerDialog({
     confirmDialog,
-    shouldBlock: () => numUnsavedChanges != null && numUnsavedChanges > 0,
+    shouldBlock: () =>
+      viewer.data != null && numUnsavedChanges != null && numUnsavedChanges > 0,
   });
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {

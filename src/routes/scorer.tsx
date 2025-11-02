@@ -133,6 +133,7 @@ function Scorer() {
   useBlockerDialog({
     confirmDialog,
     shouldBlock: () =>
+      viewer.data != null &&
       numUnsavedChanges != null &&
       (settings.hideScore.value
         ? numPerceivedChanges > 0
