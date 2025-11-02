@@ -287,6 +287,7 @@ function Scorer() {
           dispatch={dispatch}
           settings={settings}
           numUnsavedChanges={numUnsavedChanges}
+          numPerceivedChanges={numPerceivedChanges}
           confirmDialog={confirmDialog}
         />
       }

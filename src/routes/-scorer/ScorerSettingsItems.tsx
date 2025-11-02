@@ -65,6 +65,7 @@ export default function ScorerSettingsItems({
   settings,
   viewer,
   numUnsavedChanges,
+  numPerceivedChanges,
   confirmDialog,
 }: {
   dispatch: React.Dispatch<ScorerListDraftAction>;
@@ -74,6 +75,7 @@ export default function ScorerSettingsItems({
     query: UseQueryResult<Viewer, AnilistError>;
   };
   numUnsavedChanges: number | null;
+  numPerceivedChanges: number | null;
   confirmDialog: DialogState<ConfirmDialogContext>;
 }) {
   return (
@@ -91,7 +93,12 @@ export default function ScorerSettingsItems({
               settings.listType.set(v);
               dispatch({ t: "reset" });
             };
-            if (numUnsavedChanges != null && numUnsavedChanges > 0) {
+            if (
+              numUnsavedChanges != null &&
+              (settings.hideScore.value
+                ? numPerceivedChanges !== 0
+                : numUnsavedChanges !== 0)
+            ) {
               confirmDialog.openWith({
                 title: "Change List",
                 action: "Confirm",
