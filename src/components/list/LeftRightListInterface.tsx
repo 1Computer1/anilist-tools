@@ -202,8 +202,8 @@ export default function LeftRightListInterface({
                     <div>
                       Could not log in to your account.
                       <br />
-                      Please log out, revoke the AniList Tools app from your
-                      account, then try again.
+                      Please log out, revoke the ALter app from your account,
+                      then try again.
                     </div>
                   ) : fetchError.cause.status >= 500 ? (
                     <div>

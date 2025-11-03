@@ -1,35 +1,56 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import clsx from "clsx";
-import { PiNavigationArrowFill, PiStarFill, PiTrashFill } from "react-icons/pi";
+import {
+  PiFileDashedFill,
+  PiLineSegmentsFill,
+  PiNavigationArrowFill,
+  PiNotePencilFill,
+  PiScrewdriverFill,
+  PiStarFill,
+  PiTrashFill,
+} from "react-icons/pi";
 import scorerLightImg from "../images/scorer-light.avif";
 import scorerDarkImg from "../images/scorer-dark.avif";
 import dropperLightImg from "../images/dropper-light.avif";
 import dropperDarkImg from "../images/dropper-dark.avif";
+import logoImg from "../images/logo2.webp";
 import useIsDarkMode from "../hooks/useIsDarkMode";
 
 export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "AniList Tools" },
+      { title: "ALter" },
       {
         name: "description",
-        content: "Enhance your AniList experience with various tools!",
+        content: "Enhance your AniList experience with powerful tools!",
       },
     ],
   }),
 });
 
 function Index() {
-  const linkClassName = clsx("btn btn-primary btn-outline");
+  const linkClassName = clsx(
+    "btn btn-primary btn-sm md:btn-md lg:btn-lg btn-outline",
+  );
+  const plannedClassName = clsx(
+    "btn btn-primary btn-dash btn-sm md:btn-md lg:btn-lg pointer-events-none select-none",
+  );
   const isDarkMode = useIsDarkMode();
 
   return (
-    <main className="flex h-full w-full flex-col items-center justify-start gap-6 overflow-y-auto px-16 lg:gap-8">
-      <div className="flex-center gap-1">
-        <h1 className="text-center text-4xl">AniList Tools</h1>
-        <p className="text-center text-sm opacity-50 lg:text-base">
-          Enhance your AniList experience with various tools!
+    <main className="flex h-full w-full flex-col items-center justify-start gap-4 overflow-y-auto px-8 lg:gap-8 lg:px-16">
+      <div className="flex-center gap-2">
+        <h1 className="light:bg-neutral flex-center rounded-box h-24 w-64">
+          <img
+            src={logoImg}
+            alt="ALter"
+            className="pointer-events-none h-16 w-auto select-none"
+            draggable={false}
+          />
+        </h1>
+        <p className="text-center text-base lg:text-lg dark:opacity-75">
+          Enhance your AniList experience with powerful tools!
         </p>
       </div>
       <div className="flex min-h-0 w-full basis-0 flex-row flex-wrap items-center justify-center gap-6 lg:gap-8">
@@ -79,6 +100,69 @@ function Index() {
             </Link>
           }
         />
+        <Card
+          title={
+            <>
+              <PiScrewdriverFill /> Fixer
+            </>
+          }
+          desc={
+            <>
+              <p>Fix inconsistent data, such as:</p>
+              <ul className="list-inside list-disc">
+                <li>Missing or invalid start and finish dates.</li>
+                <li>Completed entries with missing progress.</li>
+              </ul>
+            </>
+          }
+          link={
+            <div className={plannedClassName}>
+              <PiFileDashedFill /> Planned
+            </div>
+          }
+        />
+        <Card
+          title={
+            <>
+              <PiNotePencilFill /> Noter
+            </>
+          }
+          desc={
+            <>
+              <p>Search your notes and edit them all at once.</p>
+              <p>
+                Supports find & replace with regular expressions and text
+                manipulation.
+              </p>
+            </>
+          }
+          link={
+            <div className={plannedClassName}>
+              <PiFileDashedFill /> Planned
+            </div>
+          }
+        />
+        <Card
+          title={
+            <>
+              <PiLineSegmentsFill /> Relater
+            </>
+          }
+          desc={
+            <>
+              <p>
+                Find new media related to what you have in your list and add
+                them as planning.
+              </p>
+              <p>Filter by relation type and media type.</p>
+            </>
+          }
+          link={
+            <div className={plannedClassName}>
+              <PiFileDashedFill /> Planned
+            </div>
+          }
+        />
       </div>
     </main>
   );
@@ -97,17 +181,17 @@ function Card({
 }) {
   return (
     <div className="flex flex-row flex-wrap items-center justify-start">
-      <div className="card card-side lg:card-lg card-border dark:bg-base-200 h-50 w-80 shadow-md lg:w-120 dark:shadow">
+      <div className="card card-side card-sm md:card-md lg:card-lg card-border dark:bg-base-200 h-42 w-80 shadow-md md:h-50 md:w-100 lg:h-56 lg:w-120 dark:shadow">
         {img ? (
-          <figure className="h-50 w-12 min-w-12 lg:w-25 lg:min-w-25">
+          <figure className="h-full w-14 min-w-14 md:w-18 md:min-w-18 lg:w-25 lg:min-w-25">
             <img
-              className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center] blur-[0.5px]"
+              className="pointer-events-none mask-t-from-95% mask-r-from-0% mask-b-from-95% mask-l-from-95% object-cover object-[left_center] blur-[0.5px] select-none"
               src={img}
               draggable={false}
             />
           </figure>
         ) : (
-          <div className="to-base-100 dark:to-base-200 from-base-200 dark:from-base-300 rounded-l-box h-50 w-12 min-w-12 bg-linear-to-r lg:w-25 lg:min-w-25"></div>
+          <div className="to-base-100 dark:to-base-200 from-base-200 dark:from-base-300 rounded-l-box h-full w-14 min-w-14 bg-linear-to-r md:w-18 md:min-w-18 lg:w-25 lg:min-w-25"></div>
         )}
         <div className="card-body justify-between py-2 pr-4 pl-4">
           <div className="flex flex-col gap-y-1">

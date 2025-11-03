@@ -29,11 +29,11 @@ export const Route = createFileRoute("/scorer")({
   component: Scorer,
   head: () => ({
     meta: [
-      { title: "AniList Tools - Scorer" },
+      { title: "ALter - Scorer" },
       {
         name: "description",
         content:
-          "Enhance your AniList experience with various tools!\nQuickly apply new scores to your anime and manga list.",
+          "Enhance your AniList experience with powerful tools!\nQuickly apply new scores to your anime and manga list.",
       },
     ],
   }),

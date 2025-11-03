@@ -27,6 +27,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useEffect } from "react";
 import { IsDarkModeContext } from "../hooks/useIsDarkMode";
+import logoImg from "../images/logo2.webp";
 
 const ANILIST_OAUTH_URL = `https://anilist.co/api/v2/oauth/authorize?client_id=${import.meta.env.VITE_ANILIST_APPID}&response_type=token`;
 
@@ -75,14 +76,9 @@ function Root() {
                   logout={logout}
                   isDarkMode={isDarkMode}
                   toggleDarkMode={toggleDarkMode}
-                  Item={({ children }) => (
-                    <li className="has-data-[status=active]:bg-base-content/10 rounded-field inline-flex flex-row items-center justify-center">
-                      {children}
-                    </li>
-                  )}
-                  Divider={() => <li></li>}
-                  Space={() => <div className="h-0 w-full"></div>}
-                  Filler={() => <div className="grow"></div>}
+                  divider={<li></li>}
+                  space={<div className="h-0 w-full"></div>}
+                  filler={<div className="grow"></div>}
                 />
               </ul>
             </nav>
@@ -106,15 +102,10 @@ function Root() {
                       logout={logout}
                       isDarkMode={isDarkMode}
                       toggleDarkMode={toggleDarkMode}
-                      Item={({ children }) => (
-                        <li className="has-data-[status=active]:bg-base-content/10 rounded-field inline-flex flex-row items-center justify-center">
-                          {children}
-                        </li>
-                      )}
-                      CloseButton={CloseButton}
-                      Space={() => <div className="h-0 w-full"></div>}
-                      Divider={() => <li></li>}
-                      Filler={() => <div className="grow"></div>}
+                      wrapCloseButton
+                      space={<div className="h-0 w-full"></div>}
+                      divider={<li></li>}
+                      filler={<div className="grow"></div>}
                     />
                   </ul>
                 </PopoverPanel>
@@ -157,21 +148,19 @@ function Root() {
 }
 
 function MenuItems({
-  Item,
-  CloseButton,
-  Divider,
-  Filler,
-  Space,
+  wrapCloseButton = false,
+  divider,
+  filler,
+  space,
   logout,
   login,
   isDarkMode,
   toggleDarkMode,
 }: {
-  Item: React.ElementType;
-  CloseButton?: React.ElementType;
-  Divider: React.ElementType;
-  Filler: React.ElementType;
-  Space: React.ElementType;
+  wrapCloseButton?: boolean;
+  divider: React.ReactNode;
+  filler: React.ReactNode;
+  space: React.ReactNode;
   logout: () => void;
   login: () => void;
   isDarkMode: boolean;
@@ -181,34 +170,37 @@ function MenuItems({
     staleTime: Infinity,
   });
 
-  const Link_ = CloseButton
+  const Link_ = wrapCloseButton
     ? ({ ...props }) => <CloseButton as={Link} {...props} />
     : Link;
 
-  const linkClassName = clsx(
-    "flex-center w-full data-[status=active]:hover:bg-transparent",
-  );
+  const linkClassName = clsx("flex-center w-full");
 
   return (
     <>
-      <Item>
-        <Link_ to="/" className={clsx(linkClassName, "text-lg")}>
-          Home
-        </Link_>
-      </Item>
-      <Divider />
-      <Item>
+      <Link_ to="/" className={linkClassName}>
+        <div className="light:bg-neutral flex-center rounded-field light:shadow-md h-12 w-full">
+          <img
+            src={logoImg}
+            alt="ALter"
+            className="pointer-events-none h-8 drop-shadow-xs select-none"
+            draggable={false}
+          />
+        </div>
+      </Link_>
+      {divider}
+      <MenuItem>
         <Link_ to="/scorer" className={linkClassName}>
           Scorer
         </Link_>
-      </Item>
-      <Item>
+      </MenuItem>
+      <MenuItem>
         <Link_ to="/dropper" className={linkClassName}>
           Dropper
         </Link_>
-      </Item>
-      <Filler />
-      <Item>
+      </MenuItem>
+      {filler}
+      <MenuItem>
         <a
           className="link link-hover link-primary inline-flex-center w-full"
           href="https://github.com/1Computer1/anilist-tools"
@@ -218,11 +210,11 @@ function MenuItems({
           Source
           <PiGithubLogo />
         </a>
-      </Item>
+      </MenuItem>
       {viewer.data ? (
         <>
-          <Divider />
-          <Space />
+          {divider}
+          {space}
           <a
             className="link link-hover link-primary btn btn-ghost btn-square h-16 w-16 self-center"
             href={viewer.data.siteUrl}
@@ -236,8 +228,8 @@ function MenuItems({
               height={64}
             />
           </a>
-          <Space />
-          <Item>
+          {space}
+          <MenuItem>
             <a
               className="link link-hover link-primary inline-flex-center w-full text-center wrap-anywhere"
               href={viewer.data.siteUrl}
@@ -246,13 +238,13 @@ function MenuItems({
             >
               {viewer.data.name}
             </a>
-          </Item>
-          <Space />
+          </MenuItem>
+          {space}
           <ToggleDarkModeButton
             isDarkMode={isDarkMode}
             toggleDarkMode={toggleDarkMode}
           />
-          <Space />
+          {space}
           <Button
             className="btn btn-sm btn-primary btn-outline w-full"
             onClick={logout}
@@ -262,12 +254,12 @@ function MenuItems({
         </>
       ) : (
         <>
-          <Space />
+          {space}
           <ToggleDarkModeButton
             isDarkMode={isDarkMode}
             toggleDarkMode={toggleDarkMode}
           />
-          <Space />
+          {space}
           <Button
             className="btn btn-sm btn-primary btn-outline w-full"
             onClick={login}
@@ -277,6 +269,14 @@ function MenuItems({
         </>
       )}
     </>
+  );
+}
+
+function MenuItem({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="rounded-field inline-flex flex-row items-center justify-center has-data-[status=active]:bg-(--menu-active-bg) has-data-[status=active]:text-(--menu-active-fg)">
+      {children}
+    </li>
   );
 }
 

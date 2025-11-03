@@ -30,11 +30,11 @@ export const Route = createFileRoute("/dropper")({
   component: Dropper,
   head: () => ({
     meta: [
-      { title: "AniList Tools - Dropper" },
+      { title: "ALter - Dropper" },
       {
         name: "description",
         content:
-          "Enhance your AniList experience with various tools!\nDrop shows and manga that you have not updated in a long time.",
+          "Enhance your AniList experience with powerful tools!\nDrop shows and manga that you have not updated in a long time.",
       },
     ],
   }),

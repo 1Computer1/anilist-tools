@@ -6,10 +6,10 @@ export const Route = createFileRoute("/redirect")({
   component: Redirect,
   head: () => ({
     meta: [
-      { title: "AniList Tools" },
+      { title: "ALter" },
       {
         name: "description",
-        content: "Enhance your AniList experience with various tools!",
+        content: "Enhance your AniList experience with powerful tools!",
       },
     ],
   }),
