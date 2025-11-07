@@ -240,6 +240,20 @@ function Scorer() {
       }
       rightMenu={
         <>
+          {numUnsavedChanges != null &&
+            (settings.hideScore.value
+              ? numPerceivedChanges
+              : numUnsavedChanges) > 0 && (
+              <div className="text-error text-center text-xs lg:text-sm">
+                {settings.hideScore.value
+                  ? numPerceivedChanges
+                  : numUnsavedChanges}{" "}
+                unsaved change
+                {(settings.hideScore.value
+                  ? numPerceivedChanges
+                  : numUnsavedChanges) > 1 && "s"}
+              </div>
+            )}
           <Button
             className="btn btn-outline btn-secondary"
             disabled={list.query.isFetching || list.data == null}

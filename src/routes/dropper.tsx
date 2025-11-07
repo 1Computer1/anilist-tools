@@ -208,6 +208,12 @@ function Dropper() {
       }
       rightMenu={
         <>
+          {numUnsavedChanges != null && numUnsavedChanges > 0 && (
+            <div className="text-error text-center text-xs lg:text-sm">
+              {numUnsavedChanges} unsaved change
+              {numUnsavedChanges > 1 && "s"}
+            </div>
+          )}
           <Button
             className="btn btn-outline btn-secondary"
             disabled={list.query.isFetching || list.data == null}
