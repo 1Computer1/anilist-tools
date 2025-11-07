@@ -4,6 +4,7 @@ export type ScoreSystem<T extends ScoreSystemType = ScoreSystemType> = {
   fromRaw: (vRaw: number) => string;
   toRaw: (vDisplay: string) => number;
   step: (vDisplay: string, dir: -1 | 1) => string;
+  stepLarge?: (vDisplay: string, dir: -1 | 1) => string;
   type: T;
 };
 
@@ -16,6 +17,7 @@ export const SCORE_SYSTEMS = {
     fromRaw: (x) => x.toString(),
     toRaw: (x) => Number(x),
     step: (x, d) => clamp(Number(x) + d, 0, 100).toString(),
+    stepLarge: (x, d) => clamp(Number(x) + d * 5, 0, 100).toString(),
     type: "int",
   } as ScoreSystem<"int">,
 
@@ -28,6 +30,11 @@ export const SCORE_SYSTEMS = {
     toRaw: (x) => Math.round(Number(x) * 10),
     step: (x, d) => {
       const n = clamp(Number(x) + d / 10, 0, 10);
+      const s = n.toFixed(1);
+      return s.replace(/\.0/, "");
+    },
+    stepLarge: (x, d) => {
+      const n = clamp(Number(x) + (d * 5) / 10, 0, 10);
       const s = n.toFixed(1);
       return s.replace(/\.0/, "");
     },

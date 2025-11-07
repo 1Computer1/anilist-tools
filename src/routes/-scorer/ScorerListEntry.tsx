@@ -133,6 +133,22 @@ export default function ScorerListEntry({
             update((s) => system.step(s, 1));
           }
         } else if (
+          (settings.scoreFormat.value === "POINT_100" ||
+            settings.scoreFormat.value === "POINT_10_DECIMAL") &&
+          (e.key === "[" || e.key === "{")
+        ) {
+          if (!settings.hideScore.value || hasChange) {
+            update((s) => system.stepLarge!(s, -1));
+          }
+        } else if (
+          (settings.scoreFormat.value === "POINT_100" ||
+            settings.scoreFormat.value === "POINT_10_DECIMAL") &&
+          (e.key === "]" || e.key === "}")
+        ) {
+          if (!settings.hideScore.value || hasChange) {
+            update((s) => system.stepLarge!(s, 1));
+          }
+        } else if (
           e.key === "`" ||
           e.key === "Escape" ||
           e.key === "Backspace"

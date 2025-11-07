@@ -153,13 +153,17 @@ function Scorer() {
   const shorcutsForScore = {
     POINT_100: {
       incDesc: "+1 to score",
+      incDescLarge: "+5 to score",
       decDesc: "-1 to score",
+      decDescLarge: "-5 to score",
       numKeyMax: 0,
       numKeyDesc: "Set score to 10, 20, …, 100",
     },
     POINT_10_DECIMAL: {
       incDesc: "+0.1 to score",
+      incDescLarge: "+0.5 to score",
       decDesc: "-0.1 to score",
+      decDescLarge: "-0.5 to score",
       numKeyMax: 0,
       numKeyDesc: "Set score to 1, 2, …, 10",
     },
@@ -323,6 +327,12 @@ function Scorer() {
             { divider: "Adjustments" },
             { keys: "→|=|+", desc: shorcutsForScore.incDesc },
             { keys: "←|-|_", desc: shorcutsForScore.decDesc },
+            ...(shorcutsForScore.incDescLarge && shorcutsForScore.decDescLarge
+              ? [
+                  { keys: "]|}", desc: shorcutsForScore.incDescLarge },
+                  { keys: "[|{", desc: shorcutsForScore.decDescLarge },
+                ]
+              : []),
             { divider: "Update" },
             {
               keys: `1...${shorcutsForScore.numKeyMax}`,
