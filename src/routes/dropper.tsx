@@ -163,7 +163,21 @@ function Dropper() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (_) => true,
+          (e) => {
+            const matched = !settings.titleFilter.value
+              ? true
+              : [
+                  e.media.title.english,
+                  e.media.title.native,
+                  e.media.title.romaji,
+                ].some((t) => {
+                  return (
+                    t?.toLowerCase().includes(settings.titleFilter.value) ??
+                    false
+                  );
+                });
+            return matched;
+          },
           "lastUpdated",
           "asc",
           settings.titleLanguage.value,

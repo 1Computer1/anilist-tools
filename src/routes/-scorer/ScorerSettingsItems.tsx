@@ -1,4 +1,4 @@
-import { Button, Field, Label, Switch } from "@headlessui/react";
+import { Button, Field, Input, Label, Switch } from "@headlessui/react";
 import type { UseQueryResult } from "@tanstack/react-query";
 import clsx from "clsx";
 import { PiCheckFatFill, PiShuffleFill } from "react-icons/pi";
@@ -42,6 +42,7 @@ export type ScorerSettings = {
   randomSeed: Cell<number>;
   sortDir: Cell<SortDir>;
   allowedStatuses: Cell<MediaListStatus[]>;
+  titleFilter: Cell<string>;
   titleLanguage: Cell<TitleLanguage>;
   scoreFormat: Cell<ScoreFormat>;
   hideScore: Cell<boolean>;
@@ -54,6 +55,7 @@ export function useScorerSettings(): ScorerSettings {
     sortBy: useCell<SortBy>("score"),
     randomSeed: useCell<number>(seedgen()),
     sortDir: useCell<SortDir>("desc"),
+    titleFilter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
     scoreFormat: useCell<ScoreFormat>("POINT_100"),
     hideScore: useCell<boolean>(false),
@@ -148,6 +150,15 @@ export default function ScorerSettingsItems({
         />
         <Label>Hide Old Scores</Label>
       </Field>
+      <SettingsItem label="Title Filter">
+        <Input
+          className="input w-full"
+          disabled={viewer.data == null}
+          placeholder="🔍 Search..."
+          value={settings.titleFilter.value}
+          onChange={(e) => settings.titleFilter.set(e.target.value)}
+        />
+      </SettingsItem>
       <SettingsItem label="Title Language">
         <CustomListbox
           className="select w-full"

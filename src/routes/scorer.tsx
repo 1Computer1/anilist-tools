@@ -196,7 +196,22 @@ function Scorer() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (e) => settings.allowedStatuses.value.includes(e.status),
+          (e) => {
+            const allowed = settings.allowedStatuses.value.includes(e.status);
+            const matched = !settings.titleFilter.value
+              ? true
+              : [
+                  e.media.title.english,
+                  e.media.title.native,
+                  e.media.title.romaji,
+                ].some((t) => {
+                  return (
+                    t?.toLowerCase().includes(settings.titleFilter.value) ??
+                    false
+                  );
+                });
+            return allowed && matched;
+          },
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,

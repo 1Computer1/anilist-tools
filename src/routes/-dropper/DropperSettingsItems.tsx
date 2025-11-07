@@ -23,12 +23,13 @@ import useCell, { type Cell } from "../../hooks/useCell";
 import SettingsItem from "../../components/list/SettingsItem";
 import { DateTime } from "luxon";
 import clsx from "clsx";
-import { Button } from "@headlessui/react";
+import { Button, Input } from "@headlessui/react";
 import { PiCheckFatFill, PiTrashFill } from "react-icons/pi";
 import { useState } from "react";
 
 export type DropperSettings = {
   listType: Cell<MediaType>;
+  titleFilter: Cell<string>;
   titleLanguage: Cell<TitleLanguage>;
 };
 
@@ -42,6 +43,7 @@ const DROPPABLE_MEDIA_LIST_STATUS: DroppableMediaListStatus[] = [
 export function useDropperSettings(): DropperSettings {
   return {
     listType: useCell<MediaType>("ANIME"),
+    titleFilter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
   };
 }
@@ -108,6 +110,15 @@ export default function DropperSettingsItems({
           options={MEDIA_TYPES}
           buttonContents={nameOfListType(settings.listType.value)}
           optionContents={(value) => nameOfListType(value)}
+        />
+      </SettingsItem>
+      <SettingsItem label="Title Filter">
+        <Input
+          className="input w-full"
+          disabled={viewer.data == null}
+          placeholder="🔍 Search..."
+          value={settings.titleFilter.value}
+          onChange={(e) => settings.titleFilter.set(e.target.value)}
         />
       </SettingsItem>
       <SettingsItem label="Title Language">
