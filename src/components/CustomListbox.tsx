@@ -8,6 +8,7 @@ import {
 import clsx from "clsx";
 import { useRef } from "react";
 import { useResizeObserver } from "usehooks-ts";
+import useIsOverflown from "../hooks/useIsOverflown";
 
 export type CustomListboxProps<TOpt extends string> = {
   modal?: boolean;
@@ -40,7 +41,10 @@ export default function CustomListbox<TOpt extends string>({
   ...props
 }: CustomListboxProps<TOpt> & Omit<ListboxButtonProps, Used>) {
   const ref = useRef<HTMLButtonElement>(null);
-  const { width } = useResizeObserver({ ref: ref as any, box: "border-box" });
+  const { width } = useResizeObserver({
+    ref: ref as any,
+    box: "border-box",
+  });
 
   return (
     <Listbox
@@ -62,19 +66,40 @@ export default function CustomListbox<TOpt extends string>({
         modal={modal}
         anchor="bottom"
       >
-        {options.map((o) => (
-          <ListboxOption
-            key={o}
-            value={o}
-            className={clsx(
-              "rounded-field cursor-default px-2 py-1",
-              "hover:bg-base-content/10 data-focus:bg-base-content/10",
-            )}
-          >
-            {optionContents(o)}
-          </ListboxOption>
-        ))}
+        <Options optionContents={optionContents} options={options} />
       </ListboxOptions>
     </Listbox>
+  );
+}
+
+function Options<TOpt extends string>({
+  options,
+  optionContents,
+}: {
+  options: TOpt[];
+  optionContents: (value: TOpt) => React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const needScroll = useIsOverflown(ref);
+
+  return (
+    <div
+      className="rounded-field flex max-h-60 flex-col overflow-y-auto [scrollbar-width:thin]"
+      ref={ref}
+    >
+      {options.map((o) => (
+        <ListboxOption
+          key={o}
+          value={o}
+          className={clsx(
+            "rounded-field cursor-default px-2 py-1 text-sm",
+            "hover:bg-base-content/10 data-focus:bg-base-content/10",
+            needScroll && "mr-2",
+          )}
+        >
+          {optionContents(o)}
+        </ListboxOption>
+      ))}
+    </div>
   );
 }

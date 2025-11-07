@@ -8,8 +8,8 @@ import {
 import type { DialogState } from "../../hooks/useDialog";
 import { PiXCircleFill } from "react-icons/pi";
 import clsx from "clsx";
-import { useRef, useState, useEffect } from "react";
-import { useResizeObserver } from "usehooks-ts";
+import { useRef } from "react";
+import useIsOverflown from "../../hooks/useIsOverflown";
 
 export type CustomDialogProps = {
   state: DialogState<any>;
@@ -69,20 +69,7 @@ export default function CustomDialog({
 
 function DialogBody({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [needScroll, setNeedScroll] = useState<boolean>(false);
-
-  const onResize = () => {
-    if (ref.current) {
-      setNeedScroll(isOverflown(ref.current));
-    }
-  };
-
-  useEffect(onResize);
-  useResizeObserver({
-    ref: ref as any,
-    box: "border-box",
-    onResize,
-  });
+  const needScroll = useIsOverflown(ref);
 
   return (
     <div
@@ -94,12 +81,5 @@ function DialogBody({ children }: { children: React.ReactNode }) {
     >
       {children}
     </div>
-  );
-}
-
-function isOverflown(element: HTMLElement) {
-  return (
-    element.scrollHeight > element.clientHeight ||
-    element.scrollWidth > element.clientWidth
   );
 }
