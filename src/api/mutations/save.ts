@@ -25,7 +25,9 @@ const makeQuery = (
   ${mutations.map((mutArgs, i) => makeMutation(i, mutArgs)).join("\n")}
 }`;
 
-function makeMutationQuery(draft: ListDraft<keyof EntryDraft>): {
+function makeMutationQuery(
+  draft: [number, Pick<EntryDraft, keyof EntryDraft>][],
+): {
   query: string;
   vars: Record<string, any>;
 } {
@@ -69,10 +71,32 @@ function makeMutationQuery(draft: ListDraft<keyof EntryDraft>): {
   return { query: makeQuery(queryVars, mutations), vars };
 }
 
+function chunksOf<T>(xs: T[], size: number): T[][] {
+  const ys = [];
+  for (let i = 0; i < xs.length; i += size) {
+    ys.push(xs.slice(i, i + size));
+  }
+  return ys;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const saveMediaListEntries = async (
   ctx: Context,
   draft: ListDraft<keyof EntryDraft>,
 ) => {
-  const { query, vars } = makeMutationQuery(draft);
-  await postQuery(ctx, query, vars);
+  // Anilist API has a max complexity of 500, which seems to be fine if we chunk
+  // the queries to 100 entries updated per (assuming only a few fields are updated each).
+  const chunks = chunksOf([...draft], 100);
+  for (let i = 0; i < chunks.length; i++) {
+    const { query, vars } = makeMutationQuery(chunks[i]);
+    await postQuery(ctx, query, vars);
+    // There's a ratelimit of 30 requests per minute and a burst limit,
+    // so if we're sending a bunch, wait 2 seconds between each.
+    if (chunks.length > 10 && i !== chunks.length - 1) {
+      await wait(60_000 / 30);
+    }
+  }
 };

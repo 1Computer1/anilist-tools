@@ -142,6 +142,7 @@ function Scorer() {
 
   const mutSave = useAnilistMutation(saveMediaListEntries, {
     onSuccess: async () => {
+      savingLoadingDialog.close();
       await queryClient.invalidateQueries({
         queryKey: ["list", { type: listOptions.type }],
       });
@@ -186,6 +187,8 @@ function Scorer() {
       numKeyDesc: "Set your happiness",
     },
   }[settings.scoreFormat.value];
+
+  const savingLoadingDialog = useDialog();
 
   return (
     <LeftRightListInterface
@@ -282,6 +285,7 @@ function Scorer() {
                 ),
                 onConfirm: async () => {
                   if (numUnsavedChanges !== 0) {
+                    savingLoadingDialog.open();
                     mutSave.mutate(draft);
                   } else {
                     await queryClient.invalidateQueries({
@@ -345,6 +349,12 @@ function Scorer() {
             { keys: "`|Esc|⌫", desc: "Revert score and go back" },
           ]}
         />
+      </CustomDialog>
+      <CustomDialog state={savingLoadingDialog} closeable={false}>
+        <div className="flex-center gap-y-2">
+          <span>Saving your new scores...</span>
+          <progress className="progress progress-success w-full"></progress>
+        </div>
       </CustomDialog>
     </LeftRightListInterface>
   );
