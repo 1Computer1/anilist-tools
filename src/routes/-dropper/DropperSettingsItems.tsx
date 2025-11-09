@@ -14,11 +14,22 @@ import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import { DateTime } from "luxon";
 import { Button } from "@headlessui/react";
 import { PiTrashFill } from "react-icons/pi";
+import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
+import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
+import {
+  seedgen,
+  SORT_BYS,
+  type SortBy,
+  type SortDir,
+} from "../../util/settings";
 
 export type DropperSettings = {
   listType: Cell<MediaType>;
   titleFilter: Cell<string>;
   titleLanguage: Cell<TitleLanguage>;
+  sortBy: Cell<SortBy>;
+  sortDir: Cell<SortDir>;
+  randomSeed: Cell<number>;
 };
 
 type DroppableMediaListStatus = "CURRENT" | "PAUSED";
@@ -33,6 +44,9 @@ export function useDropperSettings(): DropperSettings {
     listType: useCell<MediaType>("ANIME"),
     titleFilter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
+    sortBy: useCell<SortBy>("lastUpdated"),
+    sortDir: useCell<SortDir>("asc"),
+    randomSeed: useCell<number>(seedgen()),
   };
 }
 
@@ -74,6 +88,17 @@ export default function DropperSettingsItems({
       <SettingsItemTitleLanguage
         viewer={viewer}
         titleLanguage={settings.titleLanguage}
+      />
+      <SettingsItemSortBy
+        viewer={viewer}
+        sortBy={settings.sortBy}
+        options={SORT_BYS}
+      />
+      <SettingsItemSortDir
+        viewer={viewer}
+        sortBy={settings.sortBy.value}
+        sortDir={settings.sortDir}
+        randomSeed={settings.randomSeed}
       />
       <div className="divider mb-3"></div>
       <SettingsItemStatuses

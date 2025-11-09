@@ -35,8 +35,8 @@ import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSor
 export type ScorerSettings = {
   listType: Cell<MediaType>;
   sortBy: Cell<SortBy>;
-  randomSeed: Cell<number>;
   sortDir: Cell<SortDir>;
+  randomSeed: Cell<number>;
   allowedStatuses: Cell<MediaListStatus[]>;
   titleFilter: Cell<string>;
   titleLanguage: Cell<TitleLanguage>;
@@ -49,8 +49,8 @@ export function useScorerSettings(): ScorerSettings {
     listType: useCell<MediaType>("ANIME"),
     allowedStatuses: useCell<MediaListStatus[]>(["COMPLETED"]),
     sortBy: useCell<SortBy>("score"),
-    randomSeed: useCell<number>(seedgen()),
     sortDir: useCell<SortDir>("desc"),
+    randomSeed: useCell<number>(seedgen()),
     titleFilter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
     scoreFormat: useCell<ScoreFormat>("POINT_100"),
