@@ -1,31 +1,19 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import type { AnilistError } from "../../api/anilist";
-import {
-  MEDIA_LIST_STATUSES,
-  MEDIA_TYPES,
-  type MediaType,
-} from "../../api/queries/list";
-import {
-  TITLE_LANGUAGES,
-  type TitleLanguage,
-  type Viewer,
-} from "../../api/queries/viewer";
-import CustomListbox from "../../components/CustomListbox";
+import { type MediaType } from "../../api/queries/list";
+import { type TitleLanguage, type Viewer } from "../../api/queries/viewer";
 import type { DropperListDraftAction } from "../dropper";
 import type { DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
-import {
-  nameOfListType,
-  nameOfStatus,
-  nameOfTitleLanguage,
-} from "../../util/settings";
 import useCell, { type Cell } from "../../hooks/useCell";
-import SettingsItem from "../../components/list/SettingsItem";
+import SettingsItemDate from "../../components/list/settings/SettingsItemDate";
+import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
+import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
+import SettingsItemTitleFilter from "../../components/list/settings/SettingsItemTitleFilter";
+import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import { DateTime } from "luxon";
-import clsx from "clsx";
-import { Button, Input } from "@headlessui/react";
-import { PiCheckFatFill, PiTrashFill } from "react-icons/pi";
-import { useState } from "react";
+import { Button } from "@headlessui/react";
+import { PiTrashFill } from "react-icons/pi";
 
 export type DropperSettings = {
   listType: Cell<MediaType>;
@@ -52,7 +40,7 @@ export default function DropperSettingsItems({
   dispatch,
   settings,
   viewer,
-  numUnsavedChanges,
+  hasUnsavedChanges,
   confirmDialog,
 }: {
   dispatch: React.Dispatch<DropperListDraftAction>;
@@ -61,141 +49,54 @@ export default function DropperSettingsItems({
     data: Viewer | undefined;
     query: UseQueryResult<Viewer, AnilistError>;
   };
-  numUnsavedChanges: number | null;
+  hasUnsavedChanges: boolean;
   confirmDialog: DialogState<ConfirmDialogContext>;
 }) {
-  const [olderThan, setOlderThan] = useState<DateTime>(
-    DateTime.now().endOf("day"),
-  );
-
-  const [dropStatuses, setDropStatuses] = useState<DroppableMediaListStatus[]>([
+  const olderThan = useCell<DateTime>(DateTime.now().endOf("day"));
+  const dropStatuses = useCell<DroppableMediaListStatus[]>([
     "CURRENT",
     "PAUSED",
   ]);
 
   return (
     <>
-      <SettingsItem label="List">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.listType.value}
-          onChange={(v) => {
-            if (settings.listType.value === v) {
-              return;
-            }
-            const change = async () => {
-              settings.listType.set(v);
-              dispatch({ t: "reset" });
-            };
-            if (numUnsavedChanges != null && numUnsavedChanges !== 0) {
-              confirmDialog.openWith({
-                title: "Change List",
-                action: "Confirm",
-                severity: "BAD",
-                message: (
-                  <>
-                    Are you sure you want to switch to your{" "}
-                    {nameOfListType(v).toLowerCase()} list?
-                    <br />
-                    You will lose all unsaved changes.
-                  </>
-                ),
-                onConfirm: change,
-              });
-            } else {
-              change();
-            }
-          }}
-          options={MEDIA_TYPES}
-          buttonContents={nameOfListType(settings.listType.value)}
-          optionContents={(value) => nameOfListType(value)}
-        />
-      </SettingsItem>
-      <SettingsItem label="Title Filter">
-        <Input
-          className="input w-full"
-          disabled={viewer.data == null}
-          placeholder="🔍 Search..."
-          value={settings.titleFilter.value}
-          onChange={(e) => settings.titleFilter.set(e.target.value)}
-        />
-      </SettingsItem>
-      <SettingsItem label="Title Language">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.titleLanguage.value}
-          onChange={(v) => settings.titleLanguage.set(v)}
-          options={TITLE_LANGUAGES}
-          buttonContents={nameOfTitleLanguage(settings.titleLanguage.value)}
-          optionContents={(value) => nameOfTitleLanguage(value)}
-        />
-      </SettingsItem>
+      <SettingsItemList
+        viewer={viewer}
+        listType={settings.listType}
+        hasUnsavedChanges={hasUnsavedChanges}
+        confirmDialog={confirmDialog}
+        onChange={() => dispatch({ t: "reset" })}
+      />
+      <SettingsItemTitleFilter
+        viewer={viewer}
+        titleFilter={settings.titleFilter}
+      />
+      <SettingsItemTitleLanguage
+        viewer={viewer}
+        titleLanguage={settings.titleLanguage}
+      />
       <div className="divider mb-3"></div>
-      <SettingsItem label="Drop Status Filter">
-        <CustomListbox<DroppableMediaListStatus>
-          className="select w-full"
-          disabled={viewer.data == null}
-          multiple
-          value={dropStatuses}
-          options={DROPPABLE_MEDIA_LIST_STATUS}
-          onChange={(v) => {
-            if (v.length > 0) {
-              setDropStatuses(v);
-            }
-          }}
-          buttonContents={
-            <span className="inline-block truncate">
-              {[...dropStatuses]
-                .sort(
-                  (a, b) =>
-                    MEDIA_LIST_STATUSES.indexOf(a) -
-                    MEDIA_LIST_STATUSES.indexOf(b),
-                )
-                .map((x) => nameOfStatus(settings.listType.value, x))
-                .join(", ")}
-            </span>
-          }
-          optionContents={(value) => (
-            <div className="inline-flex flex-row items-center gap-x-2">
-              <div
-                className={clsx(!dropStatuses.includes(value) && "invisible")}
-              >
-                <PiCheckFatFill />
-              </div>
-              <span>{nameOfStatus(settings.listType.value, value)}</span>
-            </div>
-          )}
-        />
-      </SettingsItem>
-      <SettingsItem label="Drop Older Than">
-        <input
-          type="date"
-          disabled={viewer.data == null}
-          value={olderThan.toISODate()!}
-          onChange={(e) => {
-            const date = (
-              e.target.valueAsDate
-                ? (DateTime.fromISO(e.target.value) ?? DateTime.local())
-                : DateTime.local()
-            ).endOf("day");
-            setOlderThan(date);
-          }}
-          className={clsx(
-            "bg-base-100 rounded-field border-base-content/20 flex h-(--size) flex-col border p-2 text-sm shadow-sm",
-            "disabled:bg-base-200 disabled:text-base-content/40 focus:outline-none disabled:cursor-not-allowed disabled:border-none disabled:shadow-none",
-          )}
-        />
-      </SettingsItem>
+      <SettingsItemStatuses
+        label="Drop Status Filter"
+        viewer={viewer}
+        listType={settings.listType.value}
+        options={DROPPABLE_MEDIA_LIST_STATUS}
+        statuses={dropStatuses}
+      />
+      <SettingsItemDate
+        label="Drop Older Than"
+        viewer={viewer}
+        date={olderThan}
+        andDate={(d) => d.endOf("day")}
+      />
       <Button
         className="btn btn-outline btn-secondary"
         disabled={viewer.data == null}
         onClick={() => {
           dispatch({
             t: "updateOlderThan",
-            date: olderThan,
-            dropStatuses,
+            date: olderThan.value,
+            dropStatuses: dropStatuses.value,
             status: "DROPPED",
           });
         }}

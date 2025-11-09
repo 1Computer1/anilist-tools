@@ -17,7 +17,7 @@ import CustomDialog from "../components/dialogs/CustomDialog";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
-import { prepareListForDisplay } from "../util/settings";
+import { matchesTitle, prepareListForDisplay } from "../util/settings";
 import type { MediaListStatus } from "../api/queries/list";
 import DropperSettingsItems, {
   useDropperSettings,
@@ -25,6 +25,7 @@ import DropperSettingsItems, {
 import DropperListEntry from "./-dropper/DropperListEntry";
 import { DateTime } from "luxon";
 import useBlockerDialog from "../hooks/useBlockerDialog";
+import LoadingDialog from "../components/dialogs/LoadingDialog";
 
 export const Route = createFileRoute("/dropper")({
   component: Dropper,
@@ -163,21 +164,7 @@ function Dropper() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (e) => {
-            const matched = !settings.titleFilter.value
-              ? true
-              : [
-                  e.media.title.english,
-                  e.media.title.native,
-                  e.media.title.romaji,
-                ].some((t) => {
-                  return (
-                    t?.toLowerCase().includes(settings.titleFilter.value) ??
-                    false
-                  );
-                });
-            return matched;
-          },
+          (e) => matchesTitle(settings.titleFilter.value, e),
           "lastUpdated",
           "asc",
           settings.titleLanguage.value,
@@ -282,7 +269,7 @@ function Dropper() {
           viewer={viewer}
           dispatch={dispatch}
           settings={settings}
-          numUnsavedChanges={numUnsavedChanges}
+          hasUnsavedChanges={numUnsavedChanges != null && numUnsavedChanges > 0}
           confirmDialog={confirmDialog}
         />
       }
@@ -312,12 +299,9 @@ function Dropper() {
           ]}
         />
       </CustomDialog>
-      <CustomDialog state={savingLoadingDialog} closeable={false}>
-        <div className="flex-center gap-y-2">
-          <span>Saving your new scores...</span>
-          <progress className="progress progress-success w-full"></progress>
-        </div>
-      </CustomDialog>
+      <LoadingDialog state={savingLoadingDialog}>
+        Dropping some entries...
+      </LoadingDialog>
     </LeftRightListInterface>
   );
 }

@@ -22,8 +22,9 @@ import ScorerSettingsItems, {
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
-import { prepareListForDisplay } from "../util/settings";
+import { matchesTitle, prepareListForDisplay } from "../util/settings";
 import useBlockerDialog from "../hooks/useBlockerDialog";
+import LoadingDialog from "../components/dialogs/LoadingDialog";
 
 export const Route = createFileRoute("/scorer")({
   component: Scorer,
@@ -130,6 +131,10 @@ function Scorer() {
           return [changes, perceivedChanges];
         })();
 
+  const numDisplayUnsavedChanges = settings.hideScore.value
+    ? numPerceivedChanges
+    : numUnsavedChanges;
+
   useBlockerDialog({
     confirmDialog,
     shouldBlock: () =>
@@ -196,22 +201,9 @@ function Scorer() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (e) => {
-            const allowed = settings.allowedStatuses.value.includes(e.status);
-            const matched = !settings.titleFilter.value
-              ? true
-              : [
-                  e.media.title.english,
-                  e.media.title.native,
-                  e.media.title.romaji,
-                ].some((t) => {
-                  return (
-                    t?.toLowerCase().includes(settings.titleFilter.value) ??
-                    false
-                  );
-                });
-            return allowed && matched;
-          },
+          (e) =>
+            settings.allowedStatuses.value.includes(e.status) &&
+            matchesTitle(settings.titleFilter.value, e),
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,
@@ -240,20 +232,12 @@ function Scorer() {
       }
       rightMenu={
         <>
-          {numUnsavedChanges != null &&
-            (settings.hideScore.value
-              ? numPerceivedChanges
-              : numUnsavedChanges) > 0 && (
-              <div className="text-error text-center text-xs lg:text-sm">
-                {settings.hideScore.value
-                  ? numPerceivedChanges
-                  : numUnsavedChanges}{" "}
-                unsaved change
-                {(settings.hideScore.value
-                  ? numPerceivedChanges
-                  : numUnsavedChanges) > 1 && "s"}
-              </div>
-            )}
+          {numDisplayUnsavedChanges != null && numDisplayUnsavedChanges > 0 && (
+            <div className="text-error text-center text-xs lg:text-sm">
+              {numDisplayUnsavedChanges} unsaved change
+              {numDisplayUnsavedChanges > 1 && "s"}
+            </div>
+          )}
           <Button
             className="btn btn-outline btn-secondary"
             disabled={list.query.isFetching || list.data == null}
@@ -265,10 +249,8 @@ function Scorer() {
                 dispatch({ t: "reset" });
               };
               if (
-                numUnsavedChanges != null &&
-                (settings.hideScore.value
-                  ? numPerceivedChanges > 0
-                  : numUnsavedChanges > 0)
+                numDisplayUnsavedChanges != null &&
+                numDisplayUnsavedChanges > 0
               ) {
                 confirmDialog.openWith({
                   title: "Refresh List",
@@ -293,10 +275,7 @@ function Scorer() {
           <Button
             className="btn btn-outline btn-success"
             disabled={
-              numUnsavedChanges == null ||
-              (settings.hideScore.value
-                ? numPerceivedChanges == 0
-                : numUnsavedChanges == 0)
+              numDisplayUnsavedChanges == null || numDisplayUnsavedChanges == 0
             }
             onClick={() => {
               confirmDialog.openWith({
@@ -305,10 +284,7 @@ function Scorer() {
                 severity: "GOOD",
                 message: (
                   <>
-                    Are you sure you want to update{" "}
-                    {settings.hideScore.value
-                      ? numPerceivedChanges
-                      : numUnsavedChanges}{" "}
+                    Are you sure you want to update {numDisplayUnsavedChanges}{" "}
                     of your ratings?
                   </>
                 ),
@@ -335,8 +311,9 @@ function Scorer() {
           viewer={viewer}
           dispatch={dispatch}
           settings={settings}
-          numUnsavedChanges={numUnsavedChanges}
-          numPerceivedChanges={numPerceivedChanges}
+          hasUnsavedChanges={
+            numDisplayUnsavedChanges != null && numDisplayUnsavedChanges > 0
+          }
           confirmDialog={confirmDialog}
         />
       }
@@ -379,12 +356,9 @@ function Scorer() {
           ]}
         />
       </CustomDialog>
-      <CustomDialog state={savingLoadingDialog} closeable={false}>
-        <div className="flex-center gap-y-2">
-          <span>Saving your new scores...</span>
-          <progress className="progress progress-success w-full"></progress>
-        </div>
-      </CustomDialog>
+      <LoadingDialog state={savingLoadingDialog}>
+        Saving your new scores...
+      </LoadingDialog>
     </LeftRightListInterface>
   );
 }

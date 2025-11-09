@@ -1,17 +1,13 @@
-import { Button, Field, Input, Label, Switch } from "@headlessui/react";
+import { Field, Label, Switch } from "@headlessui/react";
 import type { UseQueryResult } from "@tanstack/react-query";
-import clsx from "clsx";
-import { PiCheckFatFill, PiShuffleFill } from "react-icons/pi";
 import type { AnilistError } from "../../api/anilist";
 import {
   MEDIA_LIST_STATUSES,
-  MEDIA_TYPES,
   type MediaListStatus,
   type MediaType,
 } from "../../api/queries/list";
 import {
   SCORE_FORMATS,
-  TITLE_LANGUAGES,
   type ScoreFormat,
   type TitleLanguage,
   type Viewer,
@@ -21,20 +17,20 @@ import type { ScorerListDraftAction } from "../scorer";
 import type { DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
 import {
-  nameOfListType,
   nameOfScoreFormat,
-  nameOfSortBy,
-  nameOfSortDir,
-  nameOfStatus,
-  nameOfTitleLanguage,
   seedgen,
   SORT_BYS,
-  SORT_DIRS,
   type SortBy,
   type SortDir,
 } from "../../util/settings";
 import useCell, { type Cell } from "../../hooks/useCell";
-import SettingsItem from "../../components/list/SettingsItem";
+import SettingsItem from "../../components/list/settings/SettingsItem";
+import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
+import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
+import SettingsItemTitleFilter from "../../components/list/settings/SettingsItemTitleFilter";
+import SettingsItemList from "../../components/list/settings/SettingsItemList";
+import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
+import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
 
 export type ScorerSettings = {
   listType: Cell<MediaType>;
@@ -66,8 +62,7 @@ export default function ScorerSettingsItems({
   dispatch,
   settings,
   viewer,
-  numUnsavedChanges,
-  numPerceivedChanges,
+  hasUnsavedChanges,
   confirmDialog,
 }: {
   dispatch: React.Dispatch<ScorerListDraftAction>;
@@ -76,54 +71,18 @@ export default function ScorerSettingsItems({
     data: Viewer | undefined;
     query: UseQueryResult<Viewer, AnilistError>;
   };
-  numUnsavedChanges: number | null;
-  numPerceivedChanges: number | null;
+  hasUnsavedChanges: boolean;
   confirmDialog: DialogState<ConfirmDialogContext>;
 }) {
   return (
     <>
-      <SettingsItem label="List">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.listType.value}
-          onChange={(v) => {
-            if (settings.listType.value === v) {
-              return;
-            }
-            const change = async () => {
-              settings.listType.set(v);
-              dispatch({ t: "reset" });
-            };
-            if (
-              numUnsavedChanges != null &&
-              (settings.hideScore.value
-                ? numPerceivedChanges !== 0
-                : numUnsavedChanges !== 0)
-            ) {
-              confirmDialog.openWith({
-                title: "Change List",
-                action: "Confirm",
-                severity: "BAD",
-                message: (
-                  <>
-                    Are you sure you want to switch to your{" "}
-                    {nameOfListType(v).toLowerCase()} list?
-                    <br />
-                    You will lose all unsaved changes.
-                  </>
-                ),
-                onConfirm: change,
-              });
-            } else {
-              change();
-            }
-          }}
-          options={MEDIA_TYPES}
-          buttonContents={nameOfListType(settings.listType.value)}
-          optionContents={(value) => nameOfListType(value)}
-        />
-      </SettingsItem>
+      <SettingsItemList
+        viewer={viewer}
+        listType={settings.listType}
+        hasUnsavedChanges={hasUnsavedChanges}
+        confirmDialog={confirmDialog}
+        onChange={() => dispatch({ t: "reset" })}
+      />
       <SettingsItem label="Score Format">
         <CustomListbox
           className="select w-full"
@@ -150,100 +109,31 @@ export default function ScorerSettingsItems({
         />
         <Label>Hide Old Scores</Label>
       </Field>
-      <SettingsItem label="Title Filter">
-        <Input
-          className="input w-full"
-          disabled={viewer.data == null}
-          placeholder="🔍 Search..."
-          value={settings.titleFilter.value}
-          onChange={(e) => settings.titleFilter.set(e.target.value)}
-        />
-      </SettingsItem>
-      <SettingsItem label="Title Language">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.titleLanguage.value}
-          onChange={(v) => settings.titleLanguage.set(v)}
-          options={TITLE_LANGUAGES}
-          buttonContents={nameOfTitleLanguage(settings.titleLanguage.value)}
-          optionContents={(value) => nameOfTitleLanguage(value)}
-        />
-      </SettingsItem>
-      <SettingsItem label="Status">
-        <CustomListbox<MediaListStatus>
-          className="select w-full"
-          disabled={viewer.data == null}
-          multiple
-          value={settings.allowedStatuses.value}
-          options={MEDIA_LIST_STATUSES}
-          onChange={(v) => {
-            if (v.length > 0) {
-              settings.allowedStatuses.set(v);
-            }
-          }}
-          buttonContents={
-            <span className="inline-block truncate">
-              {[...settings.allowedStatuses.value]
-                .sort(
-                  (a, b) =>
-                    MEDIA_LIST_STATUSES.indexOf(a) -
-                    MEDIA_LIST_STATUSES.indexOf(b),
-                )
-                .map((x) => nameOfStatus(settings.listType.value, x))
-                .join(", ")}
-            </span>
-          }
-          optionContents={(value) => (
-            <div className="inline-flex flex-row items-center gap-x-2">
-              <div
-                className={clsx(
-                  !settings.allowedStatuses.value.includes(value) &&
-                    "invisible",
-                )}
-              >
-                <PiCheckFatFill />
-              </div>
-              <span>{nameOfStatus(settings.listType.value, value)}</span>
-            </div>
-          )}
-        />
-      </SettingsItem>
-      <SettingsItem label="Sort By">
-        <CustomListbox
-          className="select w-full"
-          disabled={viewer.data == null}
-          value={settings.sortBy.value}
-          options={SORT_BYS}
-          onChange={(v) => {
-            settings.sortBy.set(v);
-          }}
-          buttonContents={nameOfSortBy(settings.sortBy.value)}
-          optionContents={(value) => nameOfSortBy(value)}
-        />
-      </SettingsItem>
-      {settings.sortBy.value.startsWith("random") ? (
-        <Button
-          className="btn btn-outline btn-secondary"
-          onClick={() => {
-            settings.randomSeed.set(seedgen());
-          }}
-        >
-          <PiShuffleFill /> Reshuffle
-        </Button>
-      ) : (
-        <SettingsItem label="Sort Direction">
-          <CustomListbox
-            className="select w-full"
-            disabled={viewer.data == null}
-            value={settings.sortDir.value}
-            options={SORT_DIRS}
-            onChange={(v) => settings.sortDir.set(v)}
-            buttonContents={nameOfSortDir(settings.sortDir.value)}
-            optionContents={(value) => nameOfSortDir(value)}
-          />
-        </SettingsItem>
-      )}
+      <SettingsItemTitleFilter
+        viewer={viewer}
+        titleFilter={settings.titleFilter}
+      />
+      <SettingsItemTitleLanguage
+        viewer={viewer}
+        titleLanguage={settings.titleLanguage}
+      />
+      <SettingsItemStatuses
+        viewer={viewer}
+        listType={settings.listType.value}
+        options={MEDIA_LIST_STATUSES}
+        statuses={settings.allowedStatuses}
+      />
+      <SettingsItemSortBy
+        viewer={viewer}
+        sortBy={settings.sortBy}
+        options={SORT_BYS}
+      />
+      <SettingsItemSortDir
+        viewer={viewer}
+        sortBy={settings.sortBy.value}
+        sortDir={settings.sortDir}
+        randomSeed={settings.randomSeed}
+      />
     </>
   );
 }
