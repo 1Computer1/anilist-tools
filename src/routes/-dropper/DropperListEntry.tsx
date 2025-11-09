@@ -3,7 +3,7 @@ import { type Dispatch, type Ref } from "react";
 import type { Entry, MediaListStatus } from "../../api/queries/list";
 import type { DropperListDraft, DropperListDraftAction } from "../dropper";
 import { useMediaQuery } from "usehooks-ts";
-import type { DropperSettings } from "./DropperSettingsItems";
+import type { DropperSettings } from "./dropperSettings";
 import { getTitle, nameOfStatus } from "../../util/settings";
 import { DateTime } from "luxon";
 import { PiTrashFill } from "react-icons/pi";

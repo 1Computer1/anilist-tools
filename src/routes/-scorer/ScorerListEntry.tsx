@@ -20,7 +20,7 @@ import type { ScorerListDraft, ScorerListDraftAction } from "../scorer";
 import type { ScoreFormat } from "../../api/queries/viewer";
 import CustomTooltip from "../../components/CustomTooltip";
 import { useMediaQuery } from "usehooks-ts";
-import type { ScorerSettings } from "./ScorerSettingsItems";
+import type { ScorerSettings } from "./scorerSettings";
 import { getTitle } from "../../util/settings";
 import {
   POINT_3_VALUES,

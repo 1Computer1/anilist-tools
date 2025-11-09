@@ -1,29 +1,11 @@
 import { Field, Label, Switch } from "@headlessui/react";
-import type { UseQueryResult } from "@tanstack/react-query";
-import type { AnilistError } from "../../api/anilist";
-import {
-  MEDIA_LIST_STATUSES,
-  type MediaListStatus,
-  type MediaType,
-} from "../../api/queries/list";
-import {
-  SCORE_FORMATS,
-  type ScoreFormat,
-  type TitleLanguage,
-  type Viewer,
-} from "../../api/queries/viewer";
+import { MEDIA_LIST_STATUSES } from "../../api/queries/list";
+import { SCORE_FORMATS, type Viewer } from "../../api/queries/viewer";
 import CustomListbox from "../../components/CustomListbox";
 import type { ScorerListDraftAction } from "../scorer";
 import type { DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
-import {
-  nameOfScoreFormat,
-  seedgen,
-  SORT_BYS,
-  type SortBy,
-  type SortDir,
-} from "../../util/settings";
-import useCell, { type Cell } from "../../hooks/useCell";
+import { nameOfScoreFormat, SORT_BYS } from "../../util/settings";
 import SettingsItem from "../../components/list/settings/SettingsItem";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
@@ -31,32 +13,8 @@ import SettingsItemTitleFilter from "../../components/list/settings/SettingsItem
 import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
 import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
-
-export type ScorerSettings = {
-  listType: Cell<MediaType>;
-  sortBy: Cell<SortBy>;
-  sortDir: Cell<SortDir>;
-  randomSeed: Cell<number>;
-  allowedStatuses: Cell<MediaListStatus[]>;
-  titleFilter: Cell<string>;
-  titleLanguage: Cell<TitleLanguage>;
-  scoreFormat: Cell<ScoreFormat>;
-  hideScore: Cell<boolean>;
-};
-
-export function useScorerSettings(): ScorerSettings {
-  return {
-    listType: useCell<MediaType>("ANIME"),
-    allowedStatuses: useCell<MediaListStatus[]>(["COMPLETED"]),
-    sortBy: useCell<SortBy>("score"),
-    sortDir: useCell<SortDir>("desc"),
-    randomSeed: useCell<number>(seedgen()),
-    titleFilter: useCell<string>(""),
-    titleLanguage: useCell<TitleLanguage>("ENGLISH"),
-    scoreFormat: useCell<ScoreFormat>("POINT_100"),
-    hideScore: useCell<boolean>(false),
-  };
-}
+import type { ScorerSettings } from "./scorerSettings";
+import type { UseAnilistQueryResult } from "../../hooks/anilist";
 
 export default function ScorerSettingsItems({
   dispatch,
@@ -67,10 +25,7 @@ export default function ScorerSettingsItems({
 }: {
   dispatch: React.Dispatch<ScorerListDraftAction>;
   settings: ScorerSettings;
-  viewer: {
-    data: Viewer | undefined;
-    query: UseQueryResult<Viewer, AnilistError>;
-  };
+  viewer: UseAnilistQueryResult<Viewer>;
   hasUnsavedChanges: boolean;
   confirmDialog: DialogState<ConfirmDialogContext>;
 }) {

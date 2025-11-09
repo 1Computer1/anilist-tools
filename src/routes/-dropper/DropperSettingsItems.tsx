@@ -1,11 +1,8 @@
-import type { UseQueryResult } from "@tanstack/react-query";
-import type { AnilistError } from "../../api/anilist";
-import { type MediaType } from "../../api/queries/list";
-import { type TitleLanguage, type Viewer } from "../../api/queries/viewer";
+import { type Viewer } from "../../api/queries/viewer";
 import type { DropperListDraftAction } from "../dropper";
 import type { DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
-import useCell, { type Cell } from "../../hooks/useCell";
+import useCell from "../../hooks/useCell";
 import SettingsItemDate from "../../components/list/settings/SettingsItemDate";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
@@ -16,21 +13,9 @@ import { Button } from "@headlessui/react";
 import { PiTrashFill } from "react-icons/pi";
 import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
 import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
-import {
-  seedgen,
-  SORT_BYS,
-  type SortBy,
-  type SortDir,
-} from "../../util/settings";
-
-export type DropperSettings = {
-  listType: Cell<MediaType>;
-  titleFilter: Cell<string>;
-  titleLanguage: Cell<TitleLanguage>;
-  sortBy: Cell<SortBy>;
-  sortDir: Cell<SortDir>;
-  randomSeed: Cell<number>;
-};
+import { SORT_BYS } from "../../util/settings";
+import type { DropperSettings } from "./dropperSettings";
+import type { UseAnilistQueryResult } from "../../hooks/anilist";
 
 type DroppableMediaListStatus = "CURRENT" | "PAUSED";
 
@@ -38,17 +23,6 @@ const DROPPABLE_MEDIA_LIST_STATUS: DroppableMediaListStatus[] = [
   "CURRENT",
   "PAUSED",
 ];
-
-export function useDropperSettings(): DropperSettings {
-  return {
-    listType: useCell<MediaType>("ANIME"),
-    titleFilter: useCell<string>(""),
-    titleLanguage: useCell<TitleLanguage>("ENGLISH"),
-    sortBy: useCell<SortBy>("lastUpdated"),
-    sortDir: useCell<SortDir>("asc"),
-    randomSeed: useCell<number>(seedgen()),
-  };
-}
 
 export default function DropperSettingsItems({
   dispatch,
@@ -59,10 +33,7 @@ export default function DropperSettingsItems({
 }: {
   dispatch: React.Dispatch<DropperListDraftAction>;
   settings: DropperSettings;
-  viewer: {
-    data: Viewer | undefined;
-    query: UseQueryResult<Viewer, AnilistError>;
-  };
+  viewer: UseAnilistQueryResult<Viewer>;
   hasUnsavedChanges: boolean;
   confirmDialog: DialogState<ConfirmDialogContext>;
 }) {

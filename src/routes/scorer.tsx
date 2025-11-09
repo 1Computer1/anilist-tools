@@ -16,9 +16,8 @@ import { SCORE_SYSTEMS } from "./-scorer/scoreSystems";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { useEffect } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
-import ScorerSettingsItems, {
-  useScorerSettings,
-} from "./-scorer/ScorerSettingsItems";
+import ScorerSettingsItems from "./-scorer/ScorerSettingsItems";
+import { useScorerSettings } from "./-scorer/scorerSettings";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";

@@ -19,9 +19,8 @@ import LeftRightListInterface, {
 } from "../components/list/LeftRightListInterface";
 import { matchesTitle, prepareListForDisplay } from "../util/settings";
 import type { MediaListStatus } from "../api/queries/list";
-import DropperSettingsItems, {
-  useDropperSettings,
-} from "./-dropper/DropperSettingsItems";
+import DropperSettingsItems from "./-dropper/DropperSettingsItems";
+import { useDropperSettings } from "./-dropper/dropperSettings";
 import DropperListEntry from "./-dropper/DropperListEntry";
 import { DateTime } from "luxon";
 import useBlockerDialog from "../hooks/useBlockerDialog";
