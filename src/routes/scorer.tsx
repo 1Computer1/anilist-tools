@@ -198,17 +198,17 @@ function Scorer() {
     <LeftRightListInterface
       {...leftRightListInterfaceProps}
       prepareListForDisplay={(list) =>
-        prepareListForDisplay(
-          list,
-          (e) =>
+        prepareListForDisplay({
+          data: list,
+          filter: (e) =>
             settings.allowedStatuses.value.includes(e.status) &&
             matchesFilter(settings.filter.value, e),
-          settings.sortBy.value,
-          settings.sortDir.value,
-          settings.titleLanguage.value,
-          settings.randomSeed.value,
-          true,
-        )
+          sortBy: settings.sortBy.value,
+          sortDir: settings.sortDir.value,
+          titleLanguage: settings.titleLanguage.value,
+          seed: settings.randomSeed.value,
+          section: true,
+        })
       }
       error={
         numUnsavedChanges == null ? (

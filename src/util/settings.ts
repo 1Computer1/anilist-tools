@@ -95,18 +95,27 @@ export function nameOfStatus(m: MediaType, s: MediaListStatus) {
   }[s];
 }
 
-export function prepareListForDisplay(
-  data: List,
-  filter: (e: Entry) => boolean,
-  sortBy: SortBy,
-  sortDir: SortDir,
-  titleLanguage: TitleLanguage,
-  seed: number,
-  section: boolean,
-): [Entry[], number[]] {
-  let sorted;
+export type PrepareListData = {
+  data: List;
+  filter: (e: Entry) => boolean;
+  sortBy: SortBy;
+  sortDir: SortDir;
+  titleLanguage: TitleLanguage;
+  seed: number;
+  section: boolean;
+};
+
+export function prepareListForDisplay({
+  data,
+  filter,
+  sortBy,
+  sortDir,
+  titleLanguage,
+  seed,
+  section,
+}: PrepareListData): [Entry[], number[]] {
+  const sorted = [...data.values()].filter(filter);
   if (sortBy === "random") {
-    sorted = [...data.values()].filter(filter);
     shuffle(sorted, seed);
     if (section) {
       sorted.sort(
@@ -117,7 +126,6 @@ export function prepareListForDisplay(
     }
   } else {
     const comparator = COMPARATORS[sortBy];
-    sorted = [...data.values()].filter(filter);
     sorted.sort((a, b) => {
       return (
         (section

@@ -158,15 +158,15 @@ function Dropper() {
     <LeftRightListInterface
       {...leftRightListInterfaceProps}
       prepareListForDisplay={(list) =>
-        prepareListForDisplay(
-          list,
-          (e) => matchesFilter(settings.filter.value, e),
-          settings.sortBy.value,
-          settings.sortDir.value,
-          settings.titleLanguage.value,
-          0,
-          false,
-        )
+        prepareListForDisplay({
+          data: list,
+          filter: (e) => matchesFilter(settings.filter.value, e),
+          sortBy: settings.sortBy.value,
+          sortDir: settings.sortDir.value,
+          titleLanguage: settings.titleLanguage.value,
+          seed: settings.randomSeed.value,
+          section: false,
+        })
       }
       error={
         numUnsavedChanges == null ? (

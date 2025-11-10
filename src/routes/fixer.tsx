@@ -361,19 +361,19 @@ function Fixer() {
     <LeftRightListInterface
       {...leftRightListInterfaceProps}
       prepareListForDisplay={(list) =>
-        prepareListForDisplay(
-          list,
-          (e) =>
+        prepareListForDisplay({
+          data: list,
+          filter: (e) =>
             draft.has(e.id) &&
             isEntryBad(draft.get(e.id)!) &&
             settings.allowedStatuses.value.includes(e.status) &&
             matchesFilter(settings.filter.value, e),
-          settings.sortBy.value,
-          settings.sortDir.value,
-          settings.titleLanguage.value,
-          0,
-          true,
-        )
+          sortBy: settings.sortBy.value,
+          sortDir: settings.sortDir.value,
+          titleLanguage: settings.titleLanguage.value,
+          seed: settings.randomSeed.value,
+          section: true,
+        })
       }
       listEmpty={(list) =>
         [...list.values()].every(
