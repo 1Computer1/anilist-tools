@@ -349,7 +349,7 @@ function Fixer() {
   const savingLoadingDialog = useDialog();
 
   const isAnime = settings.listType.value === "ANIME";
-  const airing = isAnime ? "airing" : "release";
+  const airing = isAnime ? "airing" : "releasing";
 
   return (
     <LeftRightListInterface

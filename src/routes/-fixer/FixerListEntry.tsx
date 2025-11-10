@@ -43,7 +43,7 @@ export default function FixerListEntry({
   const isAnime = settings.listType.value === "ANIME";
 
   const episodes = isAnime ? "episodes" : "chapters";
-  const airing = isAnime ? "airing" : "release";
+  const airing = isAnime ? "airing" : "releasing";
 
   const maxProgress = entry.media.episodes ?? entry.media.chapters;
   const mediaStartDate = isNonFuzzy(entry.media.startDate)
@@ -316,7 +316,7 @@ export default function FixerListEntry({
                       fuzzyDateToDate(entry.completedAt))!
                     ? "Cannot be after the finish date"
                     : mediaStartDate && newEntry.startedAt < mediaStartDate
-                      ? `Cannot be before the ${isAnime ? "airing" : "releasing"} date`
+                      ? `Cannot be before the ${airing} date`
                       : null
                   : null
             }
@@ -389,7 +389,7 @@ export default function FixerListEntry({
                     (newEntry.startedAt ?? fuzzyDateToDate(entry.startedAt))!
                     ? "Cannot be before the start date"
                     : mediaEndDate && newEntry.completedAt < mediaEndDate
-                      ? `Cannot be before the finished ${isAnime ? "airing" : "releasing"} date`
+                      ? `Cannot be before the finished ${airing} date`
                       : null
                   : null
             }

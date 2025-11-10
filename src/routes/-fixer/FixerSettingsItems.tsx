@@ -41,7 +41,7 @@ export default function FixerSettingsItems({
 }) {
   const isAnime = settings.listType.value === "ANIME";
   const episodes = isAnime ? "Episodes" : "Chapters";
-  const airing = isAnime ? "Airing" : "Release";
+  const airing = isAnime ? "Airing" : "Releasing";
   const helpDialog = useDialog();
 
   return (
