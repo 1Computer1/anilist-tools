@@ -8,10 +8,7 @@ export type NonFuzzyDate = {
 };
 
 export function isNonFuzzy(d: FuzzyDate): d is NonFuzzyDate {
-  if (!d.year || !d.month || !d.day) {
-    return false;
-  }
-  return true;
+  return !!(d.year && d.month && d.day);
 }
 
 export function isFuzzy(d: FuzzyDate): boolean {
