@@ -11,10 +11,10 @@ The name stands for **A**ni**L**ist **T**ools for **E**diting **R**apidly.
 - **Dropper**  
   Bulk drop entries not recently updated.
 
-### Planned
-
 - **Fixer**  
   Fix incorrect data like start/end date and progress.
+
+### Planned
 
 - **Noter**  
   Bulk edit notes with find/replace/etc.
