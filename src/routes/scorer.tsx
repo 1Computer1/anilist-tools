@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   PiArrowClockwiseFill,
   PiFloppyDiskFill,
-  PiQuestionFill,
+  PiKeyboardBold,
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
 import { Shortcuts } from "../components/Shortcuts";
@@ -225,7 +225,7 @@ function Scorer() {
             className="btn btn-ghost btn-square"
             onClick={() => shortcutsDialog.open()}
           >
-            <PiQuestionFill className="size-6" />
+            <PiKeyboardBold className="size-6" />
           </Button>
         </>
       }

@@ -3,10 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  PiQuestionFill,
   PiArrowClockwiseFill,
   PiFloppyDiskFill,
   PiScrewdriverFill,
+  PiKeyboardBold,
 } from "react-icons/pi";
 import { useImmerReducer } from "use-immer";
 import {
@@ -405,7 +405,7 @@ function Fixer() {
             className="btn btn-ghost btn-square"
             onClick={() => shortcutsDialog.open()}
           >
-            <PiQuestionFill className="size-6" />
+            <PiKeyboardBold className="size-6" />
           </Button>
         </>
       }
