@@ -255,7 +255,6 @@ function ScoreNumberInput({
         min={0}
         max={maxDisplay}
         step={stepDisplay}
-        tabIndex={-1}
         required
         onKeyDown={(e) => {
           e.stopPropagation();

@@ -115,11 +115,6 @@ export default function DropperListEntry({
       >
         <Switch
           checked={newStatus === "DROPPED"}
-          ref={(e) => {
-            if (e) {
-              e.tabIndex = -1;
-            }
-          }}
           onChange={() => {
             dispatch({
               t: "updateStatus",

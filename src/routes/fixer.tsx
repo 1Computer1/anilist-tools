@@ -500,8 +500,8 @@ function Fixer() {
         <Shortcuts
           shortcuts={[
             { divider: "Navigation" },
-            { keys: "Tab|↓|↩", desc: "Go next" },
-            { keys: "Shift Tab|↑", desc: "Go back" },
+            { keys: "↓|↩", desc: "Go next" },
+            { keys: "↑", desc: "Go back" },
             { divider: "Update" },
             { keys: ".", desc: "Fix entry" },
             { keys: "/", desc: "Exclude fixing this entry" },

@@ -331,8 +331,8 @@ function Scorer() {
         <Shortcuts
           shortcuts={[
             { divider: "Navigation" },
-            { keys: "Tab|↓|↩", desc: "Go next" },
-            { keys: "Shift Tab|↑", desc: "Go back" },
+            { keys: "↓|↩", desc: "Go next" },
+            { keys: "↑", desc: "Go back" },
             { divider: "Adjustments" },
             { keys: "→|+", desc: shorcutsForScore.incDesc },
             { keys: "←|-", desc: shorcutsForScore.decDesc },

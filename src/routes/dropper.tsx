@@ -284,8 +284,8 @@ function Dropper() {
         <Shortcuts
           shortcuts={[
             { divider: "Navigation" },
-            { keys: "Tab|↓|↩", desc: "Go next" },
-            { keys: "Shift Tab|↑", desc: "Go back" },
+            { keys: "↓|↩", desc: "Go next" },
+            { keys: "↑", desc: "Go back" },
             { divider: "Update" },
             { keys: ".", desc: "Drop entry" },
             { keys: "/", desc: "Revert status to original" },
