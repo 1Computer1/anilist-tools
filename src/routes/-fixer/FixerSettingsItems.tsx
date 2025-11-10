@@ -168,6 +168,11 @@ export default function FixerSettingsItems({
                 after: `Finished ${airing} Date`,
               },
               {
+                criteria: `Date < Start Date`,
+                before: "Date",
+                after: `Start Date`,
+              },
+              {
                 criteria: `Planning But Has Date`,
                 before: "Date",
                 after: `∅`,
@@ -175,6 +180,20 @@ export default function FixerSettingsItems({
             ]}
             viewer={viewer}
             setting={settings.fixes.invalidEndDate}
+          />
+          <HelpExample
+            label="Edit All Dates"
+            listType={settings.listType.value}
+            statuses={MEDIA_LIST_STATUSES}
+            fixes={[
+              {
+                criteria: `Any Date`,
+                before: "Date",
+                after: `Custom Date`,
+              },
+            ]}
+            viewer={viewer}
+            setting={settings.fixes.allDates}
           />
         </ul>
       </CustomDialog>
@@ -200,6 +219,12 @@ export default function FixerSettingsItems({
         onClick={() => _.forEach(settings.fixes, (c) => c.set(true))}
       >
         Select All
+      </Button>
+      <Button
+        className="btn btn-xs btn-primary btn-outline"
+        onClick={() => _.forEach(settings.fixes, (c) => c.set(false))}
+      >
+        Select None
       </Button>
       <FixCheckbox
         viewer={viewer}
@@ -231,6 +256,11 @@ export default function FixerSettingsItems({
         label="Invalid Finish Date"
         setting={settings.fixes.invalidEndDate}
       />
+      <FixCheckbox
+        viewer={viewer}
+        label="Edit All Dates"
+        setting={settings.fixes.allDates}
+      />
       <Button
         className="btn btn-outline btn-secondary"
         disabled={viewer.data == null}
@@ -244,7 +274,8 @@ export default function FixerSettingsItems({
                 settings.fixes.missingStartDate.value ||
                 settings.fixes.invalidStartDate.value ||
                 settings.fixes.missingEndDate.value ||
-                settings.fixes.invalidEndDate.value,
+                settings.fixes.invalidEndDate.value ||
+                settings.fixes.allDates.value,
             },
           });
         }}

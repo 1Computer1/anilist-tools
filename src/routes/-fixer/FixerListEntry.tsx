@@ -10,7 +10,7 @@ import {
 } from "../../util/date";
 import { useMediaQuery } from "usehooks-ts";
 import type { FixerSettings } from "./fixerSettings";
-import { getTitle, nameOfStatus } from "../../util/settings";
+import { getTitle, nameOfListType, nameOfStatus } from "../../util/settings";
 import { DateTime } from "luxon";
 import { PiArrowFatRightFill, PiWarningCircleFill } from "react-icons/pi";
 import type { FixerListDraft, FixerListDraftAction } from "../fixer";
@@ -55,6 +55,12 @@ export default function FixerListEntry({
 
   const newEntry = draft.get(entry.id)!;
 
+  const canModifyStart = (newEntry.status ?? entry.status) !== "PLANNING";
+  const canModifyEnd =
+    ((newEntry.status ?? entry.status) === "COMPLETED" ||
+      (newEntry.status ?? entry.status) === "REPEATING") &&
+    (entry.media.status === "FINISHED" || entry.media.status === "CANCELLED");
+
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   return (
@@ -85,7 +91,7 @@ export default function FixerListEntry({
           if (!e.ctrlKey) {
             tab(1);
           }
-        } else if (show.dates && e.key === "s") {
+        } else if (show.dates && e.key === "s" && canModifyStart) {
           dispatch({
             t: "update",
             id: entry.id,
@@ -94,7 +100,12 @@ export default function FixerListEntry({
           if (!e.ctrlKey) {
             tab(1);
           }
-        } else if (show.dates && e.key === "d") {
+        } else if (
+          show.dates &&
+          e.key === "d" &&
+          canModifyStart &&
+          canModifyEnd
+        ) {
           dispatch({
             t: "update",
             id: entry.id,
@@ -104,7 +115,7 @@ export default function FixerListEntry({
           if (!e.ctrlKey) {
             tab(1);
           }
-        } else if (show.dates && e.key === "f") {
+        } else if (show.dates && e.key === "f" && canModifyEnd) {
           dispatch({
             t: "update",
             id: entry.id,
@@ -114,12 +125,12 @@ export default function FixerListEntry({
             tab(1);
           }
         } else if (show.dates && "-_[{".includes(e.key)) {
-          const [k, bound] = e.shiftKey
-            ? (["completedAt", mediaEndDate] as const)
-            : (["startedAt", mediaStartDate] as const);
+          const [k, bound, ok] = e.shiftKey
+            ? (["completedAt", mediaEndDate, canModifyEnd] as const)
+            : (["startedAt", mediaStartDate, canModifyStart] as const);
           const before =
             newEntry[k] ?? fuzzyDateToDate(entry[k]) ?? mediaEndDate;
-          if (before && bound) {
+          if (ok && before && bound) {
             let after = before.minus({ days: "[{".includes(e.key) ? 7 : 1 });
             if (after < bound) {
               after = bound;
@@ -134,10 +145,12 @@ export default function FixerListEntry({
             tab(1);
           }
         } else if (show.dates && "+=]}".includes(e.key)) {
-          const k = e.shiftKey ? "completedAt" : "startedAt";
+          const [k, ok] = e.shiftKey
+            ? (["completedAt", canModifyEnd] as const)
+            : (["startedAt", canModifyStart] as const);
           const before =
             newEntry[k] ?? fuzzyDateToDate(entry[k]) ?? mediaEndDate;
-          if (before) {
+          if (ok && before) {
             const after = before.plus({ days: "]}".includes(e.key) ? 7 : 1 });
             dispatch({
               t: "update",
@@ -203,7 +216,13 @@ export default function FixerListEntry({
                 Status
               </CustomTooltip>
             }
-            beforeBad={newEntry.statusBad && "Status is not valid"}
+            beforeBad={
+              newEntry.statusBad &&
+              {
+                notFinished: `${nameOfListType(settings.listType.value)} not finished ${airing}`,
+                notReleased: `${nameOfListType(settings.listType.value)} not started ${airing}`,
+              }[newEntry.statusBad]
+            }
             before={nameOfStatus(settings.listType.value, entry.status)}
             afterChanged={
               newEntry.status != null && newEntry.status !== entry.status
@@ -215,62 +234,64 @@ export default function FixerListEntry({
             exclude={!!newEntry.exclude}
           />
         )}
-        {show.progress && maxProgress ? (
-          <Change
-            label={
-              <CustomTooltip
-                content={
-                  <>
-                    {maxProgress} total {isAnime ? "episode" : "chapter"}
-                    {maxProgress > 0 ? "s" : ""}
-                  </>
-                }
-              >
-                Progress
-              </CustomTooltip>
-            }
-            beforeBad={newEntry.progressBad && "Progress not same as total"}
-            before={entry.progress}
-            afterChanged={newEntry.progress !== entry.progress}
-            after={newEntry.progress}
-            exclude={!!newEntry.exclude}
-          />
-        ) : (
-          <NoChange
-            label="Progress"
-            exclude={!!newEntry.exclude}
-            text={`No ${episodes} data`}
-          />
-        )}
-        {show.progress && entry.media.volumes ? (
-          <Change
-            label={
-              <CustomTooltip
-                content={
-                  <>
-                    {entry.media.volumes} total volume
-                    {entry.media.volumes > 0 ? "s" : ""}
-                  </>
-                }
-              >
-                Volumes
-              </CustomTooltip>
-            }
-            beforeBad={
-              newEntry.progressVolumesBad && "Progress not same as total"
-            }
-            before={entry.progressVolumes}
-            afterChanged={newEntry.progressVolumes !== entry.progressVolumes}
-            after={newEntry.progressVolumes}
-            exclude={!!newEntry.exclude}
-          />
-        ) : (
-          <NoChange
-            label="Volumes"
-            exclude={!!newEntry.exclude}
-            text="No volumes data"
-          />
-        )}
+        {show.progress &&
+          (maxProgress ? (
+            <Change
+              label={
+                <CustomTooltip
+                  content={
+                    <>
+                      {maxProgress} total {isAnime ? "episode" : "chapter"}
+                      {maxProgress > 0 ? "s" : ""}
+                    </>
+                  }
+                >
+                  Progress
+                </CustomTooltip>
+              }
+              beforeBad={newEntry.progressBad && "Progress not same as total"}
+              before={entry.progress}
+              afterChanged={newEntry.progress !== entry.progress}
+              after={newEntry.progress}
+              exclude={!!newEntry.exclude}
+            />
+          ) : (
+            <NoChange
+              label="Progress"
+              exclude={!!newEntry.exclude}
+              text={`No ${episodes} data`}
+            />
+          ))}
+        {show.progress &&
+          (entry.media.volumes ? (
+            <Change
+              label={
+                <CustomTooltip
+                  content={
+                    <>
+                      {entry.media.volumes} total volume
+                      {entry.media.volumes > 0 ? "s" : ""}
+                    </>
+                  }
+                >
+                  Volumes
+                </CustomTooltip>
+              }
+              beforeBad={
+                newEntry.progressVolumesBad && "Progress not same as total"
+              }
+              before={entry.progressVolumes}
+              afterChanged={newEntry.progressVolumes !== entry.progressVolumes}
+              after={newEntry.progressVolumes}
+              exclude={!!newEntry.exclude}
+            />
+          ) : (
+            <NoChange
+              label="Volumes"
+              exclude={!!newEntry.exclude}
+              text="No volumes data"
+            />
+          ))}
         {show.dates && (
           <Change
             label={
@@ -291,11 +312,13 @@ export default function FixerListEntry({
               </CustomTooltip>
             }
             beforeBad={
-              newEntry.startedAtBad
-                ? isNonFuzzy(entry.startedAt)
-                  ? "Started too early"
-                  : "Missing start date"
-                : null
+              newEntry.startedAtBad &&
+              {
+                early: "Started too early",
+                missing: "Missing start date",
+                planning: "Start date should not be set",
+                edit: null,
+              }[newEntry.startedAtBad]
             }
             before={fuzzyDateToString(entry.startedAt)}
             afterChanged={
@@ -306,7 +329,7 @@ export default function FixerListEntry({
             afterBad={
               newEntry.startedAt == null &&
               fuzzyDateToDate(entry.startedAt) == null &&
-              (newEntry.status ?? entry.status) !== "PLANNING"
+              canModifyStart
                 ? "Cannot be blank"
                 : newEntry.startedAt != null &&
                     (newEntry.completedAt != null ||
@@ -321,7 +344,7 @@ export default function FixerListEntry({
                   : null
             }
             after={
-              (newEntry.status ?? entry.status) === "PLANNING" ? (
+              !canModifyStart ? (
                 "∅"
               ) : (
                 <CustomDateInput
@@ -363,11 +386,14 @@ export default function FixerListEntry({
               </CustomTooltip>
             }
             beforeBad={
-              newEntry.completedAtBad
-                ? isNonFuzzy(entry.completedAt)
-                  ? "Finished too early"
-                  : "Missing finish date"
-                : null
+              newEntry.completedAtBad &&
+              {
+                early: "Finished too early",
+                missing: "Missing finish date",
+                planning: "Finish date should not be set",
+                reverse: "Finish date before start date",
+                edit: null,
+              }[newEntry.completedAtBad]
             }
             before={fuzzyDateToString(entry.completedAt)}
             afterChanged={
@@ -381,7 +407,7 @@ export default function FixerListEntry({
             afterBad={
               newEntry.completedAt == null &&
               fuzzyDateToDate(entry.completedAt) == null &&
-              (newEntry.status ?? entry.status) !== "PLANNING"
+              canModifyEnd
                 ? "Cannot be blank"
                 : newEntry.completedAt != null &&
                     (newEntry.startedAt != null || isNonFuzzy(entry.startedAt))
@@ -394,7 +420,7 @@ export default function FixerListEntry({
                   : null
             }
             after={
-              (newEntry.status ?? entry.status) === "PLANNING" ? (
+              !canModifyEnd ? (
                 "∅"
               ) : (
                 <CustomDateInput

@@ -25,6 +25,7 @@ export function useFixerSettings() {
       invalidStartDate: useCell<boolean>(true),
       missingEndDate: useCell<boolean>(true),
       invalidEndDate: useCell<boolean>(true),
+      allDates: useCell<boolean>(false),
     },
   } as const;
 }

@@ -62,11 +62,11 @@ export type FixerListDraft = ListDraft<
   "status" | "startedAt" | "completedAt" | "progress" | "progressVolumes",
   {
     exclude: boolean;
-    statusBad: boolean;
-    startedAtBad: boolean;
-    completedAtBad: boolean;
-    progressBad: boolean;
-    progressVolumesBad: boolean;
+    statusBad: "notFinished" | "notReleased";
+    startedAtBad: "missing" | "early" | "planning" | "edit";
+    completedAtBad: "missing" | "early" | "reverse" | "planning" | "edit";
+    progressBad: "missing";
+    progressVolumesBad: "missing";
   }
 >;
 
@@ -124,7 +124,7 @@ function Fixer() {
             entry.media.status === "CANCELLED"
           )
         ) {
-          d.statusBad = true;
+          d.statusBad = "notFinished";
           d.status = {
             RELEASING: "CURRENT",
             HIATUS: "PAUSED",
@@ -136,7 +136,7 @@ function Fixer() {
           ) &&
           entry.media.status === "NOT_YET_RELEASED"
         ) {
-          d.statusBad = true;
+          d.statusBad = "notReleased";
           d.status = "PLANNING";
         }
       }
@@ -147,15 +147,19 @@ function Fixer() {
         const max = entry.media.episodes ?? entry.media.chapters;
         if (max != null && entry.progress !== max) {
           d.progress = max;
-          d.progressBad = true;
+          d.progressBad = "missing";
         }
         if (
           entry.media.volumes != null &&
           entry.progressVolumes !== entry.media.volumes
         ) {
           d.progressVolumes = entry.media.volumes;
-          d.progressVolumesBad = true;
+          d.progressVolumesBad = "missing";
         }
+      }
+      if (settings.fixes.allDates.value) {
+        d.startedAtBad = "edit";
+        d.completedAtBad = "edit";
       }
       if (
         (settings.fixes.missingStartDate.value ||
@@ -167,18 +171,17 @@ function Fixer() {
         if (isNonFuzzy(entry.startedAt)) {
           const startedAt = fuzzyDateToDate(entry.startedAt);
           const mediaStartDate = fuzzyDateToDate(entry.media.startDate);
-          if (
-            settings.fixes.invalidStartDate.value &&
-            startedAt < mediaStartDate
-          ) {
-            d.startedAt = mediaStartDate;
-            d.startedAtBad = true;
+          if (settings.fixes.invalidStartDate.value) {
+            if (startedAt < mediaStartDate) {
+              d.startedAt = mediaStartDate;
+              d.startedAtBad = "early";
+            }
           }
         } else if (settings.fixes.missingStartDate.value) {
           d.startedAt =
             fuzzyDateToDate(entry.completedAt) ??
             fuzzyDateToDate(entry.media.startDate);
-          d.startedAtBad = true;
+          d.startedAtBad = "missing";
         }
       }
       if (
@@ -189,7 +192,7 @@ function Fixer() {
         d.startedAt = DateTime.fromObject({ year: 0, month: 0, day: 0 }).endOf(
           "day",
         );
-        d.startedAtBad = true;
+        d.startedAtBad = "planning";
       }
       if (
         (settings.fixes.missingEndDate.value ||
@@ -199,20 +202,23 @@ function Fixer() {
         isNonFuzzy(entry.media.endDate)
       ) {
         if (isNonFuzzy(entry.completedAt)) {
+          const startedAt = d.startedAt ?? fuzzyDateToDate(entry.startedAt);
           const completedAt = fuzzyDateToDate(entry.completedAt);
           const mediaEndDate = fuzzyDateToDate(entry.media.endDate);
-          if (
-            settings.fixes.invalidEndDate.value &&
-            completedAt < mediaEndDate
-          ) {
-            d.completedAt = mediaEndDate;
-            d.completedAtBad = true;
+          if (settings.fixes.invalidEndDate.value) {
+            if (completedAt < mediaEndDate) {
+              d.completedAt = mediaEndDate;
+              d.completedAtBad = "early";
+            } else if (startedAt && completedAt < startedAt) {
+              d.completedAt = startedAt;
+              d.completedAtBad = "reverse";
+            }
           }
         } else if (settings.fixes.missingEndDate.value) {
           d.completedAt =
             fuzzyDateToDate(entry.startedAt) ??
             fuzzyDateToDate(entry.media.endDate);
-          d.completedAtBad = true;
+          d.completedAtBad = "missing";
         }
       }
       if (
@@ -225,7 +231,7 @@ function Fixer() {
           month: 0,
           day: 0,
         }).endOf("day");
-        d.completedAtBad = true;
+        d.completedAtBad = "planning";
       }
     }
 
