@@ -17,7 +17,7 @@ import CustomDialog from "../components/dialogs/CustomDialog";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
-import { matchesTitle, prepareListForDisplay } from "../util/settings";
+import { matchesFilter, prepareListForDisplay } from "../util/settings";
 import type { MediaListStatus } from "../api/queries/list";
 import DropperSettingsItems from "./-dropper/DropperSettingsItems";
 import { useDropperSettings } from "./-dropper/dropperSettings";
@@ -160,7 +160,7 @@ function Dropper() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay(
           list,
-          (e) => matchesTitle(settings.titleFilter.value, e),
+          (e) => matchesFilter(settings.filter.value, e),
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,

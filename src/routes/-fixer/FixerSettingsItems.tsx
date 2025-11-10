@@ -2,7 +2,7 @@ import { type Viewer } from "../../api/queries/viewer";
 import { useDialog, type DialogState } from "../../hooks/useDialog";
 import type { ConfirmDialogContext } from "../../components/dialogs/ConfirmDialog";
 import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
-import SettingsItemTitleFilter from "../../components/list/settings/SettingsItemTitleFilter";
+import SettingsItemFilter from "../../components/list/settings/SettingsItemFilter";
 import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
 import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
@@ -184,10 +184,7 @@ export default function FixerSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <SettingsItemTitleFilter
-        viewer={viewer}
-        titleFilter={settings.titleFilter}
-      />
+      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}
         titleLanguage={settings.titleLanguage}

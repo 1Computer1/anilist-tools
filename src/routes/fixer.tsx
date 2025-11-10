@@ -24,7 +24,7 @@ import { Shortcuts } from "../components/Shortcuts";
 import { type UserListOptions, useAnilistMutation } from "../hooks/anilist";
 import useBlockerDialog from "../hooks/useBlockerDialog";
 import { useDialog } from "../hooks/useDialog";
-import { prepareListForDisplay, matchesTitle } from "../util/settings";
+import { prepareListForDisplay, matchesFilter } from "../util/settings";
 import {
   fuzzyDateToDate,
   isEqualDateWithFuzzyDate,
@@ -360,7 +360,7 @@ function Fixer() {
           (e) =>
             draft.has(e.id) &&
             isEntryBad(draft.get(e.id)!) &&
-            matchesTitle(settings.titleFilter.value, e),
+            matchesFilter(settings.filter.value, e),
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,

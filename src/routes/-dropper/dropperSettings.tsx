@@ -8,7 +8,7 @@ export type DropperSettings = ReturnType<typeof useDropperSettings>;
 export function useDropperSettings() {
   return {
     listType: useCell<MediaType>("ANIME"),
-    titleFilter: useCell<string>(""),
+    filter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
     sortBy: useCell<SortBy>("lastUpdated"),
     sortDir: useCell<SortDir>("asc"),

@@ -21,7 +21,7 @@ import { useScorerSettings } from "./-scorer/scorerSettings";
 import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
-import { matchesTitle, prepareListForDisplay } from "../util/settings";
+import { matchesFilter, prepareListForDisplay } from "../util/settings";
 import useBlockerDialog from "../hooks/useBlockerDialog";
 import LoadingDialog from "../components/dialogs/LoadingDialog";
 
@@ -202,7 +202,7 @@ function Scorer() {
           list,
           (e) =>
             settings.allowedStatuses.value.includes(e.status) &&
-            matchesTitle(settings.titleFilter.value, e),
+            matchesFilter(settings.filter.value, e),
           settings.sortBy.value,
           settings.sortDir.value,
           settings.titleLanguage.value,

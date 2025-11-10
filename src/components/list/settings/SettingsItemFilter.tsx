@@ -4,21 +4,21 @@ import type { UseAnilistQueryResult } from "../../../hooks/anilist";
 import type { Cell } from "../../../hooks/useCell";
 import SettingsItem from "./SettingsItem";
 
-export default function SettingsItemTitleFilter({
+export default function SettingsItemFilter({
   viewer,
-  titleFilter,
+  filter,
 }: {
   viewer: UseAnilistQueryResult<Viewer>;
-  titleFilter: Cell<string>;
+  filter: Cell<string>;
 }) {
   return (
-    <SettingsItem label="Title Filter">
+    <SettingsItem label="Filter">
       <Input
         className="input w-full"
         disabled={viewer.data == null}
         placeholder="🔍 Search..."
-        value={titleFilter.value}
-        onChange={(e) => titleFilter.set(e.target.value)}
+        value={filter.value}
+        onChange={(e) => filter.set(e.target.value)}
       />
     </SettingsItem>
   );

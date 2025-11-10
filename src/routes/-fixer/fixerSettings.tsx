@@ -8,7 +8,7 @@ export type FixerSettings = ReturnType<typeof useFixerSettings>;
 export function useFixerSettings() {
   return {
     listType: useCell<MediaType>("ANIME"),
-    titleFilter: useCell<string>(""),
+    filter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
     sortBy: useCell<SortBy>("score"),
     sortDir: useCell<SortDir>("desc"),

@@ -9,7 +9,7 @@ import { nameOfScoreFormat, SORT_BYS } from "../../util/settings";
 import SettingsItem from "../../components/list/settings/SettingsItem";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
-import SettingsItemTitleFilter from "../../components/list/settings/SettingsItemTitleFilter";
+import SettingsItemFilter from "../../components/list/settings/SettingsItemFilter";
 import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSortBy";
 import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
@@ -64,10 +64,7 @@ export default function ScorerSettingsItems({
         />
         <Label>Hide Old Scores</Label>
       </Field>
-      <SettingsItemTitleFilter
-        viewer={viewer}
-        titleFilter={settings.titleFilter}
-      />
+      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}
         titleLanguage={settings.titleLanguage}

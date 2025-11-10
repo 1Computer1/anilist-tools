@@ -177,16 +177,17 @@ export function getTitle(entry: Entry, titleLanguage: TitleLanguage) {
   }[titleLanguage];
 }
 
-export function matchesTitle(titleFilter: string, entry: Entry) {
-  if (!titleFilter) {
+export function matchesFilter(filter: string, entry: Entry) {
+  if (!filter) {
     return true;
   }
   return [
     entry.media.title.english,
     entry.media.title.native,
     entry.media.title.romaji,
+    entry.notes ?? "",
   ].some((t) => {
-    return t?.toLowerCase().includes(titleFilter) ?? false;
+    return t?.toLowerCase().includes(filter) ?? false;
   });
 }
 

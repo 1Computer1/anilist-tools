@@ -12,7 +12,7 @@ export function useScorerSettings() {
     sortBy: useCell<SortBy>("score"),
     sortDir: useCell<SortDir>("desc"),
     randomSeed: useCell<number>(seedgen()),
-    titleFilter: useCell<string>(""),
+    filter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
     scoreFormat: useCell<ScoreFormat>("POINT_100"),
     hideScore: useCell<boolean>(false),

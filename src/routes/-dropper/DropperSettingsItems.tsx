@@ -6,7 +6,7 @@ import useCell from "../../hooks/useCell";
 import SettingsItemDate from "../../components/list/settings/SettingsItemDate";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 import SettingsItemTitleLanguage from "../../components/list/settings/SettingsItemTitleLanguage";
-import SettingsItemTitleFilter from "../../components/list/settings/SettingsItemTitleFilter";
+import SettingsItemFilter from "../../components/list/settings/SettingsItemFilter";
 import SettingsItemList from "../../components/list/settings/SettingsItemList";
 import { DateTime } from "luxon";
 import { Button } from "@headlessui/react";
@@ -52,10 +52,7 @@ export default function DropperSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <SettingsItemTitleFilter
-        viewer={viewer}
-        titleFilter={settings.titleFilter}
-      />
+      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}
         titleLanguage={settings.titleLanguage}
