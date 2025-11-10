@@ -183,7 +183,7 @@ function Fixer() {
       }
       if (
         settings.fixes.invalidStartDate.value &&
-        entry.status === "PLANNING" &&
+        (d.status ?? entry.status) === "PLANNING" &&
         isFuzzyNotBlank(entry.startedAt)
       ) {
         d.startedAt = DateTime.fromObject({ year: 0, month: 0, day: 0 }).endOf(
@@ -217,7 +217,7 @@ function Fixer() {
       }
       if (
         settings.fixes.invalidEndDate.value &&
-        entry.status === "PLANNING" &&
+        (d.status ?? entry.status) === "PLANNING" &&
         isFuzzyNotBlank(entry.completedAt)
       ) {
         d.completedAt = DateTime.fromObject({

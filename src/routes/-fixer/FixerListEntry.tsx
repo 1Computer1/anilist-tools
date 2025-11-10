@@ -306,7 +306,7 @@ export default function FixerListEntry({
             afterBad={
               newEntry.startedAt == null &&
               fuzzyDateToDate(entry.startedAt) == null &&
-              entry.status !== "PLANNING"
+              (newEntry.status ?? entry.status) !== "PLANNING"
                 ? "Cannot be blank"
                 : newEntry.startedAt != null &&
                     (newEntry.completedAt != null ||
@@ -321,7 +321,7 @@ export default function FixerListEntry({
                   : null
             }
             after={
-              entry.status === "PLANNING" ? (
+              (newEntry.status ?? entry.status) === "PLANNING" ? (
                 "∅"
               ) : (
                 <CustomDateInput
@@ -381,7 +381,7 @@ export default function FixerListEntry({
             afterBad={
               newEntry.completedAt == null &&
               fuzzyDateToDate(entry.completedAt) == null &&
-              entry.status !== "PLANNING"
+              (newEntry.status ?? entry.status) !== "PLANNING"
                 ? "Cannot be blank"
                 : newEntry.completedAt != null &&
                     (newEntry.startedAt != null || isNonFuzzy(entry.startedAt))
@@ -394,7 +394,7 @@ export default function FixerListEntry({
                   : null
             }
             after={
-              entry.status === "PLANNING" ? (
+              (newEntry.status ?? entry.status) === "PLANNING" ? (
                 "∅"
               ) : (
                 <CustomDateInput
