@@ -180,7 +180,9 @@ function MenuItems({
     ? ({ ...props }) => <CloseButton as={Link} {...props} />
     : Link;
 
-  const linkClassName = clsx("flex w-full flex-row items-center justify-start");
+  const linkClassName = clsx(
+    "flex w-full flex-row items-center justify-center",
+  );
   const plannedClassName = clsx(
     linkClassName,
     "pointer-events-none opacity-50 dark:opacity-25",
