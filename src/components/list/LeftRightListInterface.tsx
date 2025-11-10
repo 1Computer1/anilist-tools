@@ -9,7 +9,7 @@ import { getTokenUserId } from "../../util/jwt";
 import { getViewer, type Viewer } from "../../api/queries/viewer";
 import { PiWrenchFill } from "react-icons/pi";
 import { useDialog, type DialogState } from "../../hooks/useDialog";
-import { ErrorAlert } from "../ErrorAlert";
+import { Alert } from "../Alert";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { useMediaQuery } from "usehooks-ts";
@@ -23,6 +23,7 @@ export type LeftRightListInterfaceProps = {
   // Input props
   listOptions: UserListOptions;
   prepareListForDisplay: (list: List) => [Entry[], number[]];
+  listEmpty?: React.ReactNode;
   // Input node props
   error: React.ReactNode | null;
   leftMenu: React.ReactNode;
@@ -83,6 +84,7 @@ export function useLeftRightListInterface({
 export default function LeftRightListInterface({
   listOptions,
   prepareListForDisplay,
+  listEmpty,
   error,
   leftMenu,
   rightMenu,
@@ -163,33 +165,35 @@ export default function LeftRightListInterface({
                 "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
             >
-              {displayList.map((entry, i) => (
-                <Fragment key={entry.id}>
-                  {dividerPositions.includes(i) && (
-                    <ListDivider
-                      text={nameOfStatus(listOptions.type, entry.status)}
-                    />
-                  )}
-                  <li className="w-full">
-                    {listEntry({
-                      entry,
-                      ref: (el) => {
-                        listEntryRefs.current[i] = el!;
-                      },
-                      tab: (d) => {
-                        listEntryRefs.current[i + d]?.focus({
-                          preventScroll: true,
-                        });
-                      },
-                    })}
-                  </li>
-                </Fragment>
-              ))}
+              {displayList.length
+                ? displayList.map((entry, i) => (
+                    <Fragment key={entry.id}>
+                      {dividerPositions.includes(i) && (
+                        <ListDivider
+                          text={nameOfStatus(listOptions.type, entry.status)}
+                        />
+                      )}
+                      <li className="w-full">
+                        {listEntry({
+                          entry,
+                          ref: (el) => {
+                            listEntryRefs.current[i] = el!;
+                          },
+                          tab: (d) => {
+                            listEntryRefs.current[i + d]?.focus({
+                              preventScroll: true,
+                            });
+                          },
+                        })}
+                      </li>
+                    </Fragment>
+                  ))
+                : listEmpty}
             </ol>
           ) : (
             <div className="dark:bg-base-200 rounded-box flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 p-4 dark:shadow">
               {fetchError != null ? (
-                <ErrorAlert type="NETWORK">
+                <Alert type="NETWORK">
                   {fetchError.cause.status === 429 ? (
                     <div>
                       Too many requests were sent to AniList in a short amount
@@ -219,11 +223,11 @@ export default function LeftRightListInterface({
                         JSON.stringify(fetchError.cause.errors)}
                     </div>
                   )}
-                </ErrorAlert>
+                </Alert>
               ) : viewer.data == null ? (
-                <ErrorAlert type="AUTH">
+                <Alert type="AUTH">
                   Please login with AniList to use this tool.
-                </ErrorAlert>
+                </Alert>
               ) : !list.query.isFetching && list.query.isSuccess && error ? (
                 <>{error}</>
               ) : (

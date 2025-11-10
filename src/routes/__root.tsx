@@ -199,6 +199,11 @@ function MenuItems({
           Dropper
         </Link_>
       </MenuItem>
+      <MenuItem>
+        <Link_ to="/fixer" className={linkClassName}>
+          Fixer
+        </Link_>
+      </MenuItem>
       {filler}
       <MenuItem>
         <a

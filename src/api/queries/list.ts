@@ -107,6 +107,7 @@ const QUERY = `query ($id: Int, $type: MediaType, $forceSingleCompletedList: Boo
           }
           chapters
           episodes
+          volumes
         }
         id
         score(format: $format)
@@ -124,6 +125,7 @@ const QUERY = `query ($id: Int, $type: MediaType, $forceSingleCompletedList: Boo
         createdAt
         updatedAt
         progress
+        progressVolumes
         notes
         repeat
       }

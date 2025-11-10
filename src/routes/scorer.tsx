@@ -13,7 +13,7 @@ import { useDialog } from "../hooks/useDialog";
 import { Shortcuts } from "../components/Shortcuts";
 import ScorerListEntry from "./-scorer/ScorerListEntry";
 import { SCORE_SYSTEMS } from "./-scorer/scoreSystems";
-import { ErrorAlert } from "../components/ErrorAlert";
+import { Alert } from "../components/Alert";
 import { useEffect } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
 import ScorerSettingsItems from "./-scorer/ScorerSettingsItems";
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/scorer")({
   }),
 });
 
-export type ScorerListDraft = ListDraft<"score" | "scoreDisplay">;
+export type ScorerListDraft = ListDraft<"score", { scoreDisplay: string }>;
 
 export type ScorerListDraftAction =
   | { t: "updateScore"; id: number; score?: number; scoreDisplay?: string }
@@ -212,11 +212,11 @@ function Scorer() {
       }
       error={
         numUnsavedChanges == null ? (
-          <ErrorAlert type="APP">
+          <Alert type="APP">
             Your changes are out of sync with your list.
             <br />
             Please refresh to reset.
-          </ErrorAlert>
+          </Alert>
         ) : null
       }
       leftMenu={
@@ -332,14 +332,14 @@ function Scorer() {
           shortcuts={[
             { divider: "Navigation" },
             { keys: "Tab|↓|↩", desc: "Go next" },
-            { keys: "Shift+Tab|↑", desc: "Go back" },
+            { keys: "Shift Tab|↑", desc: "Go back" },
             { divider: "Adjustments" },
-            { keys: "→|=|+", desc: shorcutsForScore.incDesc },
-            { keys: "←|-|_", desc: shorcutsForScore.decDesc },
+            { keys: "→|+", desc: shorcutsForScore.incDesc },
+            { keys: "←|-", desc: shorcutsForScore.decDesc },
             ...(shorcutsForScore.incDescLarge && shorcutsForScore.decDescLarge
               ? [
-                  { keys: "]|}", desc: shorcutsForScore.incDescLarge },
-                  { keys: "[|{", desc: shorcutsForScore.decDescLarge },
+                  { keys: "]", desc: shorcutsForScore.incDescLarge },
+                  { keys: "[", desc: shorcutsForScore.decDescLarge },
                 ]
               : []),
             { divider: "Update" },

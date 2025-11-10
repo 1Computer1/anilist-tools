@@ -11,7 +11,7 @@ import {
 } from "react-icons/pi";
 import { useDialog } from "../hooks/useDialog";
 import { Shortcuts } from "../components/Shortcuts";
-import { ErrorAlert } from "../components/ErrorAlert";
+import { Alert } from "../components/Alert";
 import { useEffect, useState } from "react";
 import CustomDialog from "../components/dialogs/CustomDialog";
 import LeftRightListInterface, {
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/dropper")({
       {
         name: "description",
         content:
-          "Enhance your AniList experience with powerful tools!\nDrop shows and manga that you have not updated in a long time.",
+          "Enhance your AniList experience with powerful tools!\nDrop entries that you have not updated in a long time.",
       },
     ],
   }),
@@ -97,16 +97,13 @@ function Dropper() {
           break;
         }
         for (const [_, entry] of list.data) {
-          if (!draft.has(entry.id)) {
-            draft.set(entry.id, {});
-          }
+          draft.set(entry.id, {});
+          const d = draft.get(entry.id)!;
           if (
             action.dropStatuses.includes(entry.status) &&
             DateTime.fromSeconds(entry.updatedAt).endOf("day") <= action.date
           ) {
-            draft.get(entry.id)!.status = "DROPPED";
-          } else {
-            draft.get(entry.id)!.status = undefined;
+            d.status = "DROPPED";
           }
         }
         break;
@@ -164,8 +161,8 @@ function Dropper() {
         prepareListForDisplay(
           list,
           (e) => matchesTitle(settings.titleFilter.value, e),
-          "lastUpdated",
-          "asc",
+          settings.sortBy.value,
+          settings.sortDir.value,
           settings.titleLanguage.value,
           0,
           false,
@@ -173,13 +170,13 @@ function Dropper() {
       }
       error={
         numUnsavedChanges == null ? (
-          <ErrorAlert type="APP">
+          <Alert type="APP">
             Your changes are out of sync with your list.
             <br />
             Please refresh to reset.
-          </ErrorAlert>
+          </Alert>
         ) : dispatchError ? (
-          <ErrorAlert type="APP">{dispatchError}</ErrorAlert>
+          <Alert type="APP">{dispatchError}</Alert>
         ) : null
       }
       leftMenu={
@@ -288,7 +285,7 @@ function Dropper() {
           shortcuts={[
             { divider: "Navigation" },
             { keys: "Tab|↓|↩", desc: "Go next" },
-            { keys: "Shift+Tab|↑", desc: "Go back" },
+            { keys: "Shift Tab|↑", desc: "Go back" },
             { divider: "Update" },
             { keys: ".", desc: "Drop entry" },
             { keys: "/", desc: "Revert status to original" },

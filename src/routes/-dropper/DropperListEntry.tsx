@@ -8,6 +8,7 @@ import { getTitle, nameOfStatus } from "../../util/settings";
 import { DateTime } from "luxon";
 import { PiTrashFill } from "react-icons/pi";
 import { Switch } from "@headlessui/react";
+import { dateToString } from "../../util/date";
 
 export default function DropperListEntry({
   entry,
@@ -104,11 +105,7 @@ export default function DropperListEntry({
         <div className="opacity-50">
           {nameOfStatus(settings.listType.value, oldStatus)}
         </div>
-        <div>
-          {DateTime.fromSeconds(entry.updatedAt).toLocaleString(
-            DateTime.DATE_SHORT,
-          )}
-        </div>
+        <div>{dateToString(DateTime.fromSeconds(entry.updatedAt))}</div>
       </div>
       <div
         className={clsx(

@@ -13,7 +13,6 @@ export default function CustomTooltip({
   return (
     <Tooltip
       arrow
-      tabIndex={-1}
       className={clsx(
         "bg-base-100 text-base-content rounded-field border-base-content/20 w-fit border p-2 text-xs text-balance shadow",
       )}
@@ -21,7 +20,7 @@ export default function CustomTooltip({
       content={content}
       {...props}
     >
-      {children}
+      <div tabIndex={-1}>{children}</div>
     </Tooltip>
   );
 }

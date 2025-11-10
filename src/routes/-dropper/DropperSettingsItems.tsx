@@ -83,7 +83,6 @@ export default function DropperSettingsItems({
         label="Drop Older Than"
         viewer={viewer}
         date={olderThan}
-        andDate={(d) => d.endOf("day")}
       />
       <Button
         className="btn btn-outline btn-secondary"

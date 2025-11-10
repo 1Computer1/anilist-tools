@@ -1,4 +1,5 @@
-import { query } from "../anilist";
+import { postQuery, query, type Context } from "../anilist";
+import { MEDIA_LIST_STATUSES, type MediaListStatus } from "./list";
 
 export type ProfileColor =
   | "blue"
@@ -45,7 +46,7 @@ export type Viewer = {
   };
 };
 
-const Query = `query {
+const QUERY_VIEWER = `query {
   Viewer {
     id,
     name
@@ -57,6 +58,10 @@ const Query = `query {
     options {
       profileColor
       titleLanguage
+      disabledListActivity {
+        disabled
+        type
+      }
     }
     mediaListOptions {
       scoreFormat
@@ -64,7 +69,60 @@ const Query = `query {
   }
 }`;
 
-export const getViewer = query<Viewer>(Query, (x) => {
+export const getViewer = query<Viewer>(QUERY_VIEWER, (x) => {
   x.Viewer.options.titleLanguage = x.Viewer.options.titleLanguage.split("_")[0];
   return x.Viewer;
 });
+
+export type DisabledListActivity = {
+  disabled: boolean;
+  type: MediaListStatus;
+}[];
+
+const QUERY_DISABLED_LIST_ACTIVITY = `query {
+  Viewer {
+    options {
+      disabledListActivity {
+        disabled
+        type
+      }
+    }
+  }
+}`;
+
+export const getDisabledListActivity = query<DisabledListActivity>(
+  QUERY_DISABLED_LIST_ACTIVITY,
+  (x) => {
+    return x.Viewer.options.disabledListActivity;
+  },
+);
+
+const MUTATE_DISABLED_LIST_ACTIVITY = `mutation UpdateUser($disabledListActivity: [ListActivityOptionInput]) {
+  UpdateUser(disabledListActivity: $disabledListActivity) {
+    options {
+      disabledListActivity {
+        disabled
+        type
+      }
+    }
+  }
+}`;
+
+export async function withListActivityDisabled<T>(
+  ctx: Context,
+  run: () => Promise<T>,
+): Promise<T> {
+  const prev = await getDisabledListActivity(ctx);
+  await postQuery(ctx, MUTATE_DISABLED_LIST_ACTIVITY, {
+    disabledListActivity: MEDIA_LIST_STATUSES.map((s) => ({
+      disabled: true,
+      type: s,
+    })),
+  });
+  try {
+    const res = await run();
+    return res;
+  } finally {
+    await postQuery(ctx, MUTATE_DISABLED_LIST_ACTIVITY, prev);
+  }
+}
