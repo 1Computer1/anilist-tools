@@ -73,7 +73,7 @@ export function useLeftRightListInterface({
   const confirmDialog = useDialog<ConfirmDialogContext>({
     title: "",
     action: "",
-    severity: "BAD",
+    severity: "ERROR",
     message: "",
     onConfirm: () => {},
   });

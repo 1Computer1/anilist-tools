@@ -254,7 +254,7 @@ function Scorer() {
                 confirmDialog.openWith({
                   title: "Refresh List",
                   action: "Refresh",
-                  severity: "BAD",
+                  severity: "ERROR",
                   message: (
                     <>
                       Are you sure you want to refresh?
@@ -280,7 +280,7 @@ function Scorer() {
               confirmDialog.openWith({
                 title: "Update Scores",
                 action: "Update",
-                severity: "GOOD",
+                severity: "SUCCESS",
                 message: (
                   <>
                     Are you sure you want to update {numDisplayUnsavedChanges}{" "}

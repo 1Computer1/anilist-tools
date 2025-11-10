@@ -1,8 +1,7 @@
 import { Button, Description } from "@headlessui/react";
 import clsx from "clsx";
 import CustomDialog, { type CustomDialogProps } from "./CustomDialog";
-
-export type Severity = "NORMAL" | "BAD" | "GOOD";
+import { btnForSeverity, type Severity } from "../../util/severity";
 
 export default function ChoicesDialog({
   choices,
@@ -25,14 +24,7 @@ export default function ChoicesDialog({
         {choices.map(({ text, severity, onClick }, i) => (
           <Button
             key={i}
-            className={clsx(
-              "btn btn-outline",
-              {
-                NORMAL: "btn-primary",
-                BAD: "btn-error",
-                GOOD: "btn-success",
-              }[severity],
-            )}
+            className={clsx("btn btn-outline", btnForSeverity(severity))}
             onClick={onClick}
           >
             {text}

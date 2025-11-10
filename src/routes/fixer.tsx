@@ -369,7 +369,7 @@ function Fixer() {
         )
       }
       listEmpty={
-        <Alert type="SETTINGS" severity="NORMAL">
+        <Alert type="SETTINGS" severity="INFO">
           {fixPressed ? (
             <p>No invalid entries found for the specified fixes.</p>
           ) : (
@@ -426,7 +426,7 @@ function Fixer() {
                 confirmDialog.openWith({
                   title: "Refresh List",
                   action: "Refresh",
-                  severity: "BAD",
+                  severity: "ERROR",
                   message: (
                     <>
                       Are you sure you want to refresh?
@@ -450,7 +450,7 @@ function Fixer() {
               confirmDialog.openWith({
                 title: "Update Scores",
                 action: "Update",
-                severity: "GOOD",
+                severity: "SUCCESS",
                 message: (
                   <>
                     Are you sure you want to update the data for{" "}

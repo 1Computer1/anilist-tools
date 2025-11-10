@@ -1,5 +1,6 @@
 import type { DialogState } from "../../hooks/useDialog";
-import ChoicesDialog, { type Severity } from "./ChoicesDialog";
+import type { Severity } from "../../util/severity";
+import ChoicesDialog from "./ChoicesDialog";
 
 export type ConfirmDialogContext = {
   title: React.ReactNode;
@@ -31,7 +32,7 @@ export default function ConfirmDialog({
         },
         {
           text: state.context.cancel ?? "Cancel",
-          severity: "NORMAL",
+          severity: "PRIMARY",
           onClick: () => {
             state.context.onCancel?.();
             state.close();

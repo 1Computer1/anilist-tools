@@ -22,7 +22,7 @@ export default function useBlockerDialog({
           title: "Leave Page",
           action: "Leave",
           cancel: "Stay",
-          severity: "BAD",
+          severity: "ERROR",
           message: (
             <>
               Are you sure you want to leave?

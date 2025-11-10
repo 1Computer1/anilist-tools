@@ -39,7 +39,7 @@ export default function SettingsItemList({
             confirmDialog.openWith({
               title: "Change List",
               action: "Confirm",
-              severity: "BAD",
+              severity: "ERROR",
               message: (
                 <>
                   Are you sure you want to switch to your{" "}

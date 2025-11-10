@@ -5,12 +5,11 @@ import {
   PiLockFill,
   PiWrenchFill,
 } from "react-icons/pi";
-
-export type Severity = "NORMAL" | "BAD" | "WARN";
+import { alertForSeverity, type Severity } from "../util/severity";
 
 export function Alert({
   type,
-  severity = "BAD",
+  severity = "ERROR",
   children,
 }: {
   type: "NETWORK" | "APP" | "AUTH" | "SETTINGS";
@@ -21,9 +20,7 @@ export function Alert({
     <div
       className={clsx(
         "alert alert-soft alert-vertical text-xl whitespace-pre-wrap",
-        { NORMAL: "alert-info", BAD: "alert-error", WARN: "alert-warning" }[
-          severity
-        ],
+        alertForSeverity(severity),
       )}
     >
       {
