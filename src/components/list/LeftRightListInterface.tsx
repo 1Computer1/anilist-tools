@@ -23,7 +23,7 @@ export type LeftRightListInterfaceProps = {
   // Input props
   listOptions: UserListOptions;
   prepareListForDisplay: (list: List) => [Entry[], number[]];
-  listEmpty?: React.ReactNode;
+  listEmpty?: (list: List) => React.ReactNode;
   // Input node props
   error: React.ReactNode | null;
   leftMenu: React.ReactNode;
@@ -159,37 +159,41 @@ export default function LeftRightListInterface({
           {!list.query.isFetching &&
           list.data != null &&
           displayList != null ? (
-            <ol
-              className={clsx(
-                "flex min-h-0 w-full grow basis-0 flex-col gap-y-1.5 overflow-y-auto p-4",
-                "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
-              )}
-            >
-              {displayList.length
-                ? displayList.map((entry, i) => (
-                    <Fragment key={entry.id}>
-                      {dividerPositions.includes(i) && (
-                        <ListDivider
-                          text={nameOfStatus(listOptions.type, entry.status)}
-                        />
-                      )}
-                      <li className="w-full">
-                        {listEntry({
-                          entry,
-                          ref: (el) => {
-                            listEntryRefs.current[i] = el!;
-                          },
-                          tab: (d) => {
-                            listEntryRefs.current[i + d]?.focus({
-                              preventScroll: true,
-                            });
-                          },
-                        })}
-                      </li>
-                    </Fragment>
-                  ))
-                : listEmpty}
-            </ol>
+            displayList.length ? (
+              <ol
+                className={clsx(
+                  "flex min-h-0 w-full grow basis-0 flex-col gap-y-1.5 overflow-y-auto p-4",
+                  "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
+                )}
+              >
+                {displayList.map((entry, i) => (
+                  <Fragment key={entry.id}>
+                    {dividerPositions.includes(i) && (
+                      <ListDivider
+                        text={nameOfStatus(listOptions.type, entry.status)}
+                      />
+                    )}
+                    <li className="w-full">
+                      {listEntry({
+                        entry,
+                        ref: (el) => {
+                          listEntryRefs.current[i] = el!;
+                        },
+                        tab: (d) => {
+                          listEntryRefs.current[i + d]?.focus({
+                            preventScroll: true,
+                          });
+                        },
+                      })}
+                    </li>
+                  </Fragment>
+                ))}
+              </ol>
+            ) : (
+              <div className="dark:bg-base-200 rounded-box flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 p-4 dark:shadow">
+                {listEmpty?.(list.data)}
+              </div>
+            )
           ) : (
             <div className="dark:bg-base-200 rounded-box flex min-h-0 w-full grow basis-0 flex-col items-center justify-center gap-y-2 p-4 dark:shadow">
               {fetchError != null ? (

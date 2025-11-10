@@ -368,20 +368,24 @@ function Fixer() {
           true,
         )
       }
-      listEmpty={
-        <Alert type="SETTINGS" severity="INFO">
-          {fixPressed ? (
-            <p>No invalid entries found for the specified fixes.</p>
-          ) : (
-            <p>
-              To start fixing data, set which fixes to apply and use the{" "}
-              <div className="btn btn-outline btn-sm btn-secondary pointer-events-none select-none">
-                <PiScrewdriverFill /> Fix
-              </div>{" "}
-              button!
-            </p>
-          )}
-        </Alert>
+      listEmpty={(list) =>
+        [...list.values()].every(
+          (e) => !draft.has(e.id) || !isEntryBad(draft.get(e.id)!),
+        ) && (
+          <Alert type="SETTINGS" severity="INFO">
+            {fixPressed ? (
+              <p>No invalid entries found for the specified fixes.</p>
+            ) : (
+              <p>
+                To start fixing data, set which fixes to apply and use the{" "}
+                <div className="btn btn-outline btn-sm btn-secondary pointer-events-none select-none">
+                  <PiScrewdriverFill /> Fix
+                </div>{" "}
+                button!
+              </p>
+            )}
+          </Alert>
+        )
       }
       error={
         numUnsavedChanges == null ? (
