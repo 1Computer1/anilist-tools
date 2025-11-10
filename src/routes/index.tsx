@@ -26,11 +26,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const linkClassName = clsx(
-    "btn btn-primary btn-sm md:btn-md lg:btn-lg btn-outline",
-  );
+  const linkClassName = clsx("btn btn-primary btn-sm md:btn-md btn-outline");
   const plannedClassName = clsx(
-    "btn btn-primary btn-dash btn-sm md:btn-md lg:btn-lg pointer-events-none select-none",
+    "btn btn-primary btn-dash btn-sm md:btn-md pointer-events-none select-none",
   );
 
   return (
@@ -48,11 +46,11 @@ function Index() {
           Enhance your AniList experience with powerful tools!
         </p>
       </div>
-      <div className="flex min-h-0 w-full basis-0 flex-row flex-wrap items-center justify-center gap-6 lg:gap-8">
+      <div className="flex min-h-0 w-full basis-0 flex-row flex-wrap items-center justify-center gap-4 md:gap-6 lg:gap-8">
         <Card
           title={
             <>
-              <PiStarFill /> Scorer
+              <PiStarFill className="text-yellow-600" /> Scorer
             </>
           }
           desc={
@@ -73,7 +71,7 @@ function Index() {
         <Card
           title={
             <>
-              <PiTrashFill /> Dropper
+              <PiTrashFill className="text-error" /> Dropper
             </>
           }
           desc={
@@ -94,7 +92,7 @@ function Index() {
         <Card
           title={
             <>
-              <PiScrewdriverFill /> Fixer
+              <PiScrewdriverFill className="text-info" /> Fixer
             </>
           }
           desc={
@@ -102,7 +100,7 @@ function Index() {
               <p>Fix inconsistent data such as:</p>
               <ul className="list-inside list-disc">
                 <li>Invalid entry status.</li>
-                <li>Completed entries with missing progress.</li>
+                <li>Missing completion progress.</li>
                 <li>Missing or invalid start and finish dates.</li>
               </ul>
             </>
@@ -116,7 +114,7 @@ function Index() {
         <Card
           title={
             <>
-              <PiNotePencilFill /> Noter
+              <PiNotePencilFill className="text-accent" /> Noter
             </>
           }
           desc={
@@ -137,7 +135,7 @@ function Index() {
         <Card
           title={
             <>
-              <PiLineSegmentsFill /> Relater
+              <PiLineSegmentsFill className="text-lime-500" /> Relater
             </>
           }
           desc={
@@ -158,18 +156,15 @@ function Index() {
         <Card
           title={
             <>
-              <PiCameraFill /> Snapshotter
+              <PiCameraFill className="text-indigo-400" /> Snapshotter
             </>
           }
           desc={
             <>
-              <p>
-                Take a snapshot of your anime and manga lists and download it as
-                a file.
-              </p>
+              <p>Download a snapshot of your anime and manga lists.</p>
               <p>
                 Share snapshot files, including of private lists, and upload to
-                view the data of that snapshot.
+                view.
               </p>
             </>
           }
@@ -195,12 +190,14 @@ function Card({
 }) {
   return (
     <div className="flex flex-row flex-wrap items-center justify-start">
-      <div className="card card-side card-sm md:card-md lg:card-lg card-border dark:bg-base-200 h-42 w-80 shadow-md md:h-50 md:w-100 lg:h-56 lg:w-120 dark:shadow">
-        <div className="to-base-100 dark:to-base-200 from-base-200 dark:from-base-300 rounded-l-box h-full w-8 min-w-8 bg-linear-to-r md:w-10 md:min-w-10 lg:w-12 lg:min-w-12"></div>
-        <div className="card-body justify-between py-2 pr-4 pl-4">
+      <div className="card card-side card-sm md:card-md lg:card-lg card-border dark:bg-base-200 shadow-md48 h-48 w-70 md:w-90 lg:w-100 dark:shadow">
+        <div className="to-base-100 dark:to-base-200 from-base-200 dark:from-base-300 rounded-l-box h-full w-6 min-w-6 bg-linear-to-r md:w-8 md:min-w-8 lg:w-10 lg:min-w-10"></div>
+        <div className="card-body justify-between gap-1 px-3 pt-2 pb-3 md:gap-2 md:px-4 md:pb-4">
           <div className="flex flex-col gap-y-1">
             <h2 className="card-title">{title}</h2>
-            <div className="flex flex-col gap-y-1">{desc}</div>
+            <div className="flex flex-col gap-y-1 text-sm supports-[text-wrap:pretty]:text-pretty lg:pr-8">
+              {desc}
+            </div>
           </div>
           <div className="card-actions justify-end">{link}</div>
         </div>

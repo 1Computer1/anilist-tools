@@ -18,10 +18,16 @@ import { getViewer } from "../api/queries/viewer";
 import { useDarkMode, useMediaQuery } from "usehooks-ts";
 import {
   PiArrowRightBold,
+  PiCameraFill,
   PiGithubLogo,
+  PiLineSegmentsFill,
   PiListBold,
   PiMoonFill,
+  PiNotePencilFill,
+  PiScrewdriverFill,
+  PiStarFill,
   PiSunFill,
+  PiTrashFill,
 } from "react-icons/pi";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -174,7 +180,11 @@ function MenuItems({
     ? ({ ...props }) => <CloseButton as={Link} {...props} />
     : Link;
 
-  const linkClassName = clsx("flex-center w-full");
+  const linkClassName = clsx("flex w-full flex-row items-center justify-start");
+  const plannedClassName = clsx(
+    linkClassName,
+    "pointer-events-none opacity-50 dark:opacity-25",
+  );
 
   return (
     <>
@@ -191,18 +201,33 @@ function MenuItems({
       {divider}
       <MenuItem>
         <Link_ to="/scorer" className={linkClassName}>
-          Scorer
+          <PiStarFill className="text-yellow-600" /> Scorer
         </Link_>
       </MenuItem>
       <MenuItem>
         <Link_ to="/dropper" className={linkClassName}>
-          Dropper
+          <PiTrashFill className="text-error" /> Dropper
         </Link_>
       </MenuItem>
       <MenuItem>
         <Link_ to="/fixer" className={linkClassName}>
-          Fixer
+          <PiScrewdriverFill className="text-info" /> Fixer
         </Link_>
+      </MenuItem>
+      <MenuItem>
+        <div className={plannedClassName}>
+          <PiNotePencilFill className="text-accent" /> Noter
+        </div>
+      </MenuItem>
+      <MenuItem>
+        <div className={plannedClassName}>
+          <PiLineSegmentsFill className="text-lime-500" /> Relater
+        </div>
+      </MenuItem>
+      <MenuItem>
+        <div className={plannedClassName}>
+          <PiCameraFill className="text-indigo-400" /> Snapshotter
+        </div>
       </MenuItem>
       {filler}
       <MenuItem>
