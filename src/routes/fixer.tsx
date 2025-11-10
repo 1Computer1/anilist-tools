@@ -378,10 +378,10 @@ function Fixer() {
               <p>No invalid entries found for the specified fixes.</p>
             ) : (
               <p>
-                To start fixing data, set which fixes to apply, then press the{" "}
-                <div className="btn btn-outline btn-xs btn-secondary pointer-events-none select-none">
+                To fix data, set which fixes to apply, then press the{" "}
+                <span className="btn btn-outline btn-xs btn-secondary pointer-events-none -mt-1 h-5.5 select-none">
                   <PiScrewdriverFill /> Fix
-                </div>{" "}
+                </span>{" "}
                 button!
               </p>
             )}
