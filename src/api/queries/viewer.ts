@@ -123,6 +123,8 @@ export async function withListActivityDisabled<T>(
     const res = await run();
     return res;
   } finally {
-    await postQuery(ctx, MUTATE_DISABLED_LIST_ACTIVITY, prev);
+    await postQuery(ctx, MUTATE_DISABLED_LIST_ACTIVITY, {
+      disabledListActivity: prev,
+    });
   }
 }
