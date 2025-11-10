@@ -52,22 +52,6 @@ export default function DropperSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
-      <SettingsItemTitleLanguage
-        viewer={viewer}
-        titleLanguage={settings.titleLanguage}
-      />
-      <SettingsItemSortBy
-        viewer={viewer}
-        sortBy={settings.sortBy}
-        options={SORT_BYS}
-      />
-      <SettingsItemSortDir
-        viewer={viewer}
-        sortBy={settings.sortBy.value}
-        sortDir={settings.sortDir}
-        randomSeed={settings.randomSeed}
-      />
       <div className="divider mb-3"></div>
       <SettingsItemStatuses
         label="Drop Status Filter"
@@ -95,6 +79,23 @@ export default function DropperSettingsItems({
       >
         <PiTrashFill /> Drop
       </Button>
+      <div className="divider mb-3"></div>
+      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
+      <SettingsItemTitleLanguage
+        viewer={viewer}
+        titleLanguage={settings.titleLanguage}
+      />
+      <SettingsItemSortBy
+        viewer={viewer}
+        sortBy={settings.sortBy}
+        options={SORT_BYS}
+      />
+      <SettingsItemSortDir
+        viewer={viewer}
+        sortBy={settings.sortBy.value}
+        sortDir={settings.sortDir}
+        randomSeed={settings.randomSeed}
+      />
     </>
   );
 }

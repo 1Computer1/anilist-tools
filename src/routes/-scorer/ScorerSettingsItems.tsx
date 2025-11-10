@@ -38,6 +38,7 @@ export default function ScorerSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
+      <div className="divider mb-3"></div>
       <SettingsItem label="Score Format">
         <CustomListbox
           className="select w-full"
@@ -64,6 +65,7 @@ export default function ScorerSettingsItems({
         />
         <Label>Hide Old Scores</Label>
       </Field>
+      <div className="divider mb-3"></div>
       <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}

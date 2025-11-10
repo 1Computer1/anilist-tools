@@ -360,6 +360,7 @@ function Fixer() {
           (e) =>
             draft.has(e.id) &&
             isEntryBad(draft.get(e.id)!) &&
+            settings.allowedStatuses.value.includes(e.status) &&
             matchesFilter(settings.filter.value, e),
           settings.sortBy.value,
           settings.sortDir.value,

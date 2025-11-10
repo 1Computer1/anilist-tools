@@ -24,6 +24,7 @@ import {
   type MediaListStatus,
   type MediaType,
 } from "../../api/queries/list";
+import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 
 export default function FixerSettingsItems({
   dispatch,
@@ -184,22 +185,6 @@ export default function FixerSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
-      <SettingsItemTitleLanguage
-        viewer={viewer}
-        titleLanguage={settings.titleLanguage}
-      />
-      <SettingsItemSortBy
-        viewer={viewer}
-        sortBy={settings.sortBy}
-        options={SORT_BYS}
-      />
-      <SettingsItemSortDir
-        viewer={viewer}
-        sortBy={settings.sortBy.value}
-        sortDir={settings.sortDir}
-        randomSeed={settings.randomSeed}
-      />
       <div className="divider mb-3"></div>
       <div className="flex flex-row items-center gap-1">
         <div>Fixes to Apply</div>
@@ -266,6 +251,29 @@ export default function FixerSettingsItems({
       >
         <PiScrewdriverFill /> Fix
       </Button>
+      <div className="divider mb-3"></div>
+      <SettingsItemFilter viewer={viewer} filter={settings.filter} />
+      <SettingsItemTitleLanguage
+        viewer={viewer}
+        titleLanguage={settings.titleLanguage}
+      />
+      <SettingsItemStatuses
+        viewer={viewer}
+        listType={settings.listType.value}
+        options={MEDIA_LIST_STATUSES}
+        statuses={settings.allowedStatuses}
+      />
+      <SettingsItemSortBy
+        viewer={viewer}
+        sortBy={settings.sortBy}
+        options={SORT_BYS}
+      />
+      <SettingsItemSortDir
+        viewer={viewer}
+        sortBy={settings.sortBy.value}
+        sortDir={settings.sortDir}
+        randomSeed={settings.randomSeed}
+      />
     </>
   );
 }

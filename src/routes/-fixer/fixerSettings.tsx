@@ -1,4 +1,8 @@
-import type { MediaType } from "../../api/queries/list";
+import {
+  MEDIA_LIST_STATUSES,
+  type MediaListStatus,
+  type MediaType,
+} from "../../api/queries/list";
 import type { TitleLanguage } from "../../api/queries/viewer";
 import useCell from "../../hooks/useCell";
 import { type SortBy, type SortDir, seedgen } from "../../util/settings";
@@ -10,6 +14,7 @@ export function useFixerSettings() {
     listType: useCell<MediaType>("ANIME"),
     filter: useCell<string>(""),
     titleLanguage: useCell<TitleLanguage>("ENGLISH"),
+    allowedStatuses: useCell<MediaListStatus[]>(MEDIA_LIST_STATUSES),
     sortBy: useCell<SortBy>("score"),
     sortDir: useCell<SortDir>("desc"),
     randomSeed: useCell<number>(seedgen()),
