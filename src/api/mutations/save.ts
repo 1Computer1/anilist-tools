@@ -3,6 +3,7 @@ import { postQuery, type Context } from "../anilist";
 import type { MediaListStatus } from "../queries/list";
 import { dateToFuzzyDate } from "../../util/date";
 import { withListActivityDisabled } from "../queries/viewer";
+import * as _ from "lodash-es";
 
 export type EntryDraft = Partial<{
   score: number;
@@ -22,90 +23,65 @@ export type ListDraft<S extends keyof EntryDraft, X extends object = {}> = Map<
 
 export type ValueOf<T> = T extends Map<any, infer V> ? V : never;
 
-const makeMutation = (i: number, mutArgs: string[]) => `
-  update${i}: SaveMediaListEntry(${mutArgs.join(", ")}) {
-    id
-  }
-`;
-
-const makeQuery = (
-  queryVars: string[],
-  mutations: string[][],
-) => `mutation (${queryVars.join(", ")}) {
-  ${mutations.map((mutArgs, i) => makeMutation(i, mutArgs)).join("\n")}
-}`;
-
-function makeMutationQuery(
-  draft: [number, Pick<EntryDraft, keyof EntryDraft>][],
+function makeMutationData(
+  id: number,
+  d: Pick<EntryDraft, keyof EntryDraft>,
 ): {
-  query: string;
   vars: Record<string, any>;
-} {
-  const queryVars: string[] = [];
-  const mutations: string[][] = [];
+  queryVars: string[];
+  mutArgs: string[];
+  hasActivityUpdate: boolean;
+} | null {
+  const empty = Object.keys(d).length == 0;
+  if (empty) {
+    return null;
+  }
+
   const vars: Record<string, any> = {};
+  const queryVars: string[] = [];
+  const mutArgs: string[] = [];
+  let hasActivityUpdate = false;
 
-  for (const [k, v] of draft) {
-    const empty = Object.keys(v).length == 0;
-    if (!empty) {
-      const mutArgs: string[] = [];
-
-      function add<T>(
-        k: number,
-        v: NonNullable<T>,
-        name: string,
-        type: string,
-      ) {
-        vars[`${name}${k}`] = v;
-        queryVars.push(`$${name}${k}: ${type}`);
-        mutArgs.push(`${name}: $${name}${k}`);
-      }
-
-      if (v.score != null && !Number.isNaN(v.score)) {
-        add(k, v.score, "scoreRaw", "Int");
-      }
-
-      if (v.status != null) {
-        add(k, v.status, "status", "MediaListStatus");
-      }
-
-      if (v.startedAt != null) {
-        add(k, dateToFuzzyDate(v.startedAt), "startedAt", "FuzzyDateInput");
-      }
-
-      if (v.completedAt != null) {
-        add(k, dateToFuzzyDate(v.completedAt), "completedAt", "FuzzyDateInput");
-      }
-
-      if (v.progress != null) {
-        add(k, v.progress, "progress", "Int");
-      }
-
-      if (v.progressVolumes != null) {
-        add(k, v.progressVolumes, "progressVolumes", "Int");
-      }
-
-      if (mutArgs.length) {
-        vars[`entry${k}`] = k;
-        queryVars.push(`$entry${k}: Int`);
-        mutArgs.push(`id: $entry${k}`);
-        mutations.push(mutArgs);
-      }
-    }
+  function add<T>(k: number, v: NonNullable<T>, name: string, type: string) {
+    vars[`${name}${k}`] = v;
+    queryVars.push(`$${name}${k}: ${type}`);
+    mutArgs.push(`${name}: $${name}${k}`);
   }
-  return { query: makeQuery(queryVars, mutations), vars };
-}
 
-function chunksOf<T>(xs: T[], size: number): T[][] {
-  const ys = [];
-  for (let i = 0; i < xs.length; i += size) {
-    ys.push(xs.slice(i, i + size));
+  if (d.score != null && !Number.isNaN(d.score)) {
+    add(id, d.score, "scoreRaw", "Int");
   }
-  return ys;
-}
 
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  if (d.status != null) {
+    add(id, d.status, "status", "MediaListStatus");
+    hasActivityUpdate = true;
+  }
+
+  if (d.startedAt != null) {
+    add(id, dateToFuzzyDate(d.startedAt), "startedAt", "FuzzyDateInput");
+  }
+
+  if (d.completedAt != null) {
+    add(id, dateToFuzzyDate(d.completedAt), "completedAt", "FuzzyDateInput");
+  }
+
+  if (d.progress != null) {
+    add(id, d.progress, "progress", "Int");
+    hasActivityUpdate = true;
+  }
+
+  if (d.progressVolumes != null) {
+    add(id, d.progressVolumes, "progressVolumes", "Int");
+  }
+
+  if (!mutArgs.length) {
+    return null;
+  }
+
+  vars[`entry${id}`] = id;
+  queryVars.push(`$entry${id}: Int`);
+  mutArgs.push(`id: $entry${id}`);
+  return { vars, queryVars, mutArgs, hasActivityUpdate };
 }
 
 const DRY = false;
@@ -114,12 +90,24 @@ export const saveMediaListEntries = async (
   ctx: Context,
   draft: ListDraft<keyof EntryDraft>,
 ) => {
+  const mutData = [...draft]
+    .map(([k, v]) => makeMutationData(k, v))
+    .filter((x) => x != null);
+  const hasActivityUpdate = mutData.some((x) => x.hasActivityUpdate);
+
   // Anilist API has a max complexity of 500, which seems to be fine if we chunk
   // the queries to 100 entries updated per (assuming only a few fields are updated each).
-  const chunks = chunksOf([...draft], 100);
-  await withListActivityDisabled(ctx, async () => {
-    for (let i = 0; i < chunks.length; i++) {
-      const { query, vars } = makeMutationQuery(chunks[i]);
+  const mutations = _.chunk(mutData, 100).map((chunk) => ({
+    query: makeMutation(
+      chunk.flatMap((x) => x.queryVars),
+      chunk.map((x) => x.mutArgs),
+    ),
+    vars: _.assign({}, ...chunk.map((x) => x.vars)),
+  }));
+
+  const run = async () => {
+    for (let i = 0; i < mutations.length; i++) {
+      const { query, vars } = mutations[i];
       if (DRY) {
         console.log(query, vars);
       } else {
@@ -127,9 +115,32 @@ export const saveMediaListEntries = async (
       }
       // There's a ratelimit of 30 requests per minute and a burst limit,
       // so if we're sending a bunch, wait 2 seconds between each.
-      if (chunks.length > 10 && i !== chunks.length - 1) {
+      if (mutations.length > 10 && i !== mutations.length - 1) {
         await wait(60_000 / 30);
       }
     }
-  });
+  };
+  if (hasActivityUpdate) {
+    await withListActivityDisabled(ctx, run);
+  } else {
+    await run();
+  }
 };
+
+const makeMutation = (
+  queryVars: string[],
+  updates: string[][],
+) => `mutation (${queryVars.join(", ")}) {
+  ${updates.map((mutArgs, i) => makeUpdate(i, mutArgs)).join("\n  ")}
+}`;
+
+const makeUpdate = (
+  i: number,
+  mutArgs: string[],
+) => `update${i}: SaveMediaListEntry(${mutArgs.join(", ")}) {
+  id
+}`;
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
