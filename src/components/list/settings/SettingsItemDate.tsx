@@ -17,6 +17,7 @@ export default function SettingsItemDate({
   return (
     <SettingsItem label={label}>
       <CustomDateInput
+        className="input-sm py-0 text-sm"
         disabled={viewer.data == null}
         value={date.value}
         onChange={date.set}

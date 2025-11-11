@@ -27,7 +27,7 @@ export default function SettingsItemSortDir<T extends SortBy>({
   : { randomSeed?: undefined })) {
   return randomSeed != null && sortBy == "random" ? (
     <Button
-      className="btn btn-outline btn-secondary"
+      className="btn btn-outline btn-sm btn-secondary text-sm"
       onClick={() => {
         randomSeed.set(seedgen());
       }}
@@ -37,7 +37,7 @@ export default function SettingsItemSortDir<T extends SortBy>({
   ) : (
     <SettingsItem label="Sort Direction">
       <CustomListbox
-        className="select w-full"
+        className="select select-sm w-full text-sm"
         disabled={viewer.data == null}
         value={sortDir.value}
         options={SORT_DIRS}

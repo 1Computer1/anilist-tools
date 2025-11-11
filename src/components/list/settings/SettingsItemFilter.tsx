@@ -14,7 +14,7 @@ export default function SettingsItemFilter({
   return (
     <SettingsItem label="Filter">
       <Input
-        className="input w-full"
+        className="input input-sm w-full text-sm"
         disabled={viewer.data == null}
         placeholder="🔍 Search..."
         value={filter.value}

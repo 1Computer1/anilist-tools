@@ -17,7 +17,7 @@ export default function SettingsItemSortBy<T extends SortBy>({
   return (
     <SettingsItem label="Sort By">
       <CustomListbox
-        className="select w-full"
+        className="select select-sm w-full text-sm"
         disabled={viewer.data == null}
         value={sortBy.value}
         options={options}

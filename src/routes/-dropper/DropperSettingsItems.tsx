@@ -16,6 +16,7 @@ import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSor
 import { SORT_BYS } from "../../util/settings";
 import type { DropperSettings } from "./dropperSettings";
 import type { UseAnilistQueryResult } from "../../hooks/anilist";
+import SettingsDivider from "../../components/list/settings/SettingsDivider";
 
 type DroppableMediaListStatus = "CURRENT" | "PAUSED";
 
@@ -52,7 +53,7 @@ export default function DropperSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <SettingsItemStatuses
         label="Drop Status Filter"
         viewer={viewer}
@@ -66,7 +67,7 @@ export default function DropperSettingsItems({
         date={olderThan}
       />
       <Button
-        className="btn btn-outline btn-secondary"
+        className="btn btn-sm btn-outline btn-secondary text-sm"
         disabled={viewer.data == null}
         onClick={() => {
           dispatch({
@@ -79,7 +80,7 @@ export default function DropperSettingsItems({
       >
         <PiTrashFill /> Drop
       </Button>
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}

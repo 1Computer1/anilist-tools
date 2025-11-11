@@ -24,7 +24,7 @@ export default function SettingsItemList({
   return (
     <SettingsItem label="List">
       <CustomListbox
-        className="select w-full"
+        className="select select-sm w-full text-sm"
         disabled={viewer.data == null}
         value={listType.value}
         onChange={(v) => {

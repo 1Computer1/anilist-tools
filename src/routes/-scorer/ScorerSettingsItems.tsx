@@ -15,6 +15,7 @@ import SettingsItemSortBy from "../../components/list/settings/SettingsItemsSort
 import SettingsItemSortDir from "../../components/list/settings/SettingsItemsSortDir";
 import type { ScorerSettings } from "./scorerSettings";
 import type { UseAnilistQueryResult } from "../../hooks/anilist";
+import SettingsDivider from "../../components/list/settings/SettingsDivider";
 
 export default function ScorerSettingsItems({
   dispatch,
@@ -38,10 +39,10 @@ export default function ScorerSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <SettingsItem label="Score Format">
         <CustomListbox
-          className="select w-full"
+          className="select select-sm w-full text-sm"
           disabled={viewer.data == null}
           value={settings.scoreFormat.value}
           onChange={(v) => {
@@ -65,7 +66,7 @@ export default function ScorerSettingsItems({
         />
         <Label>Hide Old Scores</Label>
       </Field>
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}

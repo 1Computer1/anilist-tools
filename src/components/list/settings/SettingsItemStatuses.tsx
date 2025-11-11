@@ -24,7 +24,7 @@ export default function SettingsItemStatuses<T extends MediaListStatus>({
   return (
     <SettingsItem label={label}>
       <CustomListbox<T>
-        className="select w-full"
+        className="select select-sm w-full text-sm"
         disabled={viewer.data == null}
         multiple
         value={statuses.value}

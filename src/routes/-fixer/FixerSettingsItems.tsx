@@ -25,6 +25,7 @@ import {
   type MediaType,
 } from "../../api/queries/list";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
+import SettingsDivider from "../../components/list/settings/SettingsDivider";
 
 export default function FixerSettingsItems({
   dispatch,
@@ -204,7 +205,7 @@ export default function FixerSettingsItems({
         confirmDialog={confirmDialog}
         onChange={() => dispatch({ t: "reset" })}
       />
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <div className="flex flex-row items-center gap-1">
         <div>Fixes to Apply</div>
         <Button
@@ -214,18 +215,20 @@ export default function FixerSettingsItems({
           <PiQuestionFill className="size-4" />
         </Button>
       </div>
-      <Button
-        className="btn btn-xs btn-primary btn-outline"
-        onClick={() => _.forEach(settings.fixes, (c) => c.set(true))}
-      >
-        Select All
-      </Button>
-      <Button
-        className="btn btn-xs btn-primary btn-outline"
-        onClick={() => _.forEach(settings.fixes, (c) => c.set(false))}
-      >
-        Select None
-      </Button>
+      <div className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-center md:gap-0.5">
+        <Button
+          className="btn btn-xs btn-primary btn-outline grow basis-0 px-0 py-1"
+          onClick={() => _.forEach(settings.fixes, (c) => c.set(true))}
+        >
+          Select All
+        </Button>
+        <Button
+          className="btn btn-xs btn-primary btn-outline grow basis-0 px-0 py-1"
+          onClick={() => _.forEach(settings.fixes, (c) => c.set(false))}
+        >
+          Select None
+        </Button>
+      </div>
       <FixCheckbox
         viewer={viewer}
         label="Invalid Status"
@@ -262,7 +265,7 @@ export default function FixerSettingsItems({
         setting={settings.fixes.allDates}
       />
       <Button
-        className="btn btn-outline btn-secondary"
+        className="btn btn-outline btn-sm btn-secondary text-sm"
         disabled={viewer.data == null}
         onClick={() => {
           dispatch({
@@ -282,7 +285,7 @@ export default function FixerSettingsItems({
       >
         <PiScrewdriverFill /> Fix
       </Button>
-      <div className="divider mb-3"></div>
+      <SettingsDivider />
       <SettingsItemFilter viewer={viewer} filter={settings.filter} />
       <SettingsItemTitleLanguage
         viewer={viewer}

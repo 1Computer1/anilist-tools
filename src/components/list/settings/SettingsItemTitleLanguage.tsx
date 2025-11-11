@@ -19,7 +19,7 @@ export default function SettingsItemTitleLanguage({
   return (
     <SettingsItem label="Title Language">
       <CustomListbox
-        className="select w-full"
+        className="select select-sm w-full text-sm"
         disabled={viewer.data == null}
         value={titleLanguage.value}
         onChange={(v) => titleLanguage.set(v)}
