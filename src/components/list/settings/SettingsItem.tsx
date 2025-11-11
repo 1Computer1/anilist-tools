@@ -8,7 +8,7 @@ export default function SettingsItem({
   children: React.ReactNode;
 }) {
   return (
-    <Field className="flex w-full flex-col gap-y-2 text-sm md:text-base">
+    <Field className="flex w-full flex-col gap-y-1 text-sm md:text-base">
       <Label>{label}</Label>
       {children}
     </Field>
