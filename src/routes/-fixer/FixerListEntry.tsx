@@ -279,6 +279,7 @@ export default function FixerListEntry({
             />
           ))}
         {show.progress &&
+          settings.listType.value === "MANGA" &&
           (entry.media.volumes ? (
             <Change
               label={
