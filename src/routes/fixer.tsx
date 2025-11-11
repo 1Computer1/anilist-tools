@@ -540,11 +540,9 @@ function Fixer() {
             { divider: "Navigation" },
             { keys: "↓|↩", desc: "Go next" },
             { keys: "↑", desc: "Go back" },
-            { divider: "Update" },
-            { keys: ".", desc: "Fix entry" },
-            { keys: "/", desc: "Exclude fixing this entry" },
             ...(listEntryShow.dates
               ? [
+                  { divider: "Adjustments" },
                   {
                     keys: "s",
                     desc: `Set start date to start ${airing} date`,
@@ -563,6 +561,9 @@ function Fixer() {
                   { keys: "[|Shift [", desc: "-7 days to start/finish date" },
                 ]
               : []),
+            { divider: "Update" },
+            { keys: ".", desc: "Fix entry" },
+            { keys: "/", desc: "Exclude fixing this entry" },
             { divider: "Other" },
             { keys: "Ctrl", desc: "Hold to update but stay on entry" },
             { keys: "`|Esc|⌫", desc: "Fix entry and go back" },

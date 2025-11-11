@@ -103,9 +103,6 @@ export default function FixerListEntry({
             id: entry.id,
             startedAt: mediaStartDate ?? undefined,
           });
-          if (!e.ctrlKey) {
-            tab(1);
-          }
         } else if (
           show.dates &&
           e.key === "d" &&
@@ -118,18 +115,12 @@ export default function FixerListEntry({
             startedAt: mediaStartDate ?? undefined,
             completedAt: mediaEndDate ?? undefined,
           });
-          if (!e.ctrlKey) {
-            tab(1);
-          }
         } else if (show.dates && e.key === "f" && canModifyEnd) {
           dispatch({
             t: "update",
             id: entry.id,
             completedAt: mediaEndDate ?? undefined,
           });
-          if (!e.ctrlKey) {
-            tab(1);
-          }
         } else if (show.dates && "-_[{".includes(e.key)) {
           const [k, bound, ok] = e.shiftKey
             ? (["completedAt", mediaEndDate, canModifyEnd] as const)
@@ -147,9 +138,6 @@ export default function FixerListEntry({
               [k]: after,
             });
           }
-          if (!e.ctrlKey) {
-            tab(1);
-          }
         } else if (show.dates && "+=]}".includes(e.key)) {
           const [k, ok] = e.shiftKey
             ? (["completedAt", canModifyEnd] as const)
@@ -163,9 +151,6 @@ export default function FixerListEntry({
               id: entry.id,
               [k]: after,
             });
-          }
-          if (!e.ctrlKey) {
-            tab(1);
           }
         } else if (e.key === "ArrowDown" || e.key === "Enter") {
           tab(1);
