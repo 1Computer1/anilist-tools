@@ -67,7 +67,7 @@ export type FixerListDraft = ListDraft<
     exclude: boolean;
     statusBad: "notFinished" | "notReleased";
     startedAtBad: "missing" | "early" | "planning" | "edit";
-    completedAtBad: "missing" | "early" | "reverse" | "planning" | "edit";
+    completedAtBad: "missing" | "early" | "reverse" | "notCompleted" | "edit";
     progressBad: "missing";
     progressVolumesBad: "missing";
   }
@@ -210,7 +210,10 @@ function Fixer() {
       }
       if (
         settings.fixes.invalidEndDate.value &&
-        (d.status ?? entry.status) === "PLANNING" &&
+        !(
+          (d.status ?? entry.status) === "COMPLETED" ||
+          (d.status ?? entry.status) === "REPEATING"
+        ) &&
         isFuzzyNotBlank(entry.completedAt)
       ) {
         d.completedAt = DateTime.fromObject({
@@ -218,7 +221,7 @@ function Fixer() {
           month: 0,
           day: 0,
         }).endOf("day");
-        d.completedAtBad = "planning";
+        d.completedAtBad = "notCompleted";
       }
       if (
         settings.fixes.missingStartDate.value &&

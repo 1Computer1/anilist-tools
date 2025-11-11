@@ -136,7 +136,7 @@ export default function FixerSettingsItems({
                 after: `Start Date`,
               },
               {
-                criteria: `Planning But Has Date`,
+                criteria: `Not Finished But Has Date`,
                 before: "Date",
                 after: `∅`,
               },

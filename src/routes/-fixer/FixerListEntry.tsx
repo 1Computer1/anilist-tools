@@ -390,7 +390,7 @@ export default function FixerListEntry({
               {
                 early: "Finished too early",
                 missing: "Missing finish date",
-                planning: "Finish date should not be set",
+                notCompleted: "Finish date should not be set",
                 reverse: "Finish date before start date",
                 edit: null,
               }[newEntry.completedAtBad]
