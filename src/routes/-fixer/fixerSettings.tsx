@@ -21,10 +21,10 @@ export function useFixerSettings() {
     fixes: {
       invalidStatus: useCell<boolean>(true),
       invalidProgress: useCell<boolean>(true),
-      missingStartDate: useCell<boolean>(true),
       invalidStartDate: useCell<boolean>(true),
-      missingEndDate: useCell<boolean>(true),
       invalidEndDate: useCell<boolean>(true),
+      missingStartDate: useCell<boolean>(true),
+      missingEndDate: useCell<boolean>(true),
       allDates: useCell<boolean>(false),
     },
   } as const;

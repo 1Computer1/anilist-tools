@@ -37,6 +37,27 @@ export function dateToString(d: DateTime) {
   return d.toLocaleString(DateTime.DATE_SHORT);
 }
 
+export function dateMin(d1: DateTime | null, d2: DateTime): DateTime;
+export function dateMin(
+  d1: DateTime | null,
+  d2: DateTime | null,
+): DateTime | null {
+  if (d1 && d2) {
+    return DateTime.min(d1, d2);
+  }
+  return d1 ?? d2;
+}
+export function dateMax(d1: DateTime | null, d2: DateTime): DateTime;
+export function dateMax(
+  d1: DateTime | null,
+  d2: DateTime | null,
+): DateTime | null {
+  if (d1 && d2) {
+    return DateTime.max(d1, d2);
+  }
+  return d1 ?? d2;
+}
+
 export function isEqualDateWithFuzzyDate(d1: DateTime | null, d2: FuzzyDate) {
   if (d1 != null && isNonFuzzy(d2)) {
     return +d1.endOf("day") === +DateTime.fromObject(d2).endOf("day");

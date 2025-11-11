@@ -26,8 +26,11 @@ import useBlockerDialog from "../hooks/useBlockerDialog";
 import { useDialog } from "../hooks/useDialog";
 import { prepareListForDisplay, matchesFilter } from "../util/settings";
 import {
+  dateMax,
+  dateMin,
   fuzzyDateToDate,
   isEqualDateWithFuzzyDate,
+  isFuzzy,
   isFuzzyNotBlank,
   isNonFuzzy,
 } from "../util/date";
@@ -162,8 +165,7 @@ function Fixer() {
         d.completedAtBad = "edit";
       }
       if (
-        (settings.fixes.missingStartDate.value ||
-          settings.fixes.invalidStartDate.value) &&
+        settings.fixes.invalidStartDate.value &&
         entry.status !== "PLANNING" &&
         entry.media.status !== "NOT_YET_RELEASED" &&
         isNonFuzzy(entry.media.startDate)
@@ -171,17 +173,10 @@ function Fixer() {
         if (isNonFuzzy(entry.startedAt)) {
           const startedAt = fuzzyDateToDate(entry.startedAt);
           const mediaStartDate = fuzzyDateToDate(entry.media.startDate);
-          if (settings.fixes.invalidStartDate.value) {
-            if (startedAt < mediaStartDate) {
-              d.startedAt = mediaStartDate;
-              d.startedAtBad = "early";
-            }
+          if (startedAt < mediaStartDate) {
+            d.startedAt = mediaStartDate;
+            d.startedAtBad = "early";
           }
-        } else if (settings.fixes.missingStartDate.value) {
-          d.startedAt =
-            fuzzyDateToDate(entry.completedAt) ??
-            fuzzyDateToDate(entry.media.startDate);
-          d.startedAtBad = "missing";
         }
       }
       if (
@@ -195,8 +190,7 @@ function Fixer() {
         d.startedAtBad = "planning";
       }
       if (
-        (settings.fixes.missingEndDate.value ||
-          settings.fixes.invalidEndDate.value) &&
+        settings.fixes.invalidEndDate.value &&
         (entry.status === "COMPLETED" || entry.status === "REPEATING") &&
         entry.media.status === "FINISHED" &&
         isNonFuzzy(entry.media.endDate)
@@ -205,20 +199,13 @@ function Fixer() {
           const startedAt = d.startedAt ?? fuzzyDateToDate(entry.startedAt);
           const completedAt = fuzzyDateToDate(entry.completedAt);
           const mediaEndDate = fuzzyDateToDate(entry.media.endDate);
-          if (settings.fixes.invalidEndDate.value) {
-            if (completedAt < mediaEndDate) {
-              d.completedAt = mediaEndDate;
-              d.completedAtBad = "early";
-            } else if (startedAt && completedAt < startedAt) {
-              d.completedAt = startedAt;
-              d.completedAtBad = "reverse";
-            }
+          if (completedAt < mediaEndDate) {
+            d.completedAt = mediaEndDate;
+            d.completedAtBad = "early";
+          } else if (startedAt && completedAt < startedAt) {
+            d.completedAt = startedAt;
+            d.completedAtBad = "reverse";
           }
-        } else if (settings.fixes.missingEndDate.value) {
-          d.completedAt =
-            fuzzyDateToDate(entry.startedAt) ??
-            fuzzyDateToDate(entry.media.endDate);
-          d.completedAtBad = "missing";
         }
       }
       if (
@@ -232,6 +219,32 @@ function Fixer() {
           day: 0,
         }).endOf("day");
         d.completedAtBad = "planning";
+      }
+      if (
+        settings.fixes.missingStartDate.value &&
+        entry.status !== "PLANNING" &&
+        entry.media.status !== "NOT_YET_RELEASED" &&
+        isNonFuzzy(entry.media.startDate) &&
+        isFuzzy(entry.startedAt)
+      ) {
+        d.startedAt = dateMin(
+          d.completedAt ?? fuzzyDateToDate(entry.completedAt),
+          fuzzyDateToDate(entry.media.startDate),
+        );
+        d.startedAtBad = "missing";
+      }
+      if (
+        settings.fixes.missingEndDate.value &&
+        (entry.status === "COMPLETED" || entry.status === "REPEATING") &&
+        entry.media.status === "FINISHED" &&
+        isNonFuzzy(entry.media.endDate) &&
+        isFuzzy(entry.completedAt)
+      ) {
+        d.completedAt = dateMax(
+          d.startedAt ?? fuzzyDateToDate(entry.startedAt),
+          fuzzyDateToDate(entry.media.endDate),
+        );
+        d.completedAtBad = "missing";
       }
     }
 

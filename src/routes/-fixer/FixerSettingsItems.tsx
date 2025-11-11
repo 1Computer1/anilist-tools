@@ -101,25 +101,6 @@ export default function FixerSettingsItems({
             setting={settings.fixes.invalidProgress}
           />
           <HelpExample
-            label="Missing Start Date"
-            listType={settings.listType.value}
-            statuses={_.without(MEDIA_LIST_STATUSES, "PLANNING")}
-            fixes={[
-              {
-                criteria: "Missing Date",
-                before: "∅",
-                after: `Finish Date`,
-              },
-              {
-                criteria: "Missing Both Dates",
-                before: "∅",
-                after: `${airing} Date`,
-              },
-            ]}
-            viewer={viewer}
-            setting={settings.fixes.missingStartDate}
-          />
-          <HelpExample
             label="Invalid Start Date"
             listType={settings.listType.value}
             statuses={MEDIA_LIST_STATUSES}
@@ -137,25 +118,6 @@ export default function FixerSettingsItems({
             ]}
             viewer={viewer}
             setting={settings.fixes.invalidStartDate}
-          />
-          <HelpExample
-            label="Missing Finish Date"
-            listType={settings.listType.value}
-            statuses={["COMPLETED", "REPEATING"]}
-            fixes={[
-              {
-                criteria: "Missing Date",
-                before: "∅",
-                after: `Start Date`,
-              },
-              {
-                criteria: "Missing Both Dates",
-                before: "∅",
-                after: `Finished ${airing} Date`,
-              },
-            ]}
-            viewer={viewer}
-            setting={settings.fixes.missingEndDate}
           />
           <HelpExample
             label="Invalid Finish Date"
@@ -180,6 +142,44 @@ export default function FixerSettingsItems({
             ]}
             viewer={viewer}
             setting={settings.fixes.invalidEndDate}
+          />
+          <HelpExample
+            label="Missing Start Date"
+            listType={settings.listType.value}
+            statuses={_.without(MEDIA_LIST_STATUSES, "PLANNING")}
+            fixes={[
+              {
+                criteria: "Missing Date",
+                before: "∅",
+                after: `Earlier of Finish Date and ${airing} Date`,
+              },
+              {
+                criteria: "Missing Both Dates",
+                before: "∅",
+                after: `${airing} Date`,
+              },
+            ]}
+            viewer={viewer}
+            setting={settings.fixes.missingStartDate}
+          />
+          <HelpExample
+            label="Missing Finish Date"
+            listType={settings.listType.value}
+            statuses={["COMPLETED", "REPEATING"]}
+            fixes={[
+              {
+                criteria: "Missing Date",
+                before: "∅",
+                after: `Later of Start Date and Finished ${airing} Date`,
+              },
+              {
+                criteria: "Missing Both Dates",
+                before: "∅",
+                after: `Finished ${airing} Date`,
+              },
+            ]}
+            viewer={viewer}
+            setting={settings.fixes.missingEndDate}
           />
           <HelpExample
             label="Edit All Dates"
@@ -238,23 +238,23 @@ export default function FixerSettingsItems({
       />
       <FixCheckbox
         viewer={viewer}
-        label="Missing Start Date"
-        setting={settings.fixes.missingStartDate}
-      />
-      <FixCheckbox
-        viewer={viewer}
         label="Invalid Start Date"
         setting={settings.fixes.invalidStartDate}
       />
       <FixCheckbox
         viewer={viewer}
-        label="Missing Finish Date"
-        setting={settings.fixes.missingEndDate}
+        label="Invalid Finish Date"
+        setting={settings.fixes.invalidEndDate}
       />
       <FixCheckbox
         viewer={viewer}
-        label="Invalid Finish Date"
-        setting={settings.fixes.invalidEndDate}
+        label="Missing Start Date"
+        setting={settings.fixes.missingStartDate}
+      />
+      <FixCheckbox
+        viewer={viewer}
+        label="Missing Finish Date"
+        setting={settings.fixes.missingEndDate}
       />
       <FixCheckbox
         viewer={viewer}
@@ -271,10 +271,10 @@ export default function FixerSettingsItems({
               status: settings.fixes.invalidStatus.value,
               progress: settings.fixes.invalidProgress.value,
               dates:
-                settings.fixes.missingStartDate.value ||
                 settings.fixes.invalidStartDate.value ||
-                settings.fixes.missingEndDate.value ||
                 settings.fixes.invalidEndDate.value ||
+                settings.fixes.missingStartDate.value ||
+                settings.fixes.missingEndDate.value ||
                 settings.fixes.allDates.value,
             },
           });
