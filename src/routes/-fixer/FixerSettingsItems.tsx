@@ -59,7 +59,7 @@ export default function FixerSettingsItems({
                 after: nameOfStatus(settings.listType.value, "PLANNING"),
               },
               {
-                criteria: `${nameOfListType(settings.listType.value)} Not Finished ${airing}`,
+                criteria: `${nameOfListType(settings.listType.value)} Not Ended ${airing}`,
                 before: "Status",
                 after: `${nameOfStatus(settings.listType.value, "CURRENT")}, ${nameOfStatus(settings.listType.value, "PAUSED")}, or ${nameOfStatus(settings.listType.value, "PLANNING")}`,
               },
@@ -108,7 +108,7 @@ export default function FixerSettingsItems({
               {
                 criteria: `Date < ${airing} Date`,
                 before: "Date",
-                after: `${airing} Date`,
+                after: `Start ${airing} Date`,
               },
               {
                 criteria: `Planning But Has Date`,
@@ -125,9 +125,9 @@ export default function FixerSettingsItems({
             statuses={["COMPLETED", "REPEATING", "PLANNING"]}
             fixes={[
               {
-                criteria: `Date < Finished ${airing} Date`,
+                criteria: `Date < End ${airing} Date`,
                 before: "Date",
-                after: `Finished ${airing} Date`,
+                after: `End ${airing} Date`,
               },
               {
                 criteria: `Date < Start Date`,
@@ -151,12 +151,12 @@ export default function FixerSettingsItems({
               {
                 criteria: "Missing Date",
                 before: "∅",
-                after: `Earlier of Finish Date and ${airing} Date`,
+                after: `Earlier of Finish Date & Start ${airing} Date`,
               },
               {
                 criteria: "Missing Both Dates",
                 before: "∅",
-                after: `${airing} Date`,
+                after: `Start ${airing} Date`,
               },
             ]}
             viewer={viewer}
@@ -170,12 +170,12 @@ export default function FixerSettingsItems({
               {
                 criteria: "Missing Date",
                 before: "∅",
-                after: `Later of Start Date and Finished ${airing} Date`,
+                after: `Later of Start Date & End ${airing} Date`,
               },
               {
                 criteria: "Missing Both Dates",
                 before: "∅",
-                after: `Finished ${airing} Date`,
+                after: `End ${airing} Date`,
               },
             ]}
             viewer={viewer}
@@ -362,24 +362,24 @@ function HelpExample({
           {statuses.map((s) => (
             <div
               key={s}
-              className="border-secondary rounded-field text-secondary border border-solid px-1 py-px text-[0.5rem] sm:text-xs"
+              className="border-secondary rounded-field text-secondary border border-solid px-1 py-px text-[0.525rem] sm:text-xs"
             >
               {nameOfStatus(listType, s)}
             </div>
           ))}
         </div>
       </div>
-      <li className="flex flex-col gap-1">
+      <li className="flex flex-col gap-2">
         {fixes.map(({ criteria, before, after }) => (
           <li
             key={criteria}
-            className="flex w-full flex-col gap-1 text-sm sm:flex-row sm:items-center sm:gap-2"
+            className="flex w-full flex-col gap-1 text-xs sm:flex-row sm:items-center sm:gap-2 sm:text-sm"
           >
             <div className="flex grow flex-row items-center gap-2">
               <div>{criteria}</div>
               <div className="border-neutral hidden grow border-b border-dotted px-1 sm:block"></div>
             </div>
-            <div className="ml-4 flex flex-row items-center gap-2 sm:ml-0">
+            <div className="ml-1.5 flex flex-row items-center gap-1 sm:ml-0 sm:gap-2">
               <div className="text-error">{before}</div>
               <PiArrowFatRightFill className="text-info size-4" />
               <div className="text-info">{after}</div>

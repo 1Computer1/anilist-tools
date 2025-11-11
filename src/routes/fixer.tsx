@@ -531,11 +531,17 @@ function Fixer() {
             { keys: "/", desc: "Exclude fixing this entry" },
             ...(listEntryShow.dates
               ? [
-                  { keys: "s", desc: `Set start to ${airing} date` },
-                  { keys: "f", desc: `Set finish to finished ${airing} date` },
+                  {
+                    keys: "s",
+                    desc: `Set start date to start ${airing} date`,
+                  },
+                  {
+                    keys: "f",
+                    desc: `Set finish date to end ${airing} date`,
+                  },
                   {
                     keys: "d",
-                    desc: `Set start and finish to ${airing} period`,
+                    desc: `Set start and finish date to ${airing} period`,
                   },
                   { keys: "+|Shift +", desc: "+1 day to start/finish date" },
                   { keys: "-|Shift -", desc: "-1 day to start/finish date" },

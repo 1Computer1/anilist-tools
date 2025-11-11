@@ -219,7 +219,7 @@ export default function FixerListEntry({
             beforeBad={
               newEntry.statusBad &&
               {
-                notFinished: `${nameOfListType(settings.listType.value)} not finished ${airing}`,
+                notFinished: `${nameOfListType(settings.listType.value)} not ended ${airing}`,
                 notReleased: `${nameOfListType(settings.listType.value)} not started ${airing}`,
               }[newEntry.statusBad]
             }
@@ -303,7 +303,7 @@ export default function FixerListEntry({
                         Started {airing} on {dateToString(mediaStartDate)}
                       </>
                     ) : (
-                      <>No {airing} date</>
+                      <>No start {airing} date</>
                     )}
                   </>
                 }
@@ -339,7 +339,7 @@ export default function FixerListEntry({
                       fuzzyDateToDate(entry.completedAt))!
                     ? "Cannot be after the finish date"
                     : mediaStartDate && newEntry.startedAt < mediaStartDate
-                      ? `Cannot be before the ${airing} date`
+                      ? `Cannot be before the start ${airing} date`
                       : null
                   : null
             }
@@ -375,10 +375,10 @@ export default function FixerListEntry({
                 content={
                   mediaEndDate ? (
                     <>
-                      Finished {airing} on {dateToString(mediaEndDate)}
+                      Ended {airing} on {dateToString(mediaEndDate)}
                     </>
                   ) : (
-                    <>No finished {airing} date</>
+                    <>No end {airing} date</>
                   )
                 }
               >
@@ -415,7 +415,7 @@ export default function FixerListEntry({
                     (newEntry.startedAt ?? fuzzyDateToDate(entry.startedAt))!
                     ? "Cannot be before the start date"
                     : mediaEndDate && newEntry.completedAt < mediaEndDate
-                      ? `Cannot be before the finished ${airing} date`
+                      ? `Cannot be before the end ${airing} date`
                       : null
                   : null
             }

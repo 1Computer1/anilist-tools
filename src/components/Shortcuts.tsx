@@ -36,7 +36,9 @@ export function Shortcuts({
               ))}
             </span>
             <div className="border-neutral grow border-b border-dotted px-1"></div>
-            <span className="text-nowrap">{o.desc}</span>
+            <span className="text-xs text-nowrap sm:text-sm md:text-base">
+              {o.desc}
+            </span>
           </li>
         ),
       )}
