@@ -181,7 +181,7 @@ function MenuItems({
     : Link;
 
   const linkClassName = clsx(
-    "flex w-full flex-row items-center justify-center",
+    "light:data-[status=active]:focus:text-base-100 flex w-full flex-row items-center justify-center",
   );
   const plannedClassName = clsx(
     linkClassName,
@@ -190,7 +190,13 @@ function MenuItems({
 
   return (
     <>
-      <Link_ to="/" className={linkClassName}>
+      <Link_
+        to="/"
+        className={clsx(
+          linkClassName,
+          "dark:focus-visible:bg-base-content/10 dark:hover:bg-base-content/10 rounded-field light:focus-visible:outline-offset-2 focus-visible:outline-2 dark:focus-visible:outline-none",
+        )}
+      >
         <div className="light:bg-neutral flex-center rounded-field light:shadow-md h-12 w-full">
           <img
             src={logoImg}
