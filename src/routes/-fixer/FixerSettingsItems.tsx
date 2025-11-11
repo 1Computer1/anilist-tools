@@ -372,7 +372,7 @@ function HelpExample({
           ))}
         </div>
       </div>
-      <li className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-2">
         {fixes.map(({ criteria, before, after }) => (
           <li
             key={criteria}
@@ -389,7 +389,7 @@ function HelpExample({
             </div>
           </li>
         ))}
-      </li>
+      </ul>
     </li>
   );
 }

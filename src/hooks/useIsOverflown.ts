@@ -10,7 +10,6 @@ export default function useIsOverflown<T extends HTMLElement>(
 
   const onResize = () => {
     if (ref.current) {
-      console.log(ref.current.scrollHeight, ref.current.clientHeight);
       setNeedScroll(isOverflown(ref.current));
     }
   };
