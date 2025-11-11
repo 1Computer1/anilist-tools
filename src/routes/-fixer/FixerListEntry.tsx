@@ -379,22 +379,43 @@ export default function FixerListEntry({
               !canModifyStart ? (
                 "∅"
               ) : (
-                <CustomDateInput
-                  value={newEntry.startedAt ?? fuzzyDateToDate(entry.startedAt)}
-                  disabled={!mediaStartDate}
-                  min={mediaStartDate?.toISODate() ?? ""}
-                  onChange={(value) => {
-                    if (value < mediaStartDate!) {
-                      value = mediaStartDate!;
+                <>
+                  <CustomDateInput
+                    value={
+                      newEntry.startedAt ?? fuzzyDateToDate(entry.startedAt)
                     }
-                    dispatch({
-                      t: "update",
-                      id: entry.id,
-                      startedAt: value,
-                    });
-                  }}
-                  className="px-0.5 py-0.5 text-xs sm:text-sm lg:px-2"
-                />
+                    disabled={!mediaStartDate}
+                    min={mediaStartDate?.toISODate() ?? ""}
+                    onChange={(value) => {
+                      if (value < mediaStartDate!) {
+                        value = mediaStartDate!;
+                      }
+                      dispatch({
+                        t: "update",
+                        id: entry.id,
+                        startedAt: value,
+                      });
+                    }}
+                    className="px-0.5 py-0.5 text-xs sm:text-sm lg:px-2"
+                  />
+                  {(() => {
+                    const before = fuzzyDateToDate(entry.startedAt);
+                    const after = newEntry.startedAt;
+                    if (before && after) {
+                      const diff = Math.floor(before.diff(after).as("days"));
+                      if (diff !== 0) {
+                        return (
+                          <div>
+                            {diff > 0 ? "-" : "+"}
+                            {Math.abs(diff)} day
+                            {Math.abs(diff) > 1 ? "s" : ""}
+                          </div>
+                        );
+                      }
+                    }
+                    return null;
+                  })()}
+                </>
               )
             }
             exclude={!!newEntry.exclude}
@@ -456,24 +477,43 @@ export default function FixerListEntry({
               !canModifyEnd ? (
                 "∅"
               ) : (
-                <CustomDateInput
-                  value={
-                    newEntry.completedAt ?? fuzzyDateToDate(entry.completedAt)
-                  }
-                  min={mediaEndDate?.toISODate() ?? ""}
-                  disabled={!mediaEndDate}
-                  onChange={(value) => {
-                    if (value < mediaEndDate!) {
-                      value = mediaEndDate!;
+                <>
+                  <CustomDateInput
+                    value={
+                      newEntry.completedAt ?? fuzzyDateToDate(entry.completedAt)
                     }
-                    dispatch({
-                      t: "update",
-                      id: entry.id,
-                      completedAt: value,
-                    });
-                  }}
-                  className="px-0.5 py-0.5 text-xs sm:text-sm lg:px-2"
-                />
+                    min={mediaEndDate?.toISODate() ?? ""}
+                    disabled={!mediaEndDate}
+                    onChange={(value) => {
+                      if (value < mediaEndDate!) {
+                        value = mediaEndDate!;
+                      }
+                      dispatch({
+                        t: "update",
+                        id: entry.id,
+                        completedAt: value,
+                      });
+                    }}
+                    className="px-0.5 py-0.5 text-xs sm:text-sm lg:px-2"
+                  />
+                  {(() => {
+                    const before = fuzzyDateToDate(entry.completedAt);
+                    const after = newEntry.completedAt;
+                    if (before && after) {
+                      const diff = Math.floor(before.diff(after).as("days"));
+                      if (diff !== 0) {
+                        return (
+                          <div>
+                            {diff > 0 ? "-" : "+"}
+                            {Math.abs(diff)} day
+                            {Math.abs(diff) > 1 ? "s" : ""}
+                          </div>
+                        );
+                      }
+                    }
+                    return null;
+                  })()}
+                </>
               )
             }
             exclude={!!newEntry.exclude}
@@ -543,7 +583,7 @@ function Change({
             ) : (
               <PiArrowFatRightFill className="sm:size-4" />
             )}
-            <div className="flex flex-row items-center">{after}</div>
+            <div className="flex flex-row items-center gap-2">{after}</div>
           </div>
         )}
       </div>
