@@ -348,7 +348,7 @@ function HelpExample({
 }) {
   return (
     <li className="rounded-field dark:bg-base-200 bg-base-100 border-base-200 flex w-full flex-col gap-2 border p-2 shadow-md dark:shadow">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-x-4 gap-y-2 sm:flex-row sm:items-center sm:justify-between">
         <Field className="flex flex-row items-center gap-2">
           <Switch
             className="checkbox checkbox-primary checkbox-sm text-base-content bg-transparent duration-150 before:scale-75 motion-reduce:transition-none"
