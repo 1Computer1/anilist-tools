@@ -74,7 +74,13 @@ export type FixerListDraft = ListDraft<
 >;
 
 export type FixerListDraftAction =
-  | { t: "update"; id: number; startedAt?: DateTime; completedAt?: DateTime }
+  | {
+      t: "update";
+      id: number;
+      status?: MediaListStatus;
+      startedAt?: DateTime;
+      completedAt?: DateTime;
+    }
   | { t: "exclude"; id: number; exclude?: boolean }
   | { t: "updateRecommended"; id: number }
   | { t: "updateRecommendedAll"; show: FixerListEntryShow }
@@ -128,11 +134,13 @@ function Fixer() {
           )
         ) {
           d.statusBad = "notFinished";
-          d.status = {
-            RELEASING: "CURRENT",
-            HIATUS: "PAUSED",
-            NOT_YET_RELEASED: "PLANNING",
-          }[entry.media.status] as MediaListStatus;
+          d.status = (
+            {
+              RELEASING: "CURRENT",
+              HIATUS: "PAUSED",
+              NOT_YET_RELEASED: "PLANNING",
+            } as const
+          )[entry.media.status];
         } else if (
           ["CURRENT", "REPEATING", "DROPPED", "PAUSED"].includes(
             entry.status,
@@ -255,6 +263,9 @@ function Fixer() {
       case "update": {
         if (!draft.has(action.id)) {
           draft.set(action.id, {});
+        }
+        if ("status" in action) {
+          draft.get(action.id)!.status = action.status;
         }
         if ("startedAt" in action) {
           draft.get(action.id)!.startedAt = action.startedAt;

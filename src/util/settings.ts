@@ -4,6 +4,7 @@ import {
   type FuzzyDate,
   type List,
   type MediaListStatus,
+  type MediaStatus,
   type MediaType,
 } from "../api/queries/list";
 import { type ScoreFormat, type TitleLanguage } from "../api/queries/viewer";
@@ -92,6 +93,16 @@ export function nameOfStatus(m: MediaType, s: MediaListStatus) {
     PAUSED: "Paused",
     PLANNING: "Planning",
     REPEATING: { ANIME: "Rewatching", MANGA: "Rereading" }[m],
+  }[s];
+}
+
+export function nameOfMediaStatus(s: MediaStatus) {
+  return {
+    FINISHED: "Finished",
+    RELEASING: "Releasing",
+    HIATUS: "Hiatus",
+    NOT_YET_RELEASED: "Not Yet Released",
+    CANCELLED: "Cancelled",
   }[s];
 }
 

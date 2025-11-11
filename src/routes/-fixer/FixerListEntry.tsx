@@ -10,12 +10,18 @@ import {
 } from "../../util/date";
 import { useMediaQuery } from "usehooks-ts";
 import type { FixerSettings } from "./fixerSettings";
-import { getTitle, nameOfListType, nameOfStatus } from "../../util/settings";
+import {
+  getTitle,
+  nameOfListType,
+  nameOfMediaStatus,
+  nameOfStatus,
+} from "../../util/settings";
 import { DateTime } from "luxon";
 import { PiArrowFatRightFill, PiWarningCircleFill } from "react-icons/pi";
 import type { FixerListDraft, FixerListDraftAction } from "../fixer";
 import CustomDateInput from "../../components/CustomDateInput";
 import CustomTooltip from "../../components/CustomTooltip";
+import CustomListbox from "../../components/CustomListbox";
 
 export type FixerListEntryShow = {
   status: boolean;
@@ -212,7 +218,7 @@ export default function FixerListEntry({
         {show.status && (
           <Change
             label={
-              <CustomTooltip content={<>{entry.media.status}</>}>
+              <CustomTooltip content={nameOfMediaStatus(entry.media.status)}>
                 Status
               </CustomTooltip>
             }
@@ -227,10 +233,35 @@ export default function FixerListEntry({
             afterChanged={
               newEntry.status != null && newEntry.status !== entry.status
             }
-            after={nameOfStatus(
-              settings.listType.value,
-              newEntry.status ?? entry.status,
-            )}
+            after={
+              newEntry.statusBad === "notFinished" &&
+              newEntry.status !== "PLANNING" ? (
+                <CustomListbox
+                  className="select select-sm h-6.5 w-26 py-0.5 text-xs sm:text-sm"
+                  value={newEntry.status ?? entry.status}
+                  options={["CURRENT", "PAUSED"]}
+                  onChange={(value) => {
+                    dispatch({
+                      t: "update",
+                      id: entry.id,
+                      status: value,
+                    });
+                  }}
+                  buttonContents={nameOfStatus(
+                    settings.listType.value,
+                    newEntry.status ?? entry.status,
+                  )}
+                  optionContents={(value) =>
+                    nameOfStatus(settings.listType.value, value)
+                  }
+                />
+              ) : (
+                nameOfStatus(
+                  settings.listType.value,
+                  newEntry.status ?? entry.status,
+                )
+              )
+            }
             exclude={!!newEntry.exclude}
           />
         )}
@@ -300,7 +331,8 @@ export default function FixerListEntry({
                   <>
                     {mediaStartDate ? (
                       <>
-                        Started {airing} on {dateToString(mediaStartDate)}
+                        {+mediaStartDate.diffNow() > 0 ? "Starts" : "Started"}{" "}
+                        {airing} on {dateToString(mediaStartDate)}
                       </>
                     ) : (
                       <>No start {airing} date</>
@@ -375,7 +407,8 @@ export default function FixerListEntry({
                 content={
                   mediaEndDate ? (
                     <>
-                      Ended {airing} on {dateToString(mediaEndDate)}
+                      {+mediaEndDate.diffNow() > 0 ? "Ends" : "Ended"} {airing}{" "}
+                      on {dateToString(mediaEndDate)}
                     </>
                   ) : (
                     <>No end {airing} date</>
