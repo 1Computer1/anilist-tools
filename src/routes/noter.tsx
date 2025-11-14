@@ -18,7 +18,7 @@ import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
 import { matchesFilter, prepareListForDisplay } from "../util/settings";
-import { MEDIA_LIST_STATUSES } from "../api/queries/list";
+import { MEDIA_LIST_STATUSES, type Entry } from "../api/queries/list";
 import NoterSettingsItems from "./-noter/NoterSettingsItems";
 import { useNoterSettings } from "./-noter/noterSettings";
 import NoterListEntry from "./-noter/NoterListEntry";
@@ -104,14 +104,13 @@ function Noter() {
         }
         const d = draft.get(action.id)!;
         const entry = list.data.get(action.id)!;
-        const old = d.notes ?? entry.notes;
-        const regexp = settings.noteFindRegexp.value;
-        const rep = settings.noteReplaceJavaScriptMode.value
-          ? replaceEval(entry, old, regexp, settings.noteReplace.value)
-          : old.replace(
-              regexp,
-              settings.noteReplace.value.replaceAll(/\$([`'])/g, "$$$$$1"),
-            );
+        const rep = doReplace(
+          entry,
+          d.notes ?? entry.notes,
+          settings.noteReplaceJavaScriptMode.value,
+          settings.noteFindRegexp.value,
+          settings.noteReplace.value,
+        );
         d.notes = rep;
         break;
       }
@@ -127,16 +126,16 @@ function Noter() {
           setDispatchError("Regular expression missing or invalid.");
           break;
         }
-        const regexp = settings.noteFindRegexp.value;
         for (const [_, entry] of list.data) {
           const old =
             draft.get(entry.id)?.notes ?? list.data.get(entry.id)!.notes;
-          const rep = settings.noteReplaceJavaScriptMode.value
-            ? replaceEval(entry, old, regexp, settings.noteReplace.value)
-            : old.replace(
-                regexp,
-                settings.noteReplace.value.replaceAll(/\$([`'])/g, "$$$$$1"),
-              );
+          const rep = doReplace(
+            entry,
+            old,
+            settings.noteReplaceJavaScriptMode.value,
+            settings.noteFindRegexp.value,
+            settings.noteReplace.value,
+          );
           if (rep !== old) {
             if (!draft.has(entry.id)) {
               draft.set(entry.id, {});
@@ -349,4 +348,16 @@ function Noter() {
       </LoadingDialog>
     </LeftRightListInterface>
   );
+}
+
+function doReplace(
+  entry: Entry,
+  str: string,
+  scriptMode: boolean,
+  regexp: RegExp,
+  replacer: string,
+) {
+  return scriptMode
+    ? replaceEval(entry, str, regexp, replacer)
+    : str.replace(regexp, replacer.replaceAll(/\$([`'])/g, "$$$$$1"));
 }

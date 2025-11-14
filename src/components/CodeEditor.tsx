@@ -3,27 +3,33 @@ import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { useResizeObserver } from "usehooks-ts";
 
+export type CodeEditorProps = {
+  disabled?: boolean;
+  uneditable?: boolean;
+  className?: string;
+  value: string;
+  format?: CodeFormatter;
+  onChange: (value: string) => void;
+};
+
+export type CodeFormatter =
+  | {
+      type: "react";
+      format: (src: string) => React.ReactNode;
+    }
+  | {
+      type: "dangerouslySetInnerHTML";
+      format: (src: string) => string;
+    };
+
 export default function CodeEditor({
   disabled,
   uneditable,
   format,
-  placeholder,
-  ignorePlaceholder,
   className,
   value,
   onChange,
-}: {
-  disabled?: boolean;
-  uneditable?: boolean;
-  format?:
-    | ((src: string) => React.ReactNode)
-    | { dangerouslySetInnerHTML: (src: string) => string };
-  placeholder?: string;
-  ignorePlaceholder?: boolean;
-  className?: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
+}: CodeEditorProps) {
   const refTextArea = useRef<HTMLTextAreaElement>(null);
   const { height } = useResizeObserver({
     ref: refTextArea as any,
@@ -59,19 +65,14 @@ export default function CodeEditor({
               refTextArea.current.scrollTop = refCode.current.scrollTop;
             }
           }}
-          {...(value === "" && !ignorePlaceholder
-            ? {
-                children: (
-                  <span className="text-current/50">{placeholder}</span>
-                ),
-              }
-            : "dangerouslySetInnerHTML" in format
+          dangerouslySetInnerHTML={
+            format?.type === "dangerouslySetInnerHTML"
               ? {
-                  dangerouslySetInnerHTML: {
-                    __html: format.dangerouslySetInnerHTML(value),
-                  },
+                  __html: format.format(value),
                 }
-              : { children: format(value) })}
+              : undefined
+          }
+          children={format?.type === "react" ? format.format(value) : undefined}
         />
       )}
       {
@@ -87,7 +88,6 @@ export default function CodeEditor({
             uneditable && "invisible",
             className,
           )}
-          placeholder={placeholder}
           disabled={disabled}
           value={value}
           ref={refTextArea}

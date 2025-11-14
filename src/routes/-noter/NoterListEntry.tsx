@@ -7,7 +7,7 @@ import type { NoterSettings } from "./noterSettings";
 import { getTitle } from "../../util/settings";
 import { PiClockCounterClockwiseFill, PiSwapFill } from "react-icons/pi";
 import { Button } from "@headlessui/react";
-import CodeEditor from "../../components/CodeEditor";
+import CodeEditor, { type CodeFormatter } from "../../components/CodeEditor";
 import { escapeHtml } from "../../util/starryNight";
 import { substituteEval } from "../../util/replaceEval";
 
@@ -29,19 +29,63 @@ export default function NoterListEntry({
   const newEntry = draft.get(entry.id);
 
   const isChanged = newEntry?.notes != null && newEntry.notes !== entry.notes;
-  const [isHovering, setIsHovering] = useState(false);
+
+  const [isThisPreviewing, setIsThisPreviewing] = useState(false);
+  const [isShowingBefore, setIsShowingBefore] = useState(false);
+
   const hasReplacement =
     settings.noteFindRegexp.value != null &&
     settings.noteFindRegexpError.value == null;
   const isPreviewing =
-    (settings.previewReplaceAll.value || isHovering) && hasReplacement;
+    (settings.previewReplaceAll.value || isThisPreviewing) && hasReplacement;
+
   const oldClassName = clsx("bg-error/30 border-error border line-through");
   const newClassName = clsx("border-success bg-success/30 ml-px border");
   const foundClassName = clsx("bg-accent/30 border border-transparent");
 
-  const [isBefore, setIsBefore] = useState(false);
-
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+  const formatDiff: CodeFormatter = {
+    type: "dangerouslySetInnerHTML",
+    format: (src) => {
+      const regexp = settings.noteFindRegexp.value! as RegExp;
+      return src.replace(regexp, (...args) => {
+        const match = args[0];
+        const namedGroups =
+          typeof args.at(-1) === "object" ? args.at(-1) : null;
+        const groups = args.slice(1, namedGroups ? -3 : -2);
+        const rep = doSubstitute(
+          entry,
+          match,
+          groups,
+          namedGroups,
+          settings.noteReplaceJavaScriptMode.value,
+          settings.noteReplace.value,
+        );
+        return (
+          `<span class="${oldClassName}">${escapeHtml(match)}</span>` +
+          (rep ? `<span class="${newClassName}">${escapeHtml(rep)}</span>` : "")
+        );
+      });
+    },
+  };
+
+  const formatBefore: CodeFormatter = {
+    type: "react",
+    format: () => entry.notes,
+  };
+
+  const formatFound: CodeFormatter = {
+    type: "dangerouslySetInnerHTML",
+    format: (src) => {
+      const regexp = settings.noteFindRegexp.value! as RegExp;
+      return src.replace(
+        regexp,
+        (match) =>
+          `<span class="${foundClassName}">${escapeHtml(match)}</span>`,
+      );
+    },
+  };
 
   return (
     <div
@@ -128,13 +172,13 @@ export default function NoterListEntry({
         <Button
           className="btn btn-ghost not-disabled:text-secondary size-fit p-0.5"
           onMouseOver={() => {
-            setIsHovering(true);
+            setIsThisPreviewing(true);
           }}
           onMouseLeave={() => {
-            setIsHovering(false);
+            setIsThisPreviewing(false);
           }}
           onTouchStart={() => {
-            setIsHovering(false);
+            setIsThisPreviewing(false);
           }}
           disabled={!hasReplacement}
           onClick={() => {
@@ -146,17 +190,17 @@ export default function NoterListEntry({
         <Button
           className="btn btn-ghost not-disabled:text-accent size-fit p-0.5"
           onMouseOver={() => {
-            setIsBefore(true);
+            setIsShowingBefore(true);
           }}
           onMouseLeave={() => {
-            setIsBefore(false);
+            setIsShowingBefore(false);
           }}
           onTouchStart={() => {
-            setIsBefore(false);
+            setIsShowingBefore(false);
           }}
           disabled={!isChanged}
           onClick={() => {
-            setIsBefore(false);
+            setIsShowingBefore(false);
             dispatch({
               t: "update",
               id: entry.id,
@@ -167,71 +211,15 @@ export default function NoterListEntry({
         </Button>
         <CodeEditor
           value={newEntry?.notes ?? entry.notes}
-          uneditable={isPreviewing || isBefore}
+          uneditable={isPreviewing || isShowingBefore}
           className="bg-base-200/50 font-sans"
-          ignorePlaceholder={true}
           format={
             isPreviewing
-              ? {
-                  dangerouslySetInnerHTML: (src) => {
-                    const regexp = settings.noteFindRegexp.value! as RegExp;
-                    return src.replace(regexp, (...args) => {
-                      const match = args[0];
-                      const namedGroups =
-                        typeof args.at(-1) === "object"
-                          ? (args.at(-1) as Record<string, string>)
-                          : undefined;
-                      const groups = args.slice(
-                        1,
-                        namedGroups ? -3 : -2,
-                      ) as string[];
-                      const rep = settings.noteReplaceJavaScriptMode.value
-                        ? substituteEval(
-                            entry,
-                            match,
-                            groups,
-                            namedGroups,
-                            settings.noteReplace.value,
-                          )
-                        : settings.noteReplace.value.replaceAll(
-                            /\$(?:(\d+)|<([A-Za-z0-9_]+)>|\&|\$)/g,
-                            (sub, num, name) => {
-                              if (sub === "$&") {
-                                return match;
-                              }
-                              if (sub === "$$") {
-                                return "$";
-                              }
-                              const i = num && parseInt(num, 10);
-                              if (i) {
-                                return groups[i - 1] ?? "";
-                              }
-                              return namedGroups?.[name] ?? "";
-                            },
-                          );
-                      return (
-                        `<span class="${oldClassName}">${escapeHtml(match)}</span>` +
-                        (rep
-                          ? `<span class="${newClassName}">${escapeHtml(rep)}</span>`
-                          : "")
-                      );
-                    });
-                  },
-                }
-              : isBefore
-                ? () => entry.notes
-                : settings.noteFindRegexp.value != null &&
-                    settings.noteFindRegexpError.value == null
-                  ? {
-                      dangerouslySetInnerHTML: (src) => {
-                        const regexp = settings.noteFindRegexp.value! as RegExp;
-                        return src.replace(
-                          regexp,
-                          (match) =>
-                            `<span class="${foundClassName}">${escapeHtml(match)}</span>`,
-                        );
-                      },
-                    }
+              ? formatDiff
+              : isShowingBefore
+                ? formatBefore
+                : hasReplacement
+                  ? formatFound
                   : undefined
           }
           onChange={(value) => {
@@ -241,4 +229,32 @@ export default function NoterListEntry({
       </div>
     </div>
   );
+}
+
+function doSubstitute(
+  entry: Entry,
+  match: string,
+  groups: string[],
+  namedGroups: Record<string, string> | null,
+  scriptMode: boolean,
+  replacer: string,
+) {
+  return scriptMode
+    ? substituteEval(entry, match, groups, namedGroups, replacer)
+    : replacer.replaceAll(
+        /\$(?:(\d+)|<([A-Za-z0-9_]+)>|\&|\$)/g,
+        (sub, num, name) => {
+          if (sub === "$&") {
+            return match;
+          }
+          if (sub === "$$") {
+            return "$";
+          }
+          const i = num && parseInt(num, 10);
+          if (i) {
+            return groups[i - 1] ?? "";
+          }
+          return namedGroups?.[name] ?? "";
+        },
+      );
 }

@@ -303,7 +303,8 @@ export default function NoterSettingsItems({
         <CodeEditor
           disabled={viewer.data == null}
           format={{
-            dangerouslySetInnerHTML: (src) => highlightToHtml(src, "source.js"),
+            type: "dangerouslySetInnerHTML",
+            format: (src) => highlightToHtml(src, "source.js"),
           }}
           value={settings.noteFind.value}
           onChange={settings.noteFind.set}
@@ -346,23 +347,19 @@ export default function NoterSettingsItems({
       >
         <CodeEditor
           disabled={viewer.data == null}
-          format={
-            settings.noteReplaceJavaScriptMode.value
-              ? {
-                  dangerouslySetInnerHTML: (src) =>
-                    highlightToHtml(src, "source.regexp.extended"),
-                }
-              : {
-                  dangerouslySetInnerHTML: (src) =>
-                    src.replaceAll(
-                      /(\$(?:\d+|<[A-Za-z0-9_]+>|\&|\$))|((?:.(?!\$))+)/g,
-                      (x, p1, p2) =>
-                        p1
-                          ? `<span class="pl-k">${escapeHtml(x)}</span>`
-                          : escapeHtml(p2),
-                    ),
-                }
-          }
+          format={{
+            type: "dangerouslySetInnerHTML",
+            format: settings.noteReplaceJavaScriptMode.value
+              ? (src) => highlightToHtml(src, "source.js")
+              : (src) =>
+                  src.replaceAll(
+                    /(\$(?:\d+|<[A-Za-z0-9_]+>|\&|\$))|((?:.(?!\$))+)/g,
+                    (x, p1, p2) =>
+                      p1
+                        ? `<span class="pl-k">${escapeHtml(x)}</span>`
+                        : escapeHtml(p2),
+                  ),
+          }}
           className="h-25 min-h-25"
           value={settings.noteReplace.value}
           onChange={settings.noteReplace.set}
