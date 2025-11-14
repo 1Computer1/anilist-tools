@@ -6,6 +6,7 @@ import { useResizeObserver } from "usehooks-ts";
 export type CodeEditorProps = {
   disabled?: boolean;
   uneditable?: boolean;
+  autosize?: boolean;
   className?: string;
   value: string;
   format?: CodeFormatter;
@@ -25,6 +26,7 @@ export type CodeFormatter =
 export default function CodeEditor({
   disabled,
   uneditable,
+  autosize = false,
   format = { type: "react", format: (src) => src },
   className,
   value,
@@ -76,7 +78,13 @@ export default function CodeEditor({
             uneditable && "invisible",
             className,
           )}
-          style={{ height: "40px" }}
+          style={{
+            height: "40px",
+            // Stopgap for when field-sizing-content isn't available
+            minHeight: autosize
+              ? `calc(20px + 20px * ${value.split("\n").length || 1})`
+              : undefined,
+          }}
           disabled={disabled}
           value={value}
           ref={refTextArea}
