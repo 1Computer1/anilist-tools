@@ -231,7 +231,7 @@ export default function NoterSettingsItems({
               <CodeEditor
                 value={"I loved this anime!\nDoggos = 3"}
                 uneditable={true}
-                className="min-h-[calc(18px+20px*2)] font-sans"
+                className="font-sans"
               />
               <p>
                 You can use match the whole note with{" "}
@@ -241,13 +241,13 @@ export default function NoterSettingsItems({
                 value={`[table, after] = parse(match, "="),\ntable.Doggos = Number(table.Doggos) * 3,\nformat({ table, after, sep: ": " })`}
                 uneditable={true}
                 format={codeFormatter("source.js")}
-                className="min-h-[calc(18px+20px*3)]"
+                className="min-h-[calc(20px+20px*3)]"
               />
               <p>And end up with this new note:</p>
               <CodeEditor
                 value={`Doggos: 9\nI loved this anime!`}
                 uneditable={true}
-                className="min-h-[calc(18px+20px*2)] font-sans"
+                className="font-sans"
               />
             </>
           ) : (
@@ -466,7 +466,7 @@ export default function NoterSettingsItems({
               ? (src) => highlightToHtml(src, "source.js")
               : (src) => highlightReplacer(src),
           }}
-          className="min-h-[calc(18px+20px*4)]"
+          lines={4}
           value={settings.noteReplace.value}
           onChange={settings.noteReplace.set}
         />

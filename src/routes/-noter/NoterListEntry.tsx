@@ -207,7 +207,7 @@ export default function NoterListEntry({
         <CodeEditor
           value={newEntry?.notes ?? entry.notes}
           uneditable={isPreviewing || isShowingBefore}
-          autosize
+          lines="auto"
           className="bg-base-200/50 font-sans"
           format={
             isPreviewing
