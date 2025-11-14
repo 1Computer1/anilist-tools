@@ -28,6 +28,7 @@ export default function NoterListEntry({
 }) {
   const newEntry = draft.get(entry.id);
 
+  const notes = newEntry?.notes ?? entry.notes;
   const isChanged = newEntry?.notes != null && newEntry.notes !== entry.notes;
 
   const [isThisPreviewing, setIsThisPreviewing] = useState(false);
@@ -35,7 +36,21 @@ export default function NoterListEntry({
 
   const hasReplacement =
     settings.noteFindRegexp.value != null &&
-    settings.noteFindRegexpError.value == null;
+    settings.noteFindRegexpError.value == null &&
+    notes.replace(settings.noteFindRegexp.value, (...args) => {
+      const match = args[0];
+      const namedGroups = typeof args.at(-1) === "object" ? args.at(-1) : null;
+      const groups = args.slice(1, namedGroups ? -3 : -2);
+      return doSubstitute(
+        entry,
+        match,
+        groups,
+        namedGroups,
+        settings.noteReplaceJavaScriptMode.value,
+        settings.noteReplace.value,
+      );
+    }) !== notes;
+
   const isPreviewing =
     (settings.previewReplaceAll.value || isThisPreviewing) && hasReplacement;
 
@@ -205,7 +220,7 @@ export default function NoterListEntry({
           <PiClockCounterClockwiseFill className="size-6 lg:size-7" />
         </Button>
         <CodeEditor
-          value={newEntry?.notes ?? entry.notes}
+          value={notes}
           uneditable={isPreviewing || isShowingBefore}
           lines="auto"
           className="bg-base-200/50 font-sans"
