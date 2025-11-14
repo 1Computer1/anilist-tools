@@ -208,7 +208,7 @@ function Noter() {
           sortDir: settings.sortDir.value,
           titleLanguage: settings.titleLanguage.value,
           seed: settings.randomSeed.value,
-          section: false,
+          section: true,
         })
       }
       error={
@@ -340,7 +340,7 @@ function Noter() {
         />
       </CustomDialog>
       <LoadingDialog state={savingLoadingDialog}>
-        Dropping some entries...
+        Updating some notes...
       </LoadingDialog>
     </LeftRightListInterface>
   );

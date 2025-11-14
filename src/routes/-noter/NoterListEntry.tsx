@@ -167,16 +167,13 @@ export default function NoterListEntry({
             });
           }}
         >
-          {isChanged ? (
-            <PiClockCounterClockwiseFill className="size-6 lg:size-7" />
-          ) : (
-            <PiNotePencilFill className="size-6 lg:size-7" />
-          )}
+          <PiClockCounterClockwiseFill className="size-6 lg:size-7" />
         </Button>
         <CodeEditor
           value={newEntry?.notes ?? entry.notes}
           uneditable={isPreviewing || isBefore}
           className="bg-base-200/50 font-sans"
+          ignorePlaceholder={true}
           format={
             isPreviewing
               ? {

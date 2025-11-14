@@ -8,6 +8,7 @@ export default function CodeEditor({
   uneditable,
   format,
   placeholder,
+  ignorePlaceholder,
   className,
   value,
   onChange,
@@ -18,6 +19,7 @@ export default function CodeEditor({
     | ((src: string) => React.ReactNode)
     | { dangerouslySetInnerHTML: (src: string) => string };
   placeholder?: string;
+  ignorePlaceholder?: boolean;
   className?: string;
   value: string;
   onChange: (value: string) => void;
@@ -57,7 +59,7 @@ export default function CodeEditor({
               refTextArea.current.scrollTop = refCode.current.scrollTop;
             }
           }}
-          {...(value === ""
+          {...(value === "" && !ignorePlaceholder
             ? {
                 children: (
                   <span className="text-current/50">{placeholder}</span>
