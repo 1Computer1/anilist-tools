@@ -70,8 +70,27 @@ export default function NoterSettingsItems({
             ECMAScript-flavour regular expressions are used to search through
             notes.
             <br />
-            To search for notes that are empty, use <InlineCode>^$</InlineCode>.
+            Some useful patterns:
           </p>
+          <CodeTable
+            headers={["Pattern", "Usage"]}
+            rows={[
+              [
+                "^$",
+                <>
+                  Selects an empty line, or with the <InlineCode>s</InlineCode>{" "}
+                  flag, an empty string.
+                </>,
+              ],
+              [
+                ".+",
+                <>
+                  Selects a non-empty line, or with the{" "}
+                  <InlineCode>s</InlineCode> flag, a non-empty string.
+                </>,
+              ],
+            ]}
+          />
           <p>
             <span className="font-bold">Useful References</span>
             <ul className="list-inside list-disc">
