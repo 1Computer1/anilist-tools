@@ -48,7 +48,12 @@ export function useNoterSettings() {
   useEffect(() => {
     try {
       settings.noteFindRegexp.set(
-        settings.noteFind.value ? new RegExp(settings.noteFind.value) : null,
+        settings.noteFind.value
+          ? new RegExp(
+              settings.noteFind.value,
+              settings.noteFindFlags.value.join(""),
+            )
+          : null,
       );
       settings.noteFindRegexpError.set(null);
     } catch (err) {
