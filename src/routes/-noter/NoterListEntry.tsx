@@ -41,7 +41,7 @@ export default function NoterListEntry({
 
   const oldClassName = clsx("bg-error/30 border-error border line-through");
   const newClassName = clsx("border-success bg-success/30 ml-px border");
-  const foundClassName = clsx("bg-accent/30 border border-transparent");
+  const foundClassName = clsx("bg-accent/30");
 
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
