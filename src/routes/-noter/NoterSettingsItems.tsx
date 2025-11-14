@@ -205,6 +205,7 @@ export default function NoterSettingsItems({
                         value={`parse("hello\\nkey: value\\nworld", ":")\n⇒ [{ key: "value" }, "hello\\nworld"]`}
                         uneditable={true}
                         format={codeFormatter("source.js")}
+                        className="min-h-[calc(18px+20px*2)]"
                       />
                     </div>,
                   ],
@@ -216,6 +217,7 @@ export default function NoterSettingsItems({
                         value={`format({\n  before: "hello",\n  after: "world",\n  sep: " = ",\n  table: { key: "value" }\n})\n⇒ "hello\\nkey = value\\nworld"`}
                         uneditable={true}
                         format={codeFormatter("source.js")}
+                        className="min-h-[calc(18px+20px*7)]"
                       />
                     </div>,
                   ],
@@ -228,7 +230,7 @@ export default function NoterSettingsItems({
               <CodeEditor
                 value={"I loved this anime!\nDoggos = 3"}
                 uneditable={true}
-                className="font-sans"
+                className="min-h-[calc(18px+20px*2)] font-sans"
               />
               <p>
                 You can use match the whole note with{" "}
@@ -238,11 +240,13 @@ export default function NoterSettingsItems({
                 value={`[table, after] = parse(match, "="),\ntable.Doggos = Number(table.Doggos) * 3,\nformat({ table, after, sep: ": " })`}
                 uneditable={true}
                 format={codeFormatter("source.js")}
+                className="min-h-[calc(18px+20px*3)]"
               />
               <p>And end up with this new note:</p>
               <CodeEditor
                 value={`Doggos: 9\nI loved this anime!`}
                 uneditable={true}
+                className="min-h-[calc(18px+20px*2)] font-sans"
               />
             </>
           ) : (
@@ -460,7 +464,7 @@ export default function NoterSettingsItems({
               ? (src) => highlightToHtml(src, "source.js")
               : (src) => highlightReplacer(src),
           }}
-          className="h-25 min-h-25"
+          className="min-h-[calc(18px+20px*4)]"
           value={settings.noteReplace.value}
           onChange={settings.noteReplace.set}
         />
