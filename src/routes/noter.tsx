@@ -202,9 +202,9 @@ function Noter() {
               matchesFilter(settings.filter.value, e) &&
               (!settings.hideUnmatched.value ||
                 (settings.noteFindRegexp.value instanceof RegExp
-                  ? settings.noteFindRegexp.value.test(
-                      draft.get(e.id)?.notes ?? e.notes,
-                    )
+                  ? (draft.get(e.id)?.notes ?? e.notes).match(
+                      settings.noteFindRegexp.value,
+                    ) != null
                   : true))
             );
           },
