@@ -34,7 +34,7 @@ export function useNoterSettings() {
     noteFindFlags: useCell<RegExpFlag[]>(["g", "m"]),
     noteFindRegexp: useCell<RegExp | null>(null),
     noteFindRegexpError: useCell<SyntaxError | null>(null),
-    hideUnmatched: useCell<boolean>(true),
+    hideUnmatched: useCell<boolean>(false),
     noteReplace: useCell<string>(""),
     noteReplaceJavaScriptMode: useCell<boolean>(false),
     previewReplaceAll: useCell<boolean>(false),
