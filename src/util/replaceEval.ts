@@ -79,7 +79,10 @@ function format({
     str += before + "\n";
   }
   if (table) {
-    str += Object.entries(table).map(([k, v]) => k + sep + v);
+    str +=
+      Object.entries(table)
+        .map(([k, v]) => k + sep + v)
+        .join("\n") + "\n";
   }
   if (after) {
     str += after + "\n";
