@@ -70,7 +70,7 @@ export default function CodeEditor({
           autoCapitalize="off"
           translate="no"
           className={clsx(
-            "textarea textarea-sm field-sizing-content min-h-10 w-full max-w-full resize-y overflow-hidden font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
+            "textarea textarea-sm field-sizing-content min-h-10 w-full max-w-full resize-y overflow-y-auto font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
             format != null &&
               "caret-base-content border-transparent bg-transparent text-transparent",
             uneditable && "invisible",
