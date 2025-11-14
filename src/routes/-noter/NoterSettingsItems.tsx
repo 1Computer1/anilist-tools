@@ -268,7 +268,7 @@ export default function NoterSettingsItems({
                 format={{ type: "react", format: (src) => src }}
                 className="font-sans"
               />
-              <p>You can use match the text with:</p>
+              <p>You can match the text with:</p>
               <CodeEditor
                 value={`(?<=Fav Character: )(.+), (.+)`}
                 uneditable={true}
