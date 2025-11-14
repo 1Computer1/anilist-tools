@@ -12,9 +12,11 @@ export function CodeTable({
     <div className="rounded-box border-base-content/10 border">
       <table className="table">
         <thead>
-          {headers.map((x) => (
-            <td key={x}>{x}</td>
-          ))}
+          <tr>
+            {headers.map((x) => (
+              <th key={x}>{x}</th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {rows.map(([l, r]) => (

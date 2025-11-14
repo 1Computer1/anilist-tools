@@ -92,7 +92,7 @@ export default function NoterSettingsItems({
               ],
             ]}
           />
-          <p>
+          <div>
             <span className="font-bold">Useful References</span>
             <ul className="list-inside list-disc">
               <li>
@@ -126,7 +126,7 @@ export default function NoterSettingsItems({
                 </a>
               </li>
             </ul>
-          </p>
+          </div>
         </div>
       </CustomDialog>
       <CustomDialog
