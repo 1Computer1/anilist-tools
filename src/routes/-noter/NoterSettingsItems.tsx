@@ -35,6 +35,8 @@ import clsx from "clsx";
 import CustomDialog from "../../components/dialogs/CustomDialog";
 import type React from "react";
 import CustomListbox from "../../components/CustomListbox";
+import { CodeTable } from "../../components/CodeTable";
+import { InlineCode } from "../../components/InlineCode";
 
 export default function NoterSettingsItems({
   dispatch,
@@ -63,6 +65,8 @@ export default function NoterSettingsItems({
           <p>
             ECMAScript-flavour regular expressions are used to search through
             notes.
+            <br />
+            To search for notes that are empty, use <InlineCode>^$</InlineCode>.
           </p>
           <p>
             <span className="font-bold">Useful References</span>
@@ -406,43 +410,5 @@ export default function NoterSettingsItems({
         randomSeed={settings.randomSeed}
       />
     </>
-  );
-}
-
-function CodeTable({
-  headers,
-  rows,
-}: {
-  headers: string[];
-  rows: [string, React.ReactNode][];
-}) {
-  return (
-    <div className="rounded-box border-base-content/10 border">
-      <table className="table">
-        <thead>
-          {headers.map((x) => (
-            <td key={x}>{x}</td>
-          ))}
-        </thead>
-        <tbody>
-          {rows.map(([l, r]) => (
-            <tr key={l}>
-              <th>
-                <InlineCode>{l}</InlineCode>
-              </th>
-              <th className="font-normal">{r}</th>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function InlineCode({ children }: { children: React.ReactNode }) {
-  return (
-    <code className="bg-base-200 border-base-200 rounded-field p-1">
-      {children}
-    </code>
   );
 }

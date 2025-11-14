@@ -5,11 +5,7 @@ import type { NoterListDraft, NoterListDraftAction } from "../noter";
 import { useMediaQuery } from "usehooks-ts";
 import type { NoterSettings } from "./noterSettings";
 import { getTitle } from "../../util/settings";
-import {
-  PiClockCounterClockwiseFill,
-  PiNotePencilFill,
-  PiSwapFill,
-} from "react-icons/pi";
+import { PiClockCounterClockwiseFill, PiSwapFill } from "react-icons/pi";
 import { Button } from "@headlessui/react";
 import CodeEditor from "../../components/CodeEditor";
 import { escapeHtml } from "../../util/starryNight";
