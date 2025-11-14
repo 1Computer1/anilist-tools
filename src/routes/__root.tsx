@@ -194,7 +194,8 @@ function MenuItems({
         to="/"
         className={clsx(
           linkClassName,
-          "dark:focus-visible:bg-base-content/10 dark:hover:bg-base-content/10 rounded-field light:focus-visible:outline-offset-2 focus-visible:outline-2 dark:focus-visible:outline-none",
+          "rounded-field transition motion-reduce:transition-none",
+          "dark:focus-visible:bg-base-content/10 dark:hover:bg-base-content/10 light:focus-visible:outline-offset-2 focus-visible:outline-2 dark:focus-visible:outline-none",
         )}
       >
         <div className="light:bg-neutral flex-center rounded-field light:shadow-md h-12 w-full">
