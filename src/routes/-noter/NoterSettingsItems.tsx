@@ -430,6 +430,7 @@ export default function NoterSettingsItems({
         }
         between={
           <Button
+            disabled={viewer.data == null}
             className={clsx(
               "btn btn-sm btn-outline text-sm",
               settings.noteReplaceJavaScriptMode.value

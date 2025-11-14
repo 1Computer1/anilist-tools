@@ -39,10 +39,6 @@ export default function NoterListEntry({
   const isPreviewing =
     (settings.previewReplaceAll.value || isThisPreviewing) && hasReplacement;
 
-  const oldClassName = clsx("bg-error/30 border-error border line-through");
-  const newClassName = clsx("border-success bg-success/30 ml-px border");
-  const foundClassName = clsx("bg-accent/30");
-
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   const formatDiff: CodeFormatter = {
@@ -63,8 +59,8 @@ export default function NoterListEntry({
           settings.noteReplace.value,
         );
         return (
-          `<span class="${oldClassName}">${escapeHtml(match)}</span>` +
-          (rep ? `<span class="${newClassName}">${escapeHtml(rep)}</span>` : "")
+          `<span class="bg-error/30 line-through">${escapeHtml(match)}</span>` +
+          (rep ? `<span class="bg-success/30">${escapeHtml(rep)}</span>` : "")
         );
       });
     },
@@ -81,8 +77,7 @@ export default function NoterListEntry({
       const regexp = settings.noteFindRegexp.value! as RegExp;
       return src.replace(
         regexp,
-        (match) =>
-          `<span class="${foundClassName}">${escapeHtml(match)}</span>`,
+        (match) => `<span class="bg-accent/30">${escapeHtml(match)}</span>`,
       );
     },
   };
@@ -212,7 +207,7 @@ export default function NoterListEntry({
         <CodeEditor
           value={newEntry?.notes ?? entry.notes}
           uneditable={isPreviewing || isShowingBefore}
-          className="bg-base-200/50 font-sans"
+          className="bg-base-200/50 min-h-fit font-sans"
           format={
             isPreviewing
               ? formatDiff
