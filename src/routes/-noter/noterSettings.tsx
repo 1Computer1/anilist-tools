@@ -59,7 +59,7 @@ export function useNoterSettings() {
     } catch (err) {
       settings.noteFindRegexpError.set(err as SyntaxError);
     }
-  }, [settings.noteFind.value]);
+  }, [settings.noteFind.value, settings.noteFindFlags.value]);
 
   return settings;
 }
