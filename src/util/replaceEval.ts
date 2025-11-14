@@ -6,12 +6,13 @@ export default function replaceEval(
   regexp: RegExp,
   replacer: string,
 ) {
-  return str.replace(regexp, function (...args) {
+  return str.replace(regexp, (...args) => {
     const last = args.at(-1);
+    const match = args[0];
     const namedGroups = typeof last === "object" ? last : undefined;
     const groups = args.slice(1, namedGroups ? -3 : -2);
 
-    let decls = "const entry = __.entry; ";
+    let decls = "const entry = __.entry; const match = __.match; ";
     if (namedGroups) {
       for (const [k, _] of Object.entries(namedGroups)) {
         decls += `const $${k} = __.namedGroups["${k}"]; `;
@@ -23,9 +24,34 @@ export default function replaceEval(
 
     try {
       const f = new Function("__", `${decls} return ${replacer};`);
-      return f({ entry, namedGroups, groups });
+      return String(f({ entry, match, namedGroups, groups }));
     } catch {
       return "!!ERROR!!";
     }
   });
+}
+
+export function substituteEval(
+  entry: Entry,
+  match: string,
+  groups: string[],
+  namedGroups: Record<string, string> | undefined,
+  replacer: string,
+) {
+  let decls = "const entry = __.entry; const match = __.match; ";
+  if (namedGroups) {
+    for (const [k, _] of Object.entries(namedGroups)) {
+      decls += `const $${k} = __.namedGroups["${k}"]; `;
+    }
+  }
+  for (let i = 0; i < groups.length; i++) {
+    decls += `const $${i + 1} = __.groups[${i}]; `;
+  }
+
+  try {
+    const f = new Function("__", `${decls} return ${replacer};`);
+    return String(f({ entry, match, namedGroups, groups }));
+  } catch {
+    return "!!ERROR!!";
+  }
 }

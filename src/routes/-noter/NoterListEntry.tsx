@@ -13,7 +13,7 @@ import {
 import { Button } from "@headlessui/react";
 import CodeEditor from "../../components/CodeEditor";
 import { escapeHtml } from "../../util/starryNight";
-import replaceEval from "../../util/replaceEval";
+import { substituteEval } from "../../util/replaceEval";
 
 export default function NoterListEntry({
   entry,
@@ -193,10 +193,11 @@ export default function NoterListEntry({
                         namedGroups ? -3 : -2,
                       ) as string[];
                       const rep = settings.noteReplaceJavaScriptMode.value
-                        ? replaceEval(
+                        ? substituteEval(
                             entry,
                             match,
-                            regexp,
+                            groups,
+                            namedGroups,
                             settings.noteReplace.value,
                           )
                         : settings.noteReplace.value.replaceAll(

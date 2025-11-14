@@ -252,10 +252,10 @@ export default function NoterSettingsItems({
               />
               <Label>Hide Unmatched</Label>
             </Field>
-            <Field className="flex flex-row items-center gap-x-2 text-sm">
+            <Field className="flex flex-row items-center justify-between gap-x-2 text-sm">
               <Label>Flags</Label>
               <CustomListbox
-                className="select select-xs grow text-xs"
+                className="select select-xs w-30 text-xs"
                 disabled={viewer.data == null}
                 multiple
                 value={settings.noteFindFlags.value}
@@ -264,14 +264,16 @@ export default function NoterSettingsItems({
                   settings.noteFindFlags.set(v);
                 }}
                 buttonContents={
-                  <span className="inline-block truncate font-mono">
-                    {[...settings.noteFindFlags.value]
-                      .sort(
-                        (a, b) =>
-                          REGEXP_FLAGS.indexOf(a) - REGEXP_FLAGS.indexOf(b),
-                      )
-                      .join("")}
-                  </span>
+                  <div className="flex-center w-full">
+                    <span className="inline-block truncate font-mono">
+                      {[...settings.noteFindFlags.value]
+                        .sort(
+                          (a, b) =>
+                            REGEXP_FLAGS.indexOf(a) - REGEXP_FLAGS.indexOf(b),
+                        )
+                        .join("")}
+                    </span>
+                  </div>
                 }
                 optionContents={(value) => (
                   <div className="inline-flex flex-row items-center gap-x-1.5 text-xs">
