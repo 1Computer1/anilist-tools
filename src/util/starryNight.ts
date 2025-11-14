@@ -4,9 +4,8 @@ import sourceRegexpExtended from "@wooorm/starry-night/source.regexp.extended";
 import sourceRegexpPosix from "@wooorm/starry-night/source.regexp.posix";
 import sourceSy from "@wooorm/starry-night/source.sy";
 import sourceJs from "@wooorm/starry-night/source.js";
-import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import { toHtml } from "hast-util-to-html";
-import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+import type { CodeFormatter } from "../components/CodeEditor";
 
 export const StarryNight = await createStarryNight([
   sourceRegexp,
@@ -15,11 +14,6 @@ export const StarryNight = await createStarryNight([
   sourceSy,
   sourceJs,
 ]);
-
-export function highlightToJsx(code: string, scope: string) {
-  const tree = StarryNight.highlight(code, scope);
-  return toJsxRuntime(tree, { Fragment, jsx, jsxs });
-}
 
 export function highlightToHtml(code: string, scope: string) {
   try {
@@ -37,4 +31,11 @@ export function escapeHtml(unsafe: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+export function codeFormatter(scope: string): CodeFormatter {
+  return {
+    type: "dangerouslySetInnerHTML",
+    format: (src) => highlightToHtml(src, scope),
+  };
 }

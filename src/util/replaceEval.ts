@@ -22,7 +22,7 @@ export function substituteEval(
   namedGroups: Record<string, string> | null,
   replacer: string,
 ) {
-  let decls = "const entry = __.entry; const match = __.match; ";
+  let decls = "const { entry, match, parse, format } = __;";
   if (namedGroups) {
     for (const [k, _] of Object.entries(namedGroups)) {
       decls += `const $${k} = __.namedGroups["${k}"]; `;
@@ -34,8 +34,55 @@ export function substituteEval(
 
   try {
     const f = new Function("__", `${decls} return ${replacer};`);
-    return String(f({ entry, match, namedGroups, groups }));
+    return String(
+      f({
+        entry,
+        match,
+        namedGroups,
+        groups,
+        parse,
+        format,
+      }),
+    );
   } catch {
     return "!!ERROR!!";
   }
+}
+
+function parse(str: string, sep: string): [Record<string, string>, string] {
+  const rows = [];
+  const lines = [];
+  for (const line of str.split("\n")) {
+    const p = line.split(sep, 2);
+    if (p.length > 1) {
+      rows.push([p[0].trim(), p[1].trim()]);
+    } else {
+      lines.push(line);
+    }
+  }
+  return [Object.fromEntries(rows), lines.join("\n")];
+}
+
+function format({
+  before,
+  after,
+  sep = " = ",
+  table,
+}: {
+  before?: string;
+  after?: string;
+  sep?: string;
+  table?: Record<string, any>;
+}) {
+  let str = "";
+  if (before) {
+    str += before + "\n";
+  }
+  if (table) {
+    str += Object.entries(table).map(([k, v]) => k + sep + v);
+  }
+  if (after) {
+    str += after + "\n";
+  }
+  return str.trim();
 }

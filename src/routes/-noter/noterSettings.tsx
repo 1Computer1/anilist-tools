@@ -31,7 +31,7 @@ export function useNoterSettings() {
     listType: useCell<MediaType>("ANIME"),
     filter: useCell<string>(""),
     noteFind: useCell<string>(""),
-    noteFindFlags: useCell<RegExpFlag[]>(["g", "m"]),
+    noteFindFlags: useCell<RegExpFlag[]>(["g", "s"]),
     noteFindRegexp: useCell<RegExp | null>(null),
     noteFindRegexpError: useCell<SyntaxError | null>(null),
     hideUnmatched: useCell<boolean>(true),

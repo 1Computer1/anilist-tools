@@ -19,7 +19,11 @@ import SettingsItem from "../../components/list/settings/SettingsItem";
 import CodeEditor from "../../components/CodeEditor";
 import SettingsItemStatuses from "../../components/list/settings/SettingsItemStatuses";
 import { MEDIA_LIST_STATUSES } from "../../api/queries/list";
-import { escapeHtml, highlightToHtml } from "../../util/starryNight";
+import {
+  codeFormatter,
+  escapeHtml,
+  highlightToHtml,
+} from "../../util/starryNight";
 import { Button, Field, Label, Switch } from "@headlessui/react";
 import {
   PiCheckFatFill,
@@ -108,10 +112,10 @@ export default function NoterSettingsItems({
       <CustomDialog
         title={
           <span>
-            Replace -{" "}
+            Replace Notes{" "}
             <span
               className={clsx(
-                "btn btn-outline btn-xs pointer-events-none -mt-1 h-6 text-sm select-none",
+                "btn btn-outline btn-xs pointer-events-none -mt-1 ml-1 h-6 text-sm select-none",
                 settings.noteReplaceJavaScriptMode.value
                   ? "btn-accent"
                   : "btn-primary",
@@ -142,21 +146,22 @@ export default function NoterSettingsItems({
               <CodeTable
                 headers={["Variable", "Value"]}
                 rows={[
+                  ["match", <>The matched text.</>],
                   [
-                    "$n: string",
+                    "$n",
                     <>
                       String captured by the <InlineCode>n</InlineCode>th group.
                     </>,
                   ],
                   [
-                    "$x: string",
+                    "$x",
                     <>
                       String captured by the named group named{" "}
                       <InlineCode>x</InlineCode>.
                     </>,
                   ],
                   [
-                    "entry: Entry",
+                    "entry",
                     <>
                       Object containing data about the list entry.
                       <br />
@@ -172,7 +177,53 @@ export default function NoterSettingsItems({
                       type definition.
                     </>,
                   ],
+                  [
+                    "parse",
+                    <div className="flex flex-col gap-y-1">
+                      Function to extract a table and separate out other text
+                      from a string.
+                      <CodeEditor
+                        value={`parse("hello\\nkey: value\\nworld", ":")\n⇒ [{ key: "value" }, "hello\\nworld"]`}
+                        uneditable={true}
+                        format={codeFormatter("source.js")}
+                      />
+                    </div>,
+                  ],
+                  [
+                    "format",
+                    <div className="flex flex-col gap-y-1">
+                      Function to format a table and surrounding text.
+                      <CodeEditor
+                        value={`format({\n  before: "hello",\n  after: "world",\n  sep: " = ",\n  table: { key: "value" }\n})\n⇒ "hello\\nkey = value\\nworld"`}
+                        uneditable={true}
+                        format={codeFormatter("source.js")}
+                      />
+                    </div>,
+                  ],
                 ]}
+              />
+              <div className="divider divider-accent h-0">
+                Parse and Format Example
+              </div>
+              <p>Given this note:</p>
+              <CodeEditor
+                value={"I loved this anime!\nDoggos = 3"}
+                uneditable={true}
+                className="font-sans"
+              />
+              <p>
+                You can use match the whole note with{" "}
+                <InlineCode>.+</InlineCode> and run the following script:
+              </p>
+              <CodeEditor
+                value={`[table, after] = parse(match, "="),\ntable.Doggos = Number(table.Doggos) * 3,\nformat({ table, after, sep: ": " })`}
+                uneditable={true}
+                format={codeFormatter("source.js")}
+              />
+              <p>And end up with this new note:</p>
+              <CodeEditor
+                value={`Doggos: 9\nI loved this anime!`}
+                uneditable={true}
               />
             </>
           ) : (
@@ -206,6 +257,42 @@ export default function NoterSettingsItems({
                     </>,
                   ],
                 ]}
+              />
+              <div className="divider divider-accent h-0">
+                Regex Replace Example
+              </div>
+              <p>Given this note:</p>
+              <CodeEditor
+                value={"Fav Character: Nana, Daiba"}
+                uneditable={true}
+                format={{ type: "react", format: (src) => src }}
+                className="font-sans"
+              />
+              <p>You can use match the text with:</p>
+              <CodeEditor
+                value={`(?<=Fav Character: )(.+), (.+)`}
+                uneditable={true}
+                format={{
+                  type: "dangerouslySetInnerHTML",
+                  format: (src) =>
+                    highlightToHtml(src, "source.regexp.extended"),
+                }}
+              />
+              <p>Then use the captured parts to replace:</p>
+              <CodeEditor
+                value={`$2 $1`}
+                uneditable={true}
+                format={{
+                  type: "dangerouslySetInnerHTML",
+                  format: (src) => highlightReplacer(src),
+                }}
+              />
+              <p>And end up with this new note:</p>
+              <CodeEditor
+                value={"Fav Character: Daiba Nana"}
+                uneditable={true}
+                format={{ type: "react", format: (src) => src }}
+                className="font-sans"
               />
             </>
           )}
@@ -351,14 +438,7 @@ export default function NoterSettingsItems({
             type: "dangerouslySetInnerHTML",
             format: settings.noteReplaceJavaScriptMode.value
               ? (src) => highlightToHtml(src, "source.js")
-              : (src) =>
-                  src.replaceAll(
-                    /(\$(?:\d+|<[A-Za-z0-9_]+>|\&|\$))|((?:.(?!\$))+)/g,
-                    (x, p1, p2) =>
-                      p1
-                        ? `<span class="pl-k">${escapeHtml(x)}</span>`
-                        : escapeHtml(p2),
-                  ),
+              : (src) => highlightReplacer(src),
           }}
           className="h-25 min-h-25"
           value={settings.noteReplace.value}
@@ -407,5 +487,13 @@ export default function NoterSettingsItems({
         randomSeed={settings.randomSeed}
       />
     </>
+  );
+}
+
+function highlightReplacer(src: string) {
+  return src.replaceAll(
+    /(\$(?:\d+|<[A-Za-z0-9_]+>|\&|\$))|((?:.(?!\$))+)/g,
+    (x, p1, p2) =>
+      p1 ? `<span class="pl-k">${escapeHtml(x)}</span>` : escapeHtml(p2),
   );
 }

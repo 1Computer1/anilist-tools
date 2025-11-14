@@ -9,7 +9,7 @@ export type CodeEditorProps = {
   className?: string;
   value: string;
   format?: CodeFormatter;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 };
 
 export type CodeFormatter =
@@ -25,7 +25,7 @@ export type CodeFormatter =
 export default function CodeEditor({
   disabled,
   uneditable,
-  format,
+  format = { type: "react", format: (src) => src },
   className,
   value,
   onChange,
@@ -50,31 +50,29 @@ export default function CodeEditor({
 
   return (
     <div className="grid w-full max-w-full grid-cols-1 grid-rows-1 gap-0 [grid-template-areas:'editor']">
-      {format && (
-        <code
-          ref={refCode}
-          className={clsx(
-            "textarea textarea-sm h-10 min-h-10 w-full max-w-full overflow-y-auto font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
-            disabled &&
-              "bg-base-200 text-base-content/40 cursor-not-allowed border-none shadow-none",
-            className,
-          )}
-          style={{ height }}
-          onScroll={() => {
-            if (refCode.current && refTextArea.current) {
-              refTextArea.current.scrollTop = refCode.current.scrollTop;
-            }
-          }}
-          dangerouslySetInnerHTML={
-            format?.type === "dangerouslySetInnerHTML"
-              ? {
-                  __html: format.format(value),
-                }
-              : undefined
+      <code
+        ref={refCode}
+        className={clsx(
+          "textarea textarea-sm min-h-10 w-full max-w-full overflow-y-auto font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
+          disabled &&
+            "bg-base-200 text-base-content/40 cursor-not-allowed border-none shadow-none",
+          className,
+        )}
+        style={{ height }}
+        onScroll={() => {
+          if (refCode.current && refTextArea.current) {
+            refTextArea.current.scrollTop = refCode.current.scrollTop;
           }
-          children={format?.type === "react" ? format.format(value) : undefined}
-        />
-      )}
+        }}
+        dangerouslySetInnerHTML={
+          format?.type === "dangerouslySetInnerHTML"
+            ? {
+                __html: format.format(value),
+              }
+            : undefined
+        }
+        children={format?.type === "react" ? format.format(value) : undefined}
+      />
       {
         <Textarea
           spellCheck={false}
@@ -82,7 +80,7 @@ export default function CodeEditor({
           autoCapitalize="off"
           translate="no"
           className={clsx(
-            "textarea textarea-sm h-10 min-h-10 w-full max-w-full resize-y overflow-y-auto font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
+            "textarea textarea-sm min-h-10 w-full max-w-full resize-y overflow-y-auto font-mono text-sm wrap-break-word whitespace-pre-wrap [grid-area:editor]",
             format != null &&
               "caret-base-content border-transparent bg-transparent text-transparent",
             uneditable && "invisible",
@@ -95,7 +93,7 @@ export default function CodeEditor({
             e.stopPropagation();
           }}
           onChange={(e) => {
-            onChange(e.target.value);
+            onChange?.(e.target.value);
             if (e.target.scrollHeight > 40) {
               e.target.style.height = "40px";
               e.target.style.height = e.target.scrollHeight + 2 + "px";
