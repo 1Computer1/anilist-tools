@@ -29,6 +29,7 @@ import {
   PiCheckFatFill,
   PiCodeBold,
   PiCurrencyDollarBold,
+  PiFlagBannerFill,
   PiQuestionFill,
   PiSwapFill,
   PiWarningOctagonFill,
@@ -356,7 +357,9 @@ export default function NoterSettingsItems({
         between={
           <>
             <Field className="flex flex-row items-center gap-x-2 text-sm">
-              <Label>Flags</Label>
+              <Label className="inline-flex-center gap-x-1">
+                <PiFlagBannerFill /> Flags
+              </Label>
               <CustomListbox
                 className="select select-xs grow text-xs"
                 disabled={viewer.data == null}
@@ -368,7 +371,8 @@ export default function NoterSettingsItems({
                 }}
                 buttonContents={
                   <div className="flex-center w-full">
-                    <span className="inline-block truncate font-mono">
+                    <span className="text-success inline-block truncate font-mono">
+                      /
                       {[...settings.noteFindFlags.value]
                         .sort(
                           (a, b) =>
