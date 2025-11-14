@@ -234,8 +234,8 @@ export default function NoterSettingsItems({
                 className="font-sans"
               />
               <p>
-                You can use match the whole note with{" "}
-                <InlineCode>.+</InlineCode> and run the following script:
+                You can match the whole note with <InlineCode>.+</InlineCode>{" "}
+                and run the following script:
               </p>
               <CodeEditor
                 value={`[table, after] = parse(match, "="),\ntable.Doggos = Number(table.Doggos) * 3,\nformat({ table, after, sep: ": " })`}
