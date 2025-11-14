@@ -332,44 +332,33 @@ export default function NoterSettingsItems({
       <SettingsItem
         label="Search"
         side={
-          <div className="flex grow flex-row justify-between">
-            <div className="flex-center">
-              {settings.noteFindRegexpError.value && (
-                <CustomTooltip
-                  content={
-                    <p className="text-error max-w-[16ch] text-center text-wrap wrap-break-word">
-                      Error:{" "}
-                      {_.capitalize(settings.noteFindRegexpError.value.message)}
-                    </p>
-                  }
-                >
-                  <PiWarningOctagonFill className="text-error size-4" />
-                </CustomTooltip>
-              )}
-            </div>
+          <div className="flex grow flex-row items-center justify-between gap-1">
             <Button
               className="btn btn-ghost btn-square btn-xs"
               onClick={() => helpFindingDialog.open()}
             >
               <PiQuestionFill className="size-4" />
             </Button>
+            {settings.noteFindRegexpError.value && (
+              <CustomTooltip
+                content={
+                  <p className="text-error max-w-[16ch] text-center text-wrap wrap-break-word">
+                    Error:{" "}
+                    {_.capitalize(settings.noteFindRegexpError.value.message)}
+                  </p>
+                }
+              >
+                <PiWarningOctagonFill className="text-error size-4" />
+              </CustomTooltip>
+            )}
           </div>
         }
         between={
           <>
-            <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
-              <Switch
-                className="toggle toggle-primary duration-300 motion-reduce:transition-none"
-                disabled={viewer.data == null}
-                checked={settings.hideUnmatched.value}
-                onChange={settings.hideUnmatched.set}
-              />
-              <Label>Hide Unmatched</Label>
-            </Field>
-            <Field className="flex flex-row items-center justify-between gap-x-2 text-sm">
+            <Field className="flex flex-row items-center gap-x-2 text-sm">
               <Label>Flags</Label>
               <CustomListbox
-                className="select select-xs w-30 text-xs"
+                className="select select-xs grow text-xs"
                 disabled={viewer.data == null}
                 multiple
                 value={settings.noteFindFlags.value}
@@ -420,10 +409,19 @@ export default function NoterSettingsItems({
           onChange={settings.noteFind.set}
         />
       </SettingsItem>
+      <Field className="flex w-full flex-row items-center gap-x-2 text-sm">
+        <Switch
+          className="toggle toggle-primary duration-300 motion-reduce:transition-none"
+          disabled={viewer.data == null}
+          checked={settings.hideUnmatched.value}
+          onChange={settings.hideUnmatched.set}
+        />
+        <Label>Hide Unmatched</Label>
+      </Field>
       <SettingsItem
         label="Replace"
         side={
-          <div className="flex grow flex-row justify-end">
+          <div className="flex grow flex-row items-center gap-1">
             <Button
               className="btn btn-ghost btn-square btn-xs"
               onClick={() => helpReplacingDialog.open()}
