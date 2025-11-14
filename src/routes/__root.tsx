@@ -18,9 +18,7 @@ import { getViewer } from "../api/queries/viewer";
 import { useDarkMode, useMediaQuery } from "usehooks-ts";
 import {
   PiArrowRightBold,
-  PiCameraFill,
   PiGithubLogo,
-  PiLineSegmentsFill,
   PiListBold,
   PiMoonFill,
   PiNotePencilFill,
@@ -183,10 +181,6 @@ function MenuItems({
   const linkClassName = clsx(
     "light:data-[status=active]:focus:text-base-100 flex w-full flex-row items-center justify-center",
   );
-  const plannedClassName = clsx(
-    linkClassName,
-    "pointer-events-none opacity-50 dark:opacity-25",
-  );
 
   return (
     <>
@@ -227,16 +221,6 @@ function MenuItems({
         <Link_ to="/noter" className={linkClassName}>
           <PiNotePencilFill className="text-accent" /> Noter
         </Link_>
-      </MenuItem>
-      <MenuItem>
-        <div className={plannedClassName}>
-          <PiLineSegmentsFill className="text-lime-500" /> Relater
-        </div>
-      </MenuItem>
-      <MenuItem>
-        <div className={plannedClassName}>
-          <PiCameraFill className="text-indigo-400" /> Snapshotter
-        </div>
       </MenuItem>
       {filler}
       <MenuItem>

@@ -17,14 +17,6 @@ The name stands for **A**ni**L**ist **T**ools for **E**diting **R**apidly.
 - **Noter**  
   Bulk edit notes with find/replace/etc.
 
-### Planned
-
-- **Relater**  
-  Find related entries and bulk add to planning.
-
-- **Snapshotter**  
-  Download a snapshot of the lists and upload to view.
-
 ## Development
 
 ```

@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import {
-  PiCameraFill,
   PiFileDashedFill,
-  PiLineSegmentsFill,
   PiNavigationArrowFill,
   PiNotePencilFill,
+  PiRocketLaunchFill,
   PiScrewdriverFill,
   PiStarFill,
   PiTrashFill,
@@ -135,37 +134,13 @@ function Index() {
         <Card
           title={
             <>
-              <PiLineSegmentsFill className="text-lime-500" /> Relater
+              <PiRocketLaunchFill className="text-neutral" /> New Tools?
             </>
           }
           desc={
             <>
-              <p>
-                Find new media related to what you have in your list and add
-                them as planning.
-              </p>
-              <p>Filter by relation type and media type.</p>
-            </>
-          }
-          link={
-            <div className={plannedClassName}>
-              <PiFileDashedFill /> Planned
-            </div>
-          }
-        />
-        <Card
-          title={
-            <>
-              <PiCameraFill className="text-indigo-400" /> Snapshotter
-            </>
-          }
-          desc={
-            <>
-              <p>Download a snapshot of your anime and manga lists.</p>
-              <p>
-                Share snapshot files, including of private lists, and upload to
-                view.
-              </p>
+              <p>More coming in the future!</p>
+              <p>Send some suggestions if you have any!</p>
             </>
           }
           link={
