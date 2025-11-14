@@ -103,11 +103,16 @@ function Noter() {
           break;
         }
         const d = draft.get(action.id)!;
-        const old = d.notes ?? list.data.get(action.id)!.notes;
-        d.notes = old.replace(
-          settings.noteFindRegexp.value,
-          settings.noteReplace.value,
-        );
+        const entry = list.data.get(action.id)!;
+        const old = d.notes ?? entry.notes;
+        const regexp = settings.noteFindRegexp.value;
+        const rep = settings.noteReplaceJavaScriptMode.value
+          ? replaceEval(entry, old, regexp, settings.noteReplace.value)
+          : old.replace(
+              regexp,
+              settings.noteReplace.value.replaceAll(/\$([`'])/g, "$$$$$1"),
+            );
+        d.notes = rep;
         break;
       }
       case "replaceAll": {
