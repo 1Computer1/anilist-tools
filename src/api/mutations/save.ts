@@ -12,6 +12,7 @@ export type EntryDraft = Partial<{
   completedAt: DateTime;
   progress: number | null;
   progressVolumes: number | null;
+  notes: string;
 }>;
 
 // S = Things that can be updated
@@ -42,36 +43,40 @@ function makeMutationData(
   const mutArgs: string[] = [];
   let hasActivityUpdate = false;
 
-  function add<T>(k: number, v: NonNullable<T>, name: string, type: string) {
-    vars[`${name}${k}`] = v;
-    queryVars.push(`$${name}${k}: ${type}`);
-    mutArgs.push(`${name}: $${name}${k}`);
+  function add<T>(v: NonNullable<T>, name: string, type: string) {
+    vars[`${name}${id}`] = v;
+    queryVars.push(`$${name}${id}: ${type}`);
+    mutArgs.push(`${name}: $${name}${id}`);
   }
 
   if (d.score != null && !Number.isNaN(d.score)) {
-    add(id, d.score, "scoreRaw", "Int");
+    add(d.score, "scoreRaw", "Int");
   }
 
   if (d.status != null) {
-    add(id, d.status, "status", "MediaListStatus");
+    add(d.status, "status", "MediaListStatus");
     hasActivityUpdate = true;
   }
 
   if (d.startedAt != null) {
-    add(id, dateToFuzzyDate(d.startedAt), "startedAt", "FuzzyDateInput");
+    add(dateToFuzzyDate(d.startedAt), "startedAt", "FuzzyDateInput");
   }
 
   if (d.completedAt != null) {
-    add(id, dateToFuzzyDate(d.completedAt), "completedAt", "FuzzyDateInput");
+    add(dateToFuzzyDate(d.completedAt), "completedAt", "FuzzyDateInput");
   }
 
   if (d.progress != null) {
-    add(id, d.progress, "progress", "Int");
+    add(d.progress, "progress", "Int");
     hasActivityUpdate = true;
   }
 
   if (d.progressVolumes != null) {
-    add(id, d.progressVolumes, "progressVolumes", "Int");
+    add(d.progressVolumes, "progressVolumes", "Int");
+  }
+
+  if (d.notes != null) {
+    add(d.notes, "notes", "String");
   }
 
   if (!mutArgs.length) {

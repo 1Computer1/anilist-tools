@@ -223,9 +223,9 @@ function MenuItems({
         </Link_>
       </MenuItem>
       <MenuItem>
-        <div className={plannedClassName}>
+        <Link_ to="/noter" className={linkClassName}>
           <PiNotePencilFill className="text-accent" /> Noter
-        </div>
+        </Link_>
       </MenuItem>
       <MenuItem>
         <div className={plannedClassName}>

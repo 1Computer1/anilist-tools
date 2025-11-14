@@ -37,7 +37,7 @@ export default function CustomDialog({
     >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
       <div className="flex-center fixed inset-0 h-dvh w-dvw">
-        <DialogPanel className="bg-base-100 flex-center rounded-box card card-border max-h-[80dvh] min-w-[min(var(--container-md),90dvw)] shadow lg:min-w-md">
+        <DialogPanel className="bg-base-100 flex-center rounded-box card card-border m-4 max-h-[80dvh] min-w-[min(var(--container-md),90dvw)] shadow lg:min-w-md">
           <div
             className={clsx(
               "flex-center max-h-[80dvh] w-full gap-y-2 pb-4",

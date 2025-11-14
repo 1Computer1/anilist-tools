@@ -6,6 +6,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 import "./index.css";
+import "./starry-night.css";
 import { enableMapSet } from "immer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { IconContext } from "react-icons";

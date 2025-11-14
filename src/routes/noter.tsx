@@ -18,49 +18,45 @@ import LeftRightListInterface, {
   useLeftRightListInterface,
 } from "../components/list/LeftRightListInterface";
 import { matchesFilter, prepareListForDisplay } from "../util/settings";
-import type { MediaListStatus } from "../api/queries/list";
-import DropperSettingsItems from "./-dropper/DropperSettingsItems";
-import { useDropperSettings } from "./-dropper/dropperSettings";
-import DropperListEntry from "./-dropper/DropperListEntry";
-import { DateTime } from "luxon";
+import { MEDIA_LIST_STATUSES } from "../api/queries/list";
+import NoterSettingsItems from "./-noter/NoterSettingsItems";
+import { useNoterSettings } from "./-noter/noterSettings";
+import NoterListEntry from "./-noter/NoterListEntry";
 import useBlockerDialog from "../hooks/useBlockerDialog";
 import LoadingDialog from "../components/dialogs/LoadingDialog";
+import replaceEval from "../util/replaceEval";
 
-export const Route = createFileRoute("/dropper")({
-  component: Dropper,
+export const Route = createFileRoute("/noter")({
+  component: Noter,
   head: () => ({
     meta: [
-      { title: "ALter - Dropper" },
+      { title: "ALter - Noter" },
       {
         name: "description",
         content:
-          "Enhance your AniList experience with powerful tools!\nDrop entries that you have not updated in a long time.",
+          "Enhance your AniList experience with powerful tools!\nSearch your notes and edit them all at once.",
       },
     ],
   }),
 });
 
-export type DropperListDraft = ListDraft<"status">;
+export type NoterListDraft = ListDraft<"notes">;
 
-export type DropperListDraftAction =
-  | { t: "updateStatus"; id: number; status?: MediaListStatus }
-  | {
-      t: "updateOlderThan";
-      date: DateTime;
-      dropStatuses: MediaListStatus[];
-      status: MediaListStatus;
-    }
+export type NoterListDraftAction =
+  | { t: "update"; id: number; notes?: string }
+  | { t: "replace"; id: number }
+  | { t: "replaceAll" }
   | { t: "reset" };
 
-function Dropper() {
+function Noter() {
   const queryClient = useQueryClient();
 
-  const settings = useDropperSettings();
+  const settings = useNoterSettings();
 
   const listOptions: UserListOptions = {
     type: settings.listType.value,
-    statusIn: ["CURRENT", "PAUSED"],
-    sort: ["UPDATED_TIME"],
+    statusIn: MEDIA_LIST_STATUSES,
+    sort: ["SCORE_DESC"],
   };
 
   const leftRightListInterfaceProps = useLeftRightListInterface({
@@ -80,30 +76,67 @@ function Dropper() {
   );
 
   const [draft, dispatch] = useImmerReducer<
-    DropperListDraft,
-    DropperListDraftAction
+    NoterListDraft,
+    NoterListDraftAction
   >((draft, action) => {
     switch (action.t) {
-      case "updateStatus": {
+      case "update": {
         if (!draft.has(action.id)) {
           draft.set(action.id, {});
         }
-        draft.get(action.id)!.status = action.status;
+        draft.get(action.id)!.notes = action.notes;
         break;
       }
-      case "updateOlderThan": {
+      case "replace": {
         if (!list.data) {
           setDispatchError("Data somehow went missing, please refresh.");
           break;
         }
+        if (!draft.has(action.id)) {
+          draft.set(action.id, {});
+        }
+        if (
+          settings.noteFindRegexp.value == null ||
+          settings.noteFindRegexpError.value != null
+        ) {
+          setDispatchError("Regular expression missing or invalid.");
+          break;
+        }
+        const d = draft.get(action.id)!;
+        const old = d.notes ?? list.data.get(action.id)!.notes;
+        d.notes = old.replace(
+          settings.noteFindRegexp.value,
+          settings.noteReplace.value,
+        );
+        break;
+      }
+      case "replaceAll": {
+        if (!list.data) {
+          setDispatchError("Data somehow went missing, please refresh.");
+          break;
+        }
+        if (
+          settings.noteFindRegexp.value == null ||
+          settings.noteFindRegexpError.value != null
+        ) {
+          setDispatchError("Regular expression missing or invalid.");
+          break;
+        }
+        const regexp = settings.noteFindRegexp.value;
         for (const [_, entry] of list.data) {
-          draft.set(entry.id, {});
-          const d = draft.get(entry.id)!;
-          if (
-            action.dropStatuses.includes(entry.status) &&
-            DateTime.fromSeconds(entry.updatedAt).endOf("day") <= action.date
-          ) {
-            d.status = "DROPPED";
+          const old =
+            draft.get(entry.id)?.notes ?? list.data.get(entry.id)!.notes;
+          const rep = settings.noteReplaceJavaScriptMode.value
+            ? replaceEval(entry, old, regexp, settings.noteReplace.value)
+            : old.replace(
+                regexp,
+                settings.noteReplace.value.replaceAll(/\$([`'])/g, "$$$$$1"),
+              );
+          if (rep !== old) {
+            if (!draft.has(entry.id)) {
+              draft.set(entry.id, {});
+            }
+            draft.get(entry.id)!.notes = rep;
           }
         }
         break;
@@ -121,14 +154,14 @@ function Dropper() {
       : (() => {
           let changes = 0;
           for (const [k, v] of draft) {
-            if (v.status == null) {
+            if (v.notes == null) {
               continue;
             }
             const before = list.data!.get(k);
             if (!before) {
               return null;
             }
-            if (v.status !== before.status) {
+            if (v.notes !== before.notes) {
               changes += 1;
             }
           }
@@ -160,7 +193,17 @@ function Dropper() {
       prepareListForDisplay={(list) =>
         prepareListForDisplay({
           data: list,
-          filter: (e) => matchesFilter(settings.filter.value, e),
+          filter: (e) => {
+            return (
+              matchesFilter(settings.filter.value, e) &&
+              (!settings.hideUnmatched.value ||
+                (settings.noteFindRegexp.value instanceof RegExp
+                  ? settings.noteFindRegexp.value.test(
+                      draft.get(e.id)?.notes ?? e.notes,
+                    )
+                  : true))
+            );
+          },
           sortBy: settings.sortBy.value,
           sortDir: settings.sortDir.value,
           titleLanguage: settings.titleLanguage.value,
@@ -233,13 +276,13 @@ function Dropper() {
             disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
             onClick={() => {
               confirmDialog.openWith({
-                title: "Drop Entries",
-                action: "Drop",
+                title: "Update Notes",
+                action: "Update",
                 severity: "SUCCESS",
                 message: (
                   <>
-                    Are you sure you want to drop {numUnsavedChanges} of your
-                    entries?
+                    Are you sure you want to update {numUnsavedChanges} of your
+                    notes?
                   </>
                 ),
                 onConfirm: async () => {
@@ -261,7 +304,7 @@ function Dropper() {
         </>
       }
       settingsItems={
-        <DropperSettingsItems
+        <NoterSettingsItems
           viewer={viewer}
           dispatch={dispatch}
           settings={settings}
@@ -270,7 +313,7 @@ function Dropper() {
         />
       }
       listEntry={({ entry, ref, tab }) => (
-        <DropperListEntry
+        <NoterListEntry
           settings={settings}
           entry={entry}
           draft={draft}
@@ -287,11 +330,12 @@ function Dropper() {
             { keys: "↓|↩", desc: "Go next" },
             { keys: "↑", desc: "Go back" },
             { divider: "Update" },
-            { keys: ".", desc: "Drop entry" },
-            { keys: "/", desc: "Revert status to original" },
+            { keys: "r", desc: "Apply replacement" },
+            { keys: ".", desc: "Clear note" },
+            { keys: "/", desc: "Revert note to original" },
             { divider: "Other" },
             { keys: "Ctrl", desc: "Hold to update but stay on entry" },
-            { keys: "`|Esc|⌫", desc: "Revert status and go back" },
+            { keys: "`|Esc|⌫", desc: "Revert note and go back" },
           ]}
         />
       </CustomDialog>

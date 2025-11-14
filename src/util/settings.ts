@@ -20,6 +20,7 @@ export type SortBy =
   | "releaseDate"
   | "averageScore"
   | "popularity"
+  | "notes"
   | "random";
 
 export const SORT_BYS: SortBy[] = [
@@ -33,6 +34,7 @@ export const SORT_BYS: SortBy[] = [
   "releaseDate",
   "averageScore",
   "popularity",
+  "notes",
   "random",
 ];
 
@@ -74,6 +76,7 @@ export function nameOfSortBy(s: SortBy) {
     releaseDate: "Release Date",
     startDate: "Start Date",
     completedDate: "Completed Date",
+    notes: "Notes",
     random: "Random",
   }[s];
 }
@@ -175,6 +178,7 @@ export const COMPARATORS: Record<
   releaseDate: (a, b) => compareDate(b.media.startDate, a.media.startDate),
   startDate: (a, b) => compareDate(b.startedAt, a.startedAt),
   completedDate: (a, b) => compareDate(b.completedAt, a.completedAt),
+  notes: (a, b) => b.notes.localeCompare(a.notes),
 };
 
 export function compareDate(a: FuzzyDate, b: FuzzyDate) {
@@ -204,7 +208,7 @@ export function matchesFilter(filter: string, entry: Entry) {
     entry.media.title.english,
     entry.media.title.native,
     entry.media.title.romaji,
-    entry.notes ?? "",
+    entry.notes,
   ].some((t) => {
     return t?.toLowerCase().includes(filter) ?? false;
   });

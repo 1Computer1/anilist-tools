@@ -121,15 +121,15 @@ function Index() {
             <>
               <p>Search your notes and edit them all at once.</p>
               <p>
-                Supports find & replace with regular expressions and text
-                manipulation.
+                Find and replace with regular expressions, and further process
+                your notes with custom scripts.
               </p>
             </>
           }
           link={
-            <div className={plannedClassName}>
-              <PiFileDashedFill /> Planned
-            </div>
+            <Link to="/noter" className={linkClassName}>
+              <PiNavigationArrowFill /> Go
+            </Link>
           }
         />
         <Card

@@ -206,7 +206,7 @@ export default function FixerSettingsItems({
         onChange={() => dispatch({ t: "reset" })}
       />
       <SettingsDivider />
-      <div className="flex flex-row items-center gap-1">
+      <div className="flex flex-row items-center justify-between gap-1">
         <div>Fixes to Apply</div>
         <Button
           className="btn btn-ghost btn-square btn-xs"

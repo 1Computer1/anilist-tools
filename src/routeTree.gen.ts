@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ScorerRouteImport } from './routes/scorer'
 import { Route as RedirectRouteImport } from './routes/redirect'
+import { Route as NoterRouteImport } from './routes/noter'
 import { Route as FixerRouteImport } from './routes/fixer'
 import { Route as DropperRouteImport } from './routes/dropper'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const ScorerRoute = ScorerRouteImport.update({
 const RedirectRoute = RedirectRouteImport.update({
   id: '/redirect',
   path: '/redirect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoterRoute = NoterRouteImport.update({
+  id: '/noter',
+  path: '/noter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FixerRoute = FixerRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dropper': typeof DropperRoute
   '/fixer': typeof FixerRoute
+  '/noter': typeof NoterRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dropper': typeof DropperRoute
   '/fixer': typeof FixerRoute
+  '/noter': typeof NoterRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
@@ -60,21 +68,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dropper': typeof DropperRoute
   '/fixer': typeof FixerRoute
+  '/noter': typeof NoterRoute
   '/redirect': typeof RedirectRoute
   '/scorer': typeof ScorerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dropper' | '/fixer' | '/redirect' | '/scorer'
+  fullPaths: '/' | '/dropper' | '/fixer' | '/noter' | '/redirect' | '/scorer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dropper' | '/fixer' | '/redirect' | '/scorer'
-  id: '__root__' | '/' | '/dropper' | '/fixer' | '/redirect' | '/scorer'
+  to: '/' | '/dropper' | '/fixer' | '/noter' | '/redirect' | '/scorer'
+  id:
+    | '__root__'
+    | '/'
+    | '/dropper'
+    | '/fixer'
+    | '/noter'
+    | '/redirect'
+    | '/scorer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DropperRoute: typeof DropperRoute
   FixerRoute: typeof FixerRoute
+  NoterRoute: typeof NoterRoute
   RedirectRoute: typeof RedirectRoute
   ScorerRoute: typeof ScorerRoute
 }
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/redirect'
       fullPath: '/redirect'
       preLoaderRoute: typeof RedirectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noter': {
+      id: '/noter'
+      path: '/noter'
+      fullPath: '/noter'
+      preLoaderRoute: typeof NoterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fixer': {
@@ -123,6 +147,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DropperRoute: DropperRoute,
   FixerRoute: FixerRoute,
+  NoterRoute: NoterRoute,
   RedirectRoute: RedirectRoute,
   ScorerRoute: ScorerRoute,
 }

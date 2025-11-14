@@ -49,7 +49,7 @@ export type Entry = {
   updatedAt: number;
   progress: number | null;
   progressVolumes: number | null;
-  notes: string | null;
+  notes: string;
   repeat: number;
   media: {
     title: { english?: string; native: string; romaji?: string };
@@ -190,6 +190,9 @@ export const getList = query<
         entries.set(entry.id, entry);
       }
     }
+  }
+  for (const entry of entries.values()) {
+    entry.notes ??= "";
   }
   return entries;
 });

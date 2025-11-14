@@ -486,7 +486,7 @@ function Fixer() {
             disabled={numUnsavedChanges == null || numUnsavedChanges == 0}
             onClick={() => {
               confirmDialog.openWith({
-                title: "Update Scores",
+                title: "Update Data",
                 action: "Update",
                 severity: "SUCCESS",
                 message: (

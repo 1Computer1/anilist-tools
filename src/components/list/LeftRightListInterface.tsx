@@ -147,7 +147,7 @@ export default function LeftRightListInterface({
             <div
               className={clsx(
                 "flex min-h-0 w-full grow basis-0 flex-col justify-start gap-2 overflow-y-auto p-4 [scrollbar-width:thin]",
-                "md:h-full md:w-44 lg:w-48",
+                "md:h-full md:w-44 md:max-w-sm md:min-w-44 md:resize-x lg:w-48 lg:max-w-md lg:min-w-48 xl:max-w-3xl",
                 "rounded-box focus:outline-base-content focus:outline-2 focus:outline-offset-2",
               )}
             >
