@@ -391,7 +391,7 @@ export default function FixerListEntry({
                       const diff = Math.floor(before.diff(after).as("days"));
                       if (diff !== 0) {
                         return (
-                          <div>
+                          <div className="hidden sm:block">
                             {diff > 0 ? "-" : "+"}
                             {Math.abs(diff)} day
                             {Math.abs(diff) > 1 ? "s" : ""}
