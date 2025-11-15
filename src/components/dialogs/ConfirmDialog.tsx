@@ -12,35 +12,42 @@ export type ConfirmDialogContext = {
   onCancel?: () => void;
 };
 
+export type ConfirmDialogProps =
+  | {
+      state: DialogState<ConfirmDialogContext>;
+    }
+  | ({ state: DialogState } & ConfirmDialogContext);
+
 export default function ConfirmDialog({
   state,
-}: {
-  state: DialogState<ConfirmDialogContext>;
-}) {
+  ...propsContext
+}: ConfirmDialogProps) {
+  const context = state.context ?? (propsContext as ConfirmDialogContext);
+
   return (
     <ChoicesDialog
       state={state}
-      title={state.context.title}
+      title={context.title}
       choices={[
         {
-          text: state.context.action,
-          severity: state.context.severity,
+          text: context.action,
+          severity: context.severity,
           onClick: () => {
-            state.context.onConfirm();
+            context.onConfirm();
             state.close();
           },
         },
         {
-          text: state.context.cancel ?? "Cancel",
+          text: context.cancel ?? "Cancel",
           severity: "PRIMARY",
           onClick: () => {
-            state.context.onCancel?.();
+            context.onCancel?.();
             state.close();
           },
         },
       ]}
     >
-      {state.context.message}
+      {context.message}
     </ChoicesDialog>
   );
 }

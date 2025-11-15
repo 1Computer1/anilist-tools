@@ -33,7 +33,7 @@ export default function CustomDialog({
         }
       }}
       transition
-      className="transition duration-150 ease-out data-closed:opacity-0 motion-reduce:transition-none"
+      className="transition duration-150 ease-out focus:outline-none data-closed:opacity-0 motion-reduce:transition-none"
     >
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
       <div className="flex-center fixed inset-0 h-dvh w-dvw">
@@ -75,7 +75,7 @@ function DialogBody({ children }: { children: React.ReactNode }) {
     <div
       ref={ref}
       className={clsx(
-        "w-full px-4",
+        "w-full px-4 pb-1",
         needScroll ? "overflow-y-scroll" : "overflow-y-auto",
       )}
     >

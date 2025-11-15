@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type DialogState<T> = {
+export type DialogState<T = undefined> = {
   isOpen: boolean;
   setOpen: (x: boolean) => void;
   open: () => void;

@@ -460,6 +460,7 @@ export default function NoterSettingsItems({
       >
         <CodeEditor
           disabled={viewer.data == null}
+          preventPaste={settings.noteReplaceJavaScriptMode.value}
           format={{
             type: "dangerouslySetInnerHTML",
             format: settings.noteReplaceJavaScriptMode.value
