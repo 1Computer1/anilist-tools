@@ -200,6 +200,7 @@ function Noter() {
           filter: (e) => {
             return (
               matchesFilter(settings.filter.value, e) &&
+              settings.allowedStatuses.value.includes(e.status) &&
               (!settings.hideUnmatched.value ||
                 (settings.noteFindRegexp.value instanceof RegExp
                   ? (draft.get(e.id)?.notes ?? e.notes).search(
